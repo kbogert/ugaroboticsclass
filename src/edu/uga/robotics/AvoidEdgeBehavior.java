@@ -61,7 +61,6 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	public void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
 
 		lastvalue = aNewValue;
-		LCD.showNumber (aNewValue);
 	}
 
 }
