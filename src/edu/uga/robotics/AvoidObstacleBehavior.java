@@ -1,9 +1,18 @@
 package edu.uga.robotics;
 
+import josx.platform.rcx.LCD;
+import josx.platform.rcx.Sensor;
+import josx.platform.rcx.SensorListener;
 import josx.robotics.Behavior;
 
-public class AvoidObstacleBehavior implements Behavior {
+public class AvoidObstacleBehavior implements Behavior, SensorListener {
 
+	private boolean isNearObject = false;
+	
+	AvoidObstacleBehavior() {
+		new Thread(new AvoidObstacleThread(this));
+	}
+	
 	public void action() {
 
 		// move in a little closer,
@@ -20,8 +29,30 @@ public class AvoidObstacleBehavior implements Behavior {
 	}
 
 	public boolean takeControl() {
-		// TODO Auto-generated method stub
-		return false;
+		synchronized (this) {
+			return isNearObject;
+		}
 	}
 
+	public void stateChanged(Sensor arg0, int arg1, int arg2) {
+
+
+		LCD.showNumber (arg2);
+	}
+
+	public class AvoidObstacleThread implements Runnable {
+		AvoidObstacleBehavior parent;
+		
+		AvoidObstacleThread(AvoidObstacleBehavior a) {
+			parent = a;
+		}
+		
+		public void run() {
+			synchronized(parent) {
+				parent.isNearObject = true;
+			}
+			
+		}
+		
+	}
 }
