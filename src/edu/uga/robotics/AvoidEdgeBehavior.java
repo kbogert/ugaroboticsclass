@@ -7,7 +7,7 @@ import josx.robotics.Behavior;
 
 public class AvoidEdgeBehavior implements Behavior, SensorListener {
 
-	private final int MOVE_BACKWARD_DISTANCE = -15;
+	private final int MOVE_BACKWARD_DISTANCE = -20;
 	private final float TURN_DEGREES = 30F;
 	
 	private final int THRESHOLD = 31;
@@ -25,7 +25,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 		// move forward into endzone, then stop
 		Project2a.navigator.stop();
 		try {
-			Thread.sleep(100);
+			Thread.sleep(250);
 		} catch (InterruptedException e) {
 		}
 		
