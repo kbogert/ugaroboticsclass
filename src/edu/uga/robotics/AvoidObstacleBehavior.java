@@ -54,7 +54,7 @@ public class AvoidObstacleBehavior implements Behavior {
 		public void run() {
 			while (true) {
 				try {
-					Project2a.proxSensor.waitTillNear(1000);
+					Project2a.proxSensor.waitTillNear(0);
 					synchronized(parent) {
 						parent.isNearObject = true;
 					}
