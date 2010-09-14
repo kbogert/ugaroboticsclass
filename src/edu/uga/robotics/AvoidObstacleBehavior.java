@@ -9,7 +9,7 @@ public class AvoidObstacleBehavior implements Behavior {
 	
 	AvoidObstacleBehavior() {
 		Thread temp = new AvoidObstacleThread(this);
-		temp.setDaemon(true);
+//		temp.setDaemon(true);
 		temp.start();
 	}
 	
@@ -54,7 +54,7 @@ public class AvoidObstacleBehavior implements Behavior {
 		public void run() {
 			while (true) {
 				try {
-					Project2a.proxSensor.waitTillNear(0);
+					Project2a.proxSensor.waitTillNear(1000);
 					synchronized(parent) {
 						parent.isNearObject = true;
 					}
