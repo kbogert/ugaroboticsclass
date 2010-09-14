@@ -1,6 +1,5 @@
 package edu.uga.robotics;
 
-import josx.platform.rcx.LCD;
 import josx.platform.rcx.Sensor;
 import josx.platform.rcx.SensorListener;
 import josx.robotics.Behavior;
@@ -14,7 +13,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	private int lastvalue = 0;
 	
 	AvoidEdgeBehavior() {
-		Sensor.S1.addSensorListener(this);
+		Sensor.S2.addSensorListener(this);
 		
 	}
 	
