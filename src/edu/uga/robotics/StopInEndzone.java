@@ -6,7 +6,7 @@ import josx.robotics.Behavior;
 
 public class StopInEndzone implements Behavior, SensorListener {
 
-	private final int MOVE_FORWARD_DISTANCE = 10;
+	private final int MOVE_FORWARD_DISTANCE = 30;
 	private final int THRESHOLD = 41;
 	private int lastvalue = 0;
 	
