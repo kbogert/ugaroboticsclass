@@ -1,16 +1,16 @@
 package edu.uga.robotics;
 
-import josx.platform.rcx.LCD;
-import josx.platform.rcx.Sensor;
-import josx.platform.rcx.SensorListener;
+import josx.platform.rcx.TextLCD;
 import josx.robotics.Behavior;
 
-public class AvoidObstacleBehavior implements Behavior, SensorListener {
+public class AvoidObstacleBehavior implements Behavior {
 
 	private boolean isNearObject = false;
 	
 	AvoidObstacleBehavior() {
-		new Thread(new AvoidObstacleThread(this));
+		Thread temp = new AvoidObstacleThread(this);
+		temp.setDaemon(true);
+		temp.start();
 	}
 	
 	public void action() {
@@ -21,6 +21,16 @@ public class AvoidObstacleBehavior implements Behavior, SensorListener {
 		// backup a little, turn 50 degrees
 		// move forward for a ways (need to setup another thread, so this doesn't block and we still check for obstacles with the prox sensor)
 		// let the MoveForward behavior have control
+
+		TextLCD.print("AVOID");
+		Project2a.navigator.stop();
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+
+		}
+		System.exit(0);
+
 	}
 
 	public void suppress() {
@@ -33,14 +43,8 @@ public class AvoidObstacleBehavior implements Behavior, SensorListener {
 			return isNearObject;
 		}
 	}
-
-	public void stateChanged(Sensor arg0, int arg1, int arg2) {
-
-
-		LCD.showNumber (arg2);
-	}
-
-	public class AvoidObstacleThread implements Runnable {
+	
+	public class AvoidObstacleThread extends Thread {
 		AvoidObstacleBehavior parent;
 		
 		AvoidObstacleThread(AvoidObstacleBehavior a) {
@@ -48,10 +52,16 @@ public class AvoidObstacleBehavior implements Behavior, SensorListener {
 		}
 		
 		public void run() {
-			synchronized(parent) {
-				parent.isNearObject = true;
+			while (true) {
+				try {
+					Project2a.proxSensor.waitTillNear(0);
+					synchronized(parent) {
+						parent.isNearObject = true;
+					}
+				} catch (InterruptedException e) {
+
+				}
 			}
-			
 		}
 		
 	}
