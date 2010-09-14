@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="/home/kbogert/.eclipse/org.eclipse.platform_3.5.0_155965261/plugins/org.lejos_1.2.0/lib/classes.jar" rootpath="/" sourcepath="/home/kbogert/.eclipse/org.eclipse.platform_3.5.0_155965261/plugins/org.lejos_1.2.0/src/classes-src.zip"/>
-	<classpathentry kind="lib" path="/home/kbogert/.eclipse/org.eclipse.platform_3.5.0_155965261/plugins/org.lejos_1.2.0/lib/rcxcomm.jar" rootpath="/" sourcepath="/home/kbogert/.eclipse/org.eclipse.platform_3.5.0_155965261/plugins/org.lejos_1.2.0/src/rcxcomm-src.zip"/>
+	<classpathentry kind="lib" path="lib/classes.jar"/>
+	<classpathentry kind="lib" path="lib/rcxcomm.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
