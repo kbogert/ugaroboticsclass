@@ -24,13 +24,27 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 		// backup a bit, then turn a little
 		// move forward into endzone, then stop
 		Project2a.navigator.stop();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
+		
+		
 		
 		if (Project2a.navigator.getY() < 0) {
 			Project2a.navigator.rotate(-TURN_DEGREES);
 		} else {
 			Project2a.navigator.rotate(TURN_DEGREES);
 		}
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
 		Project2a.navigator.travel(MOVE_BACKWARD_DISTANCE);
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
 
 		Project2a.curState = Project2a.RobotState.Stopped;
 	}
