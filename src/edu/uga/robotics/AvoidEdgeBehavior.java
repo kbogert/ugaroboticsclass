@@ -10,7 +10,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	private final int MOVE_BACKWARD_DISTANCE = -20;
 	private final float TURN_DEGREES = 30F;
 	
-	private final int THRESHOLD = 31;
+	private final int THRESHOLD = 40;
 	private int lastvalue = 0;
 	
 	AvoidEdgeBehavior() {

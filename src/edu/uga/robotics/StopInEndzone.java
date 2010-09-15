@@ -9,7 +9,7 @@ import josx.robotics.Behavior;
 public class StopInEndzone implements Behavior, SensorListener {
 
 	private final int MOVE_FORWARD_DISTANCE = 30;
-	private final int THRESHOLD = 41;
+	private final int THRESHOLD = 45;
 	private int lastvalue = 0;
 	
 	StopInEndzone() {
@@ -34,13 +34,6 @@ public class StopInEndzone implements Behavior, SensorListener {
 		} catch (InterruptedException e) {
 		}
 
-		LCD.showNumber(lastvalue);
-
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-		}
-
 		System.exit(0);
 		
 	}
@@ -51,6 +44,14 @@ public class StopInEndzone implements Behavior, SensorListener {
 	}
 
 	public synchronized boolean takeControl() {
+		if (lastvalue >= THRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid)) {
+			Project2a.navigator.stop();
+			LCD.showNumber(lastvalue);
+			try {
+				Thread.sleep(2500);
+			} catch (InterruptedException e) {
+			}			
+		}
 		return lastvalue >= THRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid);
 	}
 
