@@ -35,13 +35,6 @@ public class AvoidObstacleBehavior implements Behavior {
 		}
 
 		int sensorValue = Sensor.S1.readValue();
-		
-		LCD.showNumber(sensorValue);
-
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-		}
 
 		Project2a.navigator.travel(-10);
 		if (sensorValue < blackThreshold) {

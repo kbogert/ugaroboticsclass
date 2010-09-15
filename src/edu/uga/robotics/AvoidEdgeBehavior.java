@@ -10,6 +10,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	private final float TURN_DEGREES = 30F;
 	
 	private final int THRESHOLD = 40;
+	private final int topTHRESHOLD = 44;
 	private int lastvalue = 0;
 	
 	AvoidEdgeBehavior() {
@@ -54,7 +55,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	}
 
 	public synchronized boolean takeControl() {
-		return lastvalue >= THRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid);
+		return lastvalue >= THRESHOLD &&  lastvalue <= topTHRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid);
 	}
 
 	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {

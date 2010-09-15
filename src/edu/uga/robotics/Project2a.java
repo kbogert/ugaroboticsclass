@@ -29,7 +29,7 @@ public class Project2a {
 	}
 
 	private static void initializeSensors() {
-		proxSensor = new ProximitySensor(Sensor.S1, 25);
+		proxSensor = new ProximitySensor(Sensor.S1);
 		
 		Sensor.S2.setTypeAndMode(3, 0x80); // light sensor, percentage mode
 		Sensor.S2.activate();
