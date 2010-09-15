@@ -2,7 +2,6 @@ package edu.uga.robotics;
 
 import josx.platform.rcx.LCD;
 import josx.platform.rcx.Sensor;
-import josx.platform.rcx.TextLCD;
 import josx.robotics.Behavior;
 
 public class AvoidObstacleBehavior implements Behavior {
