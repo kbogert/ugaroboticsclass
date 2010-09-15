@@ -13,7 +13,7 @@ public class StopInEndzone implements Behavior, SensorListener {
 	private int lastvalue = 0;
 	
 	StopInEndzone() {
-		Sensor.S1.addSensorListener(this);
+		Sensor.S2.addSensorListener(this);
 		
 	}
 	

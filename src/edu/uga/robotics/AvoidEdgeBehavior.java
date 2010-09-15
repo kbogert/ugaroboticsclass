@@ -58,7 +58,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	}
 
 	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
-
+	
 		lastvalue = aNewValue;
 	}
 
