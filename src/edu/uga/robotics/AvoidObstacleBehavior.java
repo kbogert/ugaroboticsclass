@@ -1,11 +1,16 @@
 package edu.uga.robotics;
 
+import josx.platform.rcx.LCD;
+import josx.platform.rcx.Sensor;
 import josx.platform.rcx.TextLCD;
 import josx.robotics.Behavior;
 
 public class AvoidObstacleBehavior implements Behavior {
 
 	private boolean isNearObject = false;
+	private final int blackThreshold = 39;
+	private final int whiteThreshold = 49;
+	
 	
 	AvoidObstacleBehavior() {
 		Thread temp = new AvoidObstacleThread(this);
@@ -22,14 +27,40 @@ public class AvoidObstacleBehavior implements Behavior {
 		// move forward for a ways (need to setup another thread, so this doesn't block and we still check for obstacles with the prox sensor)
 		// let the MoveForward behavior have control
 
-		TextLCD.print("AVOID");
-		Project2a.navigator.stop();
+		Project2a.curState = Project2a.RobotState.Avoid;
+
 		try {
-			Thread.sleep(5000);
+			Thread.sleep(500);
 		} catch (InterruptedException e) {
 
 		}
-		System.exit(0);
+
+		int sensorValue = Sensor.S1.readValue();
+		
+		LCD.showNumber(sensorValue);
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+		}
+
+		Project2a.navigator.travel(-10);
+		if (sensorValue < blackThreshold) {
+	
+			// turn left
+			Project2a.navigator.rotate(45.0f);
+			
+		} else {
+			// turn right
+			Project2a.navigator.rotate(-45.0f);
+			
+		}
+		Project2a.navigator.travel(25);
+		Project2a.curState = Project2a.RobotState.Stopped;
+
+		synchronized (this) {
+			isNearObject = false;
+		}
 
 	}
 
