@@ -1,5 +1,6 @@
 package edu.uga.robotics;
 
+import josx.platform.rcx.LCD;
 import josx.platform.rcx.Sensor;
 import josx.platform.rcx.SensorListener;
 import josx.robotics.Behavior;
@@ -53,11 +54,11 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 
 	}
 
-	public boolean takeControl() {
+	public synchronized boolean takeControl() {
 		return lastvalue >= THRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid);
 	}
 
-	public void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
+	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
 
 		lastvalue = aNewValue;
 	}

@@ -1,7 +1,9 @@
 package edu.uga.robotics;
 
+import josx.platform.rcx.LCD;
 import josx.platform.rcx.Sensor;
 import josx.platform.rcx.SensorListener;
+import josx.platform.rcx.TextLCD;
 import josx.robotics.Behavior;
 
 public class StopInEndzone implements Behavior, SensorListener {
@@ -25,6 +27,20 @@ public class StopInEndzone implements Behavior, SensorListener {
 		Project2a.navigator.stop();
 		Project2a.navigator.travel(MOVE_FORWARD_DISTANCE);
 
+		TextLCD.print("END");
+
+		try {
+			Thread.sleep(2500);
+		} catch (InterruptedException e) {
+		}
+
+		LCD.showNumber(lastvalue);
+
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+		}
+
 		System.exit(0);
 		
 	}
@@ -34,11 +50,11 @@ public class StopInEndzone implements Behavior, SensorListener {
 		Project2a.curState = Project2a.RobotState.Finished;
 	}
 
-	public boolean takeControl() {
+	public synchronized boolean takeControl() {
 		return lastvalue >= THRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid);
 	}
 
-	public void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
+	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
 
 		lastvalue = aNewValue;
 	
