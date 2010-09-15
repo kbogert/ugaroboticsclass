@@ -43,7 +43,7 @@ public class StopInEndzone implements Behavior, SensorListener {
 	}
 
 	public synchronized boolean takeControl() {
-		return lastvalue >= THRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid);
+		return lastvalue >= THRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid  || Project2a.curState == Project2a.RobotState.Scan);
 	}
 
 	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {

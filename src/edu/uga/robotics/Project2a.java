@@ -16,6 +16,8 @@ public class Project2a {
 		public static final byte Forward = 1;
 		public static final byte Avoid = 2;
 		public static final byte Finished = 3;
+		public static final byte Scan = 4;
+		
 		
 	}
 	
@@ -45,16 +47,16 @@ public class Project2a {
 		
 		initializeSensors();
 		
-		Behavior [] behaviors = new Behavior[4];
+		Behavior [] behaviors = new Behavior[5];
 		
-		behaviors[0] = new MoveForward();
-		behaviors[1] = new StopInEndzone();
-		behaviors[2] = new AvoidObstacleBehavior();
-		behaviors[3] = new AvoidEdgeBehavior();
+		behaviors[0] = new StopAndLook();
+		behaviors[1] = new MoveForward();
+		behaviors[2] = new StopInEndzone();
+		behaviors[3] = new AvoidObstacleBehavior();
+		behaviors[4] = new AvoidEdgeBehavior();
 		
 		Arbitrator arb = new Arbitrator(behaviors);
 		arb.start();
-		
 		
 	}
 	

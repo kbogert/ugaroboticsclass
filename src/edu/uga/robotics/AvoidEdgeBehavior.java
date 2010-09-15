@@ -55,7 +55,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	}
 
 	public synchronized boolean takeControl() {
-		return lastvalue >= THRESHOLD &&  lastvalue <= topTHRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid);
+		return lastvalue >= THRESHOLD &&  lastvalue <= topTHRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid  || Project2a.curState == Project2a.RobotState.Scan);
 	}
 
 	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {

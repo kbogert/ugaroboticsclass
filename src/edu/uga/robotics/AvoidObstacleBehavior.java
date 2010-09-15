@@ -35,7 +35,7 @@ public class AvoidObstacleBehavior implements Behavior {
 
 		int sensorValue = Sensor.S1.readValue();
 
-		Project2a.navigator.travel(-10);
+		Project2a.navigator.travel(-12);
 		if (sensorValue < blackThreshold) {
 	
 			// turn left
@@ -46,8 +46,17 @@ public class AvoidObstacleBehavior implements Behavior {
 			Project2a.navigator.rotate(-45.0f);
 			
 		}
-		Project2a.navigator.travel(25);
-		Project2a.curState = Project2a.RobotState.Stopped;
+		Project2a.navigator.travel(28);
+		if (sensorValue < blackThreshold) {
+			
+			// turn left
+			Project2a.navigator.rotate(-45.0f);
+			
+		} else {
+			// turn right
+			Project2a.navigator.rotate(45.0f);
+			
+		}		Project2a.curState = Project2a.RobotState.Stopped;
 
 		synchronized (this) {
 			isNearObject = false;
