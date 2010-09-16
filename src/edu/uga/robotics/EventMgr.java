@@ -6,11 +6,6 @@ public class EventMgr {
 
 	private boolean hasEvent = false;
 	private long eventTime = 0l;
-	private EventMgr event;
-	
-	EventMgr(EventMgr event) {
-		this.event = event;
-	}
 	
 	public synchronized void setEvent() {
 		hasEvent = true;
