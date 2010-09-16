@@ -59,12 +59,19 @@ public class AvoidObstacleBehavior implements Behavior {
 			// turn right
 			Project2a.navigator.rotate(45.0f);
 			
-		}		Project2a.curState = Project2a.RobotState.Stopped;
+		}		
+		
+		Project2a.curState = Project2a.RobotState.Stopped;
 
 		synchronized (this) {
 			isNearObject = false;
 		}
+		
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
 
+		}
 	}
 
 	public void suppress() {
@@ -93,6 +100,7 @@ public class AvoidObstacleBehavior implements Behavior {
 					synchronized(parent) {
 						parent.isNearObject = true;
 					}
+					event.setEvent();
 				} catch (InterruptedException e) {
 
 				}

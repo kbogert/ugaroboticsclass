@@ -9,7 +9,7 @@ public class StopInEndzone implements Behavior, SensorListener {
 
 	private final int MOVE_FORWARD_DISTANCE = 30;
 	private final int THRESHOLD = 45;
-	private int lastvalue = 0;
+	private long curtime = 0;
 	private EventMgr event;
 	
 	StopInEndzone(EventMgr event) {
@@ -44,13 +44,16 @@ public class StopInEndzone implements Behavior, SensorListener {
 	}
 
 	public synchronized boolean takeControl() {
-		return lastvalue >= THRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid  || Project2a.curState == Project2a.RobotState.Scan);
+		return curtime - System.currentTimeMillis() < 100 && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid  || Project2a.curState == Project2a.RobotState.Scan);
 	}
 
 	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
 
-		lastvalue = aNewValue;
-	
+		if (aNewValue >= THRESHOLD) {
+
+			curtime = System.currentTimeMillis();
+			event.setEvent();
+		}	
 	}
 
 }

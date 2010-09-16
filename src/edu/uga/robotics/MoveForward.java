@@ -12,17 +12,60 @@ public class MoveForward implements Behavior {
 	
 	public void action() {
 
-		Project2a.navigator.forward();
-		Project2a.curState = Project2a.RobotState.Scan;
+		try {
+			while (true) {
+				long startTime = System.currentTimeMillis();
+				
+				Project2a.curState = Project2a.RobotState.Forward;
+				Project2a.navigator.forward();
+				while (startTime - System.currentTimeMillis() < 500) {
+					if (event.getEvent())
+						return;
+					Thread.sleep(10);
+				}
+				
+				Project2a.navigator.stop();
+				Project2a.curState = Project2a.RobotState.Scan;
+				
+				Thread.sleep(100);
+				
+				if (event.getEvent())
+					return;
+
+				Project2a.navigator.rotate(-10f);
+				if (event.getEvent())
+					return;
+
+				Thread.sleep(100);
+				if (event.getEvent())
+					return;
+				
+				Project2a.navigator.rotate(20f);
+				if (event.getEvent())
+					return;
+				
+				Thread.sleep(100);
+				if (event.getEvent())
+					return;
+				
+				Project2a.navigator.rotate(-10f);
+								
+				if (event.getEvent())
+					return;
+
+				Thread.sleep(100);
+			}
+		} catch (InterruptedException e) {
+		}
 	}
 
 	public void suppress() {
-		// TODO Auto-generated method stub
 
+		Project2a.navigator.stop();
 	}
 
 	public boolean takeControl() {
-		return Project2a.curState == Project2a.RobotState.Stopped;
+		return Project2a.curState == Project2a.RobotState.Stopped && ! event.getEvent();
 	}
 
 }

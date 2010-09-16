@@ -51,8 +51,8 @@ public class Project2a {
 		
 		Behavior [] behaviors = new Behavior[4];
 		
-		behaviors[0] = new AvoidObstacleBehavior(eventMgr);
-		behaviors[1] = new AvoidEdgeBehavior(eventMgr);
+		behaviors[0] = new AvoidEdgeBehavior(eventMgr);
+		behaviors[1] = new AvoidObstacleBehavior(eventMgr);
 		behaviors[2] = new StopInEndzone(eventMgr);
 		behaviors[3] = new MoveForward(eventMgr);
 		

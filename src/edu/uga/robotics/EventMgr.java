@@ -12,16 +12,16 @@ public class EventMgr {
 		this.event = event;
 	}
 	
-	public void setEvent() {
+	public synchronized void setEvent() {
 		hasEvent = true;
 		eventTime = System.currentTimeMillis();
 	}
 	
-	public void clearEvent() {
+	public synchronized void clearEvent() {
 		hasEvent = false;
 	}
 	
-	public boolean getEvent() {
+	public synchronized boolean getEvent() {
 		return hasEvent && (System.currentTimeMillis() - eventTime < 100);
 	}
 }

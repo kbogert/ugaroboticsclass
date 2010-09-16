@@ -11,7 +11,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	
 	private final int THRESHOLD = 40;
 	private final int topTHRESHOLD = 44;
-	private int lastvalue = 0;
+	private long curtime = 0;
 	
 	private EventMgr event;
 	
@@ -31,6 +31,11 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 		} catch (InterruptedException e) {
 		}
 		
+		Project2a.navigator.travel(MOVE_BACKWARD_DISTANCE);
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+		}
 		
 		
 		if (Project2a.navigator.getY() < 0) {
@@ -38,11 +43,6 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 		} else {
 			Project2a.navigator.rotate(TURN_DEGREES);
 		}
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-		}
-		Project2a.navigator.travel(MOVE_BACKWARD_DISTANCE);
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
@@ -57,12 +57,16 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	}
 
 	public synchronized boolean takeControl() {
-		return lastvalue >= THRESHOLD &&  lastvalue <= topTHRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid  || Project2a.curState == Project2a.RobotState.Scan);
+		return curtime - System.currentTimeMillis() < 100 && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid  || Project2a.curState == Project2a.RobotState.Scan);
 	}
 
 	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
 	
-		lastvalue = aNewValue;
+		if (aNewValue >= THRESHOLD &&  aNewValue <= topTHRESHOLD) {
+
+			curtime = System.currentTimeMillis();
+			event.setEvent();
+		}
 	}
 
 }
