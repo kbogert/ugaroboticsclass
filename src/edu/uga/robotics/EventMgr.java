@@ -1,6 +1,5 @@
 package edu.uga.robotics;
 
-import josx.platform.rcx.Sensor;
 
 public class EventMgr {
 
