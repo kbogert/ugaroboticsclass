@@ -16,7 +16,7 @@ public class EventMgr {
 	}
 	
 	public synchronized boolean getEvent() {
-		return hasEvent && (getCurTime() - eventTime < 100);
+		return hasEvent && (getCurTime() - eventTime < 250);
 	}
 	
 	public int getCurTime() {
