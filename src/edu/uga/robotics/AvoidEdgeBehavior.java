@@ -57,7 +57,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	}
 
 	public synchronized boolean takeControl() {
-		return curtime - event.getCurTime() < 100 && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid  || Project2a.curState == Project2a.RobotState.Scan);
+		return curtime - event.getCurTime() < 100;
 	}
 
 	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
