@@ -13,9 +13,11 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	private final int topTHRESHOLD = 44;
 	private int lastvalue = 0;
 	
-	AvoidEdgeBehavior() {
+	private EventMgr event;
+	
+	AvoidEdgeBehavior(EventMgr event) {
 		Sensor.S2.addSensorListener(this);
-		
+		this.event = event;
 	}
 	
 	public void action() {

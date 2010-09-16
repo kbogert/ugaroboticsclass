@@ -4,6 +4,12 @@ import josx.robotics.Behavior;
 
 public class MoveForward implements Behavior {
 
+	private EventMgr event;
+	
+	public MoveForward(EventMgr event) {
+		this.event = event;
+	}
+	
 	public void action() {
 
 		Project2a.navigator.forward();

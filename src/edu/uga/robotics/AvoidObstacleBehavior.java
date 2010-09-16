@@ -8,12 +8,15 @@ public class AvoidObstacleBehavior implements Behavior {
 	private boolean isNearObject = false;
 	private final int blackThreshold = 39;
 	private final int whiteThreshold = 49;
+
+	private EventMgr event;
 	
 	
-	AvoidObstacleBehavior() {
+	AvoidObstacleBehavior(EventMgr event) {
 		Thread temp = new AvoidObstacleThread(this);
 //		temp.setDaemon(true);
 		temp.start();
+		this.event = event;
 	}
 	
 	public void action() {
@@ -86,6 +89,7 @@ public class AvoidObstacleBehavior implements Behavior {
 			while (true) {
 				try {
 					Project2a.proxSensor.waitTillNear(0);
+					
 					synchronized(parent) {
 						parent.isNearObject = true;
 					}

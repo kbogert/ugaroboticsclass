@@ -10,10 +10,11 @@ public class StopInEndzone implements Behavior, SensorListener {
 	private final int MOVE_FORWARD_DISTANCE = 30;
 	private final int THRESHOLD = 45;
 	private int lastvalue = 0;
+	private EventMgr event;
 	
-	StopInEndzone() {
+	StopInEndzone(EventMgr event) {
 		Sensor.S2.addSensorListener(this);
-		
+		this.event = event;
 	}
 	
 	public void action() {
