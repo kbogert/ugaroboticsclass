@@ -11,7 +11,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	
 	private final int THRESHOLD = 40;
 	private final int topTHRESHOLD = 44;
-	private long curtime = 0;
+	private int curtime = 0;
 	
 	private EventMgr event;
 	
@@ -57,14 +57,14 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	}
 
 	public synchronized boolean takeControl() {
-		return curtime - System.currentTimeMillis() < 100 && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid  || Project2a.curState == Project2a.RobotState.Scan);
+		return curtime - event.getCurTime() < 100 && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.Avoid  || Project2a.curState == Project2a.RobotState.Scan);
 	}
 
 	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
 	
 		if (aNewValue >= THRESHOLD &&  aNewValue <= topTHRESHOLD) {
 
-			curtime = System.currentTimeMillis();
+			curtime = event.getCurTime();
 			event.setEvent();
 		}
 	}

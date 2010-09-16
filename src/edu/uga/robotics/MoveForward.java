@@ -14,11 +14,11 @@ public class MoveForward implements Behavior {
 
 		try {
 			while (true) {
-				long startTime = System.currentTimeMillis();
+				int startTime = event.getCurTime();
 				
 				Project2a.curState = Project2a.RobotState.Forward;
 				Project2a.navigator.forward();
-				while (startTime - System.currentTimeMillis() < 500) {
+				while (startTime - event.getCurTime() < 500) {
 					if (event.getEvent())
 						return;
 					Thread.sleep(10);

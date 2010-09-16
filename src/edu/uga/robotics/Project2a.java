@@ -17,8 +17,6 @@ public class Project2a {
 		public static final byte Avoid = 2;
 		public static final byte Finished = 3;
 		public static final byte Scan = 4;
-		
-		
 	}
 	
 	public static byte curState;
