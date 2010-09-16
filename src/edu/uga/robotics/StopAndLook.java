@@ -10,6 +10,11 @@ public class StopAndLook implements Behavior {
 	public void action() {
 		
 		Project2a.navigator.stop();
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+
+		}
 		rotateDirection = ! rotateDirection;
 		Project2a.navigator.rotate(rotateDirection ? -10f : 10f);
 		try {
@@ -18,7 +23,7 @@ public class StopAndLook implements Behavior {
 
 		}
 		
-		Project2a.navigator.rotate(rotateDirection ? 20f : -20f);
+		Project2a.navigator.rotate(rotateDirection ? 10f : -10f);
 		
 		Project2a.curState = Project2a.RobotState.Stopped;
 

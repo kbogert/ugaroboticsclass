@@ -47,13 +47,12 @@ public class Project2a {
 		
 		initializeSensors();
 		
-		Behavior [] behaviors = new Behavior[5];
+		Behavior [] behaviors = new Behavior[4];
 		
-		behaviors[0] = new StopAndLook();
-		behaviors[1] = new MoveForward();
-		behaviors[2] = new StopInEndzone();
-		behaviors[3] = new AvoidObstacleBehavior();
-		behaviors[4] = new AvoidEdgeBehavior();
+		behaviors[0] = new MoveForward();
+		behaviors[1] = new StopInEndzone();
+		behaviors[2] = new AvoidObstacleBehavior();
+		behaviors[3] = new AvoidEdgeBehavior();
 		
 		Arbitrator arb = new Arbitrator(behaviors);
 		arb.start();

@@ -6,7 +6,7 @@ public class MoveForward implements Behavior {
 
 	public void action() {
 
-		Project2a.navigator.travel(10);
+		Project2a.navigator.forward();
 		Project2a.curState = Project2a.RobotState.Scan;
 	}
 
