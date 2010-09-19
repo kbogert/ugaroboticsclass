@@ -8,16 +8,14 @@ public class StopAndLook implements Behavior {
 	private boolean abort = false;
 	
 	private final static float ROTATE_AMOUNT = 5.0f;
-	public static boolean obstacleLeft = false;
-	public static boolean obstacleRight = false;
 	
 	public void action() {
 		
 		Project2a.curState = Project2a.RobotState.Scan;
 		Project2a.navigator.stop();
 		abort = false;
-		obstacleLeft = false;
-		obstacleRight = false;
+		boolean obstacleLeft = false;
+		boolean obstacleRight = false;
 		
 		try {
 			Thread.sleep(100);
@@ -66,7 +64,23 @@ public class StopAndLook implements Behavior {
 			obstacleRight = true;
 		}
 		
-		Project2a.curState = Project2a.RobotState.PickDirection;
+		if (obstacleLeft && ! obstacleRight) {
+			// obstacle on the left, turn right
+			Project2a.navigator.rotate(-ROTATE_AMOUNT);
+			
+		} else if (obstacleRight && ! obstacleLeft) {
+			// obstacle on the right, turn left
+			Project2a.navigator.rotate(ROTATE_AMOUNT);
+		}
+		if (abort) return;
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+
+		}
+		if (abort) return;
+		
+		Project2a.curState = Project2a.RobotState.Stopped;
 
 	}
 
