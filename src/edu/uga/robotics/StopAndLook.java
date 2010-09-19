@@ -9,6 +9,7 @@ public class StopAndLook implements Behavior {
 	
 	public void action() {
 		
+		Project2a.curState = Project2a.RobotState.Scan;
 		Project2a.navigator.stop();
 		try {
 			Thread.sleep(100);
@@ -30,6 +31,8 @@ public class StopAndLook implements Behavior {
 	}
 
 	public void suppress() {
+		Project2a.navigator.stop();
+		Project2a.curState = Project2a.RobotState.Stopped;
 
 	}
 
