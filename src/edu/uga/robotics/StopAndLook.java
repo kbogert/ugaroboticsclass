@@ -44,8 +44,6 @@ public class StopAndLook implements Behavior {
 		Project2a.navigator.rotate(rotateDirection ? ROTATE_AMOUNT*2 : -ROTATE_AMOUNT*2);
 		
 		if (abort) return;
-
-		startTime = Project2a.getCurTime();
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
@@ -54,6 +52,7 @@ public class StopAndLook implements Behavior {
 		if (abort) return;
 
 		
+		startTime = Project2a.getCurTime();
 		Project2a.navigator.rotate(rotateDirection ? -ROTATE_AMOUNT : ROTATE_AMOUNT);
 		
 		if (abort) return;
