@@ -5,17 +5,21 @@ import josx.robotics.Behavior;
 public class StopAndLook implements Behavior {
 
 	private boolean rotateDirection = false;
-	
+	private boolean abort = false;
 	
 	public void action() {
 		
 		Project2a.curState = Project2a.RobotState.Scan;
 		Project2a.navigator.stop();
+		abort = false;
+		
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
 
 		}
+		if (abort) return;
+
 		rotateDirection = ! rotateDirection;
 		Project2a.navigator.rotate(rotateDirection ? -5f : 5f);
 		try {
@@ -23,6 +27,7 @@ public class StopAndLook implements Behavior {
 		} catch (InterruptedException e) {
 
 		}
+		if (abort) return;
 		
 		Project2a.navigator.rotate(rotateDirection ? 10f : -10f);
 		try {
@@ -30,6 +35,7 @@ public class StopAndLook implements Behavior {
 		} catch (InterruptedException e) {
 
 		}
+		if (abort) return;
 
 		Project2a.navigator.rotate(rotateDirection ? 5f : -5f);
 		try {
@@ -37,12 +43,14 @@ public class StopAndLook implements Behavior {
 		} catch (InterruptedException e) {
 
 		}
+		if (abort) return;
 		
 		Project2a.curState = Project2a.RobotState.Stopped;
 
 	}
 
 	public void suppress() {
+		abort = true;
 		Project2a.navigator.stop();
 		Project2a.curState = Project2a.RobotState.Stopped;
 
