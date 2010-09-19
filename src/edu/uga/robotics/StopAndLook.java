@@ -17,7 +17,7 @@ public class StopAndLook implements Behavior {
 
 		}
 		rotateDirection = ! rotateDirection;
-		Project2a.navigator.rotate(rotateDirection ? -10f : 10f);
+		Project2a.navigator.rotate(rotateDirection ? -5f : 5f);
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
