@@ -7,6 +7,8 @@ public class StopAndLook implements Behavior {
 	private boolean rotateDirection = false;
 	private boolean abort = false;
 	
+	private final static float ROTATE_AMOUNT = 5.0f;
+	
 	public void action() {
 		
 		Project2a.curState = Project2a.RobotState.Scan;
@@ -21,7 +23,7 @@ public class StopAndLook implements Behavior {
 		if (abort) return;
 
 		rotateDirection = ! rotateDirection;
-		Project2a.navigator.rotate(rotateDirection ? -5f : 5f);
+		Project2a.navigator.rotate(rotateDirection ? -ROTATE_AMOUNT : ROTATE_AMOUNT);
 
 		if (abort) return;
 		try {
@@ -31,7 +33,7 @@ public class StopAndLook implements Behavior {
 		}
 		if (abort) return;
 		
-		Project2a.navigator.rotate(rotateDirection ? 10f : -10f);
+		Project2a.navigator.rotate(rotateDirection ? ROTATE_AMOUNT*2 : -ROTATE_AMOUNT*2);
 		
 		if (abort) return;
 		try {
@@ -41,7 +43,7 @@ public class StopAndLook implements Behavior {
 		}
 		if (abort) return;
 
-		Project2a.navigator.rotate(rotateDirection ? 5f : -5f);
+		Project2a.navigator.rotate(rotateDirection ? ROTATE_AMOUNT : -ROTATE_AMOUNT);
 		
 		if (abort) return;
 		try {
