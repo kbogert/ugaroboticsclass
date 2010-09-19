@@ -13,7 +13,7 @@ public class MoveForward implements Behavior {
 	public static int startTime = 0;
 	
 	public void action() {
-		startTime = event.getCurTime();
+		startTime = Project2a.getCurTime();
 		
 		Project2a.curState = Project2a.RobotState.Forward;
 		Project2a.navigator.forward();
@@ -27,7 +27,7 @@ public class MoveForward implements Behavior {
 	}
 
 	public boolean takeControl() {
-		return Project2a.curState == Project2a.RobotState.Stopped && ! event.getEvent();
+		return Project2a.curState == Project2a.RobotState.Stopped;
 	}
 
 }

@@ -25,7 +25,7 @@ public class AvoidObstacleBehavior implements Behavior {
 		// move forward for a ways (need to setup another thread, so this doesn't block and we still check for obstacles with the prox sensor)
 		// let the MoveForward behavior have control
 
-		Project2a.curState = Project2a.RobotState.Avoid;
+		Project2a.curState = Project2a.RobotState.BackupFromObstacle;
 
 		try {
 			Thread.sleep(500);

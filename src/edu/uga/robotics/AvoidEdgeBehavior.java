@@ -21,7 +21,7 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	}
 	
 	public void action() {
-		Project2a.curState = Project2a.RobotState.Avoid;
+		Project2a.curState = Project2a.RobotState.AvoidEdge;
 		
 		// backup a bit, then turn a little
 		// move forward into endzone, then stop
@@ -57,14 +57,14 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 	}
 
 	public synchronized boolean takeControl() {
-		return curtime - event.getCurTime() < 100;
+		return curtime - Project2a.getCurTime() < 100;
 	}
 
 	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
 	
 		if (aNewValue >= THRESHOLD &&  aNewValue <= topTHRESHOLD) {
 
-			curtime = event.getCurTime();
+			curtime = Project2a.getCurTime();
 			event.setEvent();
 		}
 	}

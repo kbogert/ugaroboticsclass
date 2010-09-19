@@ -44,14 +44,14 @@ public class StopInEndzone implements Behavior, SensorListener {
 	}
 
 	public synchronized boolean takeControl() {
-		return curtime - event.getCurTime() < 100;
+		return curtime - Project2a.getCurTime() < 100;
 	}
 
 	public synchronized void stateChanged(Sensor aSource, int aOldValue, int aNewValue) {
 
 		if (aNewValue >= THRESHOLD) {
 
-			curtime = event.getCurTime();
+			curtime = Project2a.getCurTime();
 			event.setEvent();
 		}	
 	}
