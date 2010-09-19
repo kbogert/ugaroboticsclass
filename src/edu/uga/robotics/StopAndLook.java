@@ -54,7 +54,7 @@ public class StopAndLook implements Behavior {
 		if (abort) return;
 
 		
-		Project2a.navigator.rotate(rotateDirection ? ROTATE_AMOUNT : -ROTATE_AMOUNT);
+		Project2a.navigator.rotate(rotateDirection ? -ROTATE_AMOUNT : ROTATE_AMOUNT);
 		
 		if (abort) return;
 		try {
