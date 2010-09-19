@@ -10,13 +10,6 @@ public class AvoidObstacleBehavior implements Behavior {
 	private final int blackThreshold = 39;
 	private final int whiteThreshold = 49;
 	
-	
-	AvoidObstacleBehavior() {
-		Thread temp = new AvoidObstacleThread(this);
-//		temp.setDaemon(true);
-		temp.start();
-	}
-	
 	public void action() {
 
 		// move in a little closer,
@@ -26,7 +19,7 @@ public class AvoidObstacleBehavior implements Behavior {
 		// move forward for a ways (need to setup another thread, so this doesn't block and we still check for obstacles with the prox sensor)
 		// let the MoveForward behavior have control
 
-		Project2a.curState = Project2a.RobotState.Avoid;
+		Project2a.curState = Project2a.RobotState.BackupFromObstacle;
 
 		try {
 			Thread.sleep(500);
@@ -106,26 +99,5 @@ public class AvoidObstacleBehavior implements Behavior {
 			return isNearObject;
 		}
 	}
-	
-	public class AvoidObstacleThread extends Thread {
-		AvoidObstacleBehavior parent;
-		
-		AvoidObstacleThread(AvoidObstacleBehavior a) {
-			parent = a;
-		}
-		
-		public void run() {
-			while (true) {
-				try {
-					Project2a.proxSensor.waitTillNear(0);
-					synchronized(parent) {
-						parent.isNearObject = true;
-					}
-				} catch (InterruptedException e) {
 
-				}
-			}
-		}
-		
-	}
 }
