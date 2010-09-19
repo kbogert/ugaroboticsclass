@@ -17,6 +17,8 @@ public class Project2a {
 		public static final byte Avoid = 2;
 		public static final byte Finished = 3;
 		public static final byte Scan = 4;
+		
+		
 	}
 	
 	public static byte curState;
@@ -37,8 +39,6 @@ public class Project2a {
 	
 	public static void main(String[] args) {
 
-		EventMgr eventMgr = new EventMgr();
-		
 		curState = RobotState.Stopped;
 		Motor.A.setPower(2);
 		Motor.B.setPower(2);
@@ -49,14 +49,13 @@ public class Project2a {
 		
 		Behavior [] behaviors = new Behavior[4];
 		
-		behaviors[0] = new AvoidEdgeBehavior(eventMgr);
-		behaviors[1] = new AvoidObstacleBehavior(eventMgr);
-		behaviors[2] = new StopInEndzone(eventMgr);
-		behaviors[3] = new MoveForward(eventMgr);
+		behaviors[0] = new MoveForward();
+		behaviors[1] = new StopInEndzone();
+		behaviors[2] = new AvoidObstacleBehavior();
+		behaviors[3] = new AvoidEdgeBehavior();
 		
 		Arbitrator arb = new Arbitrator(behaviors);
 		arb.start();
-		
 		
 	}
 	

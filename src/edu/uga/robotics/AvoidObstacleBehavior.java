@@ -1,5 +1,6 @@
 package edu.uga.robotics;
 
+import josx.platform.rcx.Motor;
 import josx.platform.rcx.Sensor;
 import josx.robotics.Behavior;
 
@@ -8,15 +9,12 @@ public class AvoidObstacleBehavior implements Behavior {
 	private boolean isNearObject = false;
 	private final int blackThreshold = 39;
 	private final int whiteThreshold = 49;
-
-	private EventMgr event;
 	
 	
-	AvoidObstacleBehavior(EventMgr event) {
+	AvoidObstacleBehavior() {
 		Thread temp = new AvoidObstacleThread(this);
 //		temp.setDaemon(true);
 		temp.start();
-		this.event = event;
 	}
 	
 	public void action() {
@@ -37,8 +35,19 @@ public class AvoidObstacleBehavior implements Behavior {
 		}
 
 		int sensorValue = Sensor.S1.readValue();
+		Motor.A.setPower(2);
+		Motor.B.setPower(2);
 
 		Project2a.navigator.travel(-12);
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+
+		}
+
+		Motor.A.setPower(4);
+		Motor.B.setPower(4);
+
 		if (sensorValue < blackThreshold) {
 	
 			// turn left
@@ -49,7 +58,24 @@ public class AvoidObstacleBehavior implements Behavior {
 			Project2a.navigator.rotate(-45.0f);
 			
 		}
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+
+		}
+		Motor.A.setPower(2);
+		Motor.B.setPower(2);
+		
 		Project2a.navigator.travel(28);
+		Motor.A.setPower(4);
+		Motor.B.setPower(4);
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+
+		}
+		Motor.A.setPower(3);
+		Motor.B.setPower(3);
 		if (sensorValue < blackThreshold) {
 			
 			// turn left
@@ -59,19 +85,15 @@ public class AvoidObstacleBehavior implements Behavior {
 			// turn right
 			Project2a.navigator.rotate(45.0f);
 			
-		}		
-		
-		Project2a.curState = Project2a.RobotState.Stopped;
+		}		Project2a.curState = Project2a.RobotState.Stopped;
+
+		Motor.A.setPower(2);
+		Motor.B.setPower(2);
 
 		synchronized (this) {
 			isNearObject = false;
 		}
-		
-		try {
-			Thread.sleep(200);
-		} catch (InterruptedException e) {
 
-		}
 	}
 
 	public void suppress() {
@@ -96,11 +118,9 @@ public class AvoidObstacleBehavior implements Behavior {
 			while (true) {
 				try {
 					Project2a.proxSensor.waitTillNear(0);
-					
 					synchronized(parent) {
 						parent.isNearObject = true;
 					}
-					event.setEvent();
 				} catch (InterruptedException e) {
 
 				}
