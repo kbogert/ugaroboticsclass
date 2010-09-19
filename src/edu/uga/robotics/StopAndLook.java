@@ -34,7 +34,7 @@ public class StopAndLook implements Behavior {
 	}
 
 	public boolean takeControl() {
-		return Project2a.curState == Project2a.RobotState.Scan;
+		return Project2a.curState == Project2a.RobotState.Forward && Project2a.getCurTime() - 500 > MoveForward.startTime;
 	}
 
 }

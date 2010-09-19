@@ -8,7 +8,7 @@ public class EventMgr {
 
 	public synchronized void setEvent() {
 		hasEvent = true;
-		eventTime = getCurTime();
+		eventTime = Project2a.getCurTime();
 	}
 	
 	public synchronized void clearEvent() {
@@ -16,11 +16,7 @@ public class EventMgr {
 	}
 	
 	public synchronized boolean getEvent() {
-		return hasEvent && (getCurTime() - eventTime < 250);
+		return hasEvent && (Project2a.getCurTime() - eventTime < 250);
 	}
-	
-	public int getCurTime() {
-		return (int)System.currentTimeMillis();
 
-	}
 }
