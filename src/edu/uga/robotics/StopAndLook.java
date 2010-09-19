@@ -16,6 +16,8 @@ public class StopAndLook implements Behavior {
 		Project2a.curState = Project2a.RobotState.Scan;
 		Project2a.navigator.stop();
 		abort = false;
+		obstacleLeft = false;
+		obstacleRight = false;
 		
 		try {
 			Thread.sleep(100);
@@ -24,6 +26,7 @@ public class StopAndLook implements Behavior {
 		}
 		if (abort) return;
 
+		int startTime = Project2a.getCurTime();
 		rotateDirection = ! rotateDirection;
 		Project2a.navigator.rotate(rotateDirection ? -ROTATE_AMOUNT : ROTATE_AMOUNT);
 
@@ -34,10 +37,15 @@ public class StopAndLook implements Behavior {
 
 		}
 		if (abort) return;
+		if (Project2a.getLastProxEvent() > startTime) {
+			obstacleLeft = true;
+		}
 		
 		Project2a.navigator.rotate(rotateDirection ? ROTATE_AMOUNT*2 : -ROTATE_AMOUNT*2);
 		
 		if (abort) return;
+
+		startTime = Project2a.getCurTime();
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
@@ -45,6 +53,7 @@ public class StopAndLook implements Behavior {
 		}
 		if (abort) return;
 
+		
 		Project2a.navigator.rotate(rotateDirection ? ROTATE_AMOUNT : -ROTATE_AMOUNT);
 		
 		if (abort) return;
@@ -54,8 +63,11 @@ public class StopAndLook implements Behavior {
 
 		}
 		if (abort) return;
+		if (Project2a.getLastProxEvent() > startTime) {
+			obstacleRight = true;
+		}
 		
-		Project2a.curState = Project2a.RobotState.Stopped;
+		Project2a.curState = Project2a.RobotState.PickDirection;
 
 	}
 
