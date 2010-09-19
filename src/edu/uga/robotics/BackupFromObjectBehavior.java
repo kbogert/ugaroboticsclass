@@ -48,7 +48,7 @@ public class BackupFromObjectBehavior implements Behavior {
 	}
 
 	public boolean takeControl() {
-		return Project2a.getCurTime() - 200 > Project2a.getLastProxEvent() && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.AvoidEdge || Project2a.curState == Project2a.RobotState.MoveAroundObstacle);
+		return Project2a.getCurTime() - 200 < Project2a.getLastProxEvent() && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.AvoidEdge || Project2a.curState == Project2a.RobotState.MoveAroundObstacle);
 	}
 
 }
