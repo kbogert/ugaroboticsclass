@@ -1,5 +1,6 @@
 package edu.uga.robotics;
 
+import josx.platform.rcx.Motor;
 import josx.robotics.Behavior;
 
 public class MoveForward implements Behavior {
@@ -8,6 +9,9 @@ public class MoveForward implements Behavior {
 	
 	public void action() {
 		startTime = Project2a.getCurTime();
+		
+		Motor.A.setPower(1);
+		Motor.B.setPower(1);
 		
 		Project2a.curState = Project2a.RobotState.Forward;
 		Project2a.navigator.forward();
