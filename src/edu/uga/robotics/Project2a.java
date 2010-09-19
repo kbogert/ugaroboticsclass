@@ -62,8 +62,6 @@ public class Project2a {
 	
 	public static void main(String[] args) {
 
-		EventMgr eventMgr = new EventMgr();
-		
 		curState = RobotState.Stopped;
 		Motor.A.setPower(2);
 		Motor.B.setPower(2);
@@ -74,11 +72,11 @@ public class Project2a {
 		
 		Behavior [] behaviors = new Behavior[5];
 		
-		behaviors[0] = new MoveForward(eventMgr);
+		behaviors[0] = new MoveForward();
 		behaviors[1] = new StopAndLook();		
-		behaviors[2] = new StopInEndzone(eventMgr);
-		behaviors[3] = new AvoidObstacleBehavior(eventMgr);
-		behaviors[4] = new AvoidEdgeBehavior(eventMgr);
+		behaviors[2] = new StopInEndzone();
+		behaviors[3] = new AvoidObstacleBehavior();
+		behaviors[4] = new AvoidEdgeBehavior();
 		
 		Arbitrator arb = new Arbitrator(behaviors);
 		arb.start();

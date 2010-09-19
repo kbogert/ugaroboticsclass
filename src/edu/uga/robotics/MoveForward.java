@@ -4,12 +4,6 @@ import josx.robotics.Behavior;
 
 public class MoveForward implements Behavior {
 
-	private EventMgr event;
-	
-	public MoveForward(EventMgr event) {
-		this.event = event;
-	}
-
 	public static int startTime = 0;
 	
 	public void action() {
