@@ -1,5 +1,6 @@
 package edu.uga.robotics;
 
+import josx.platform.rcx.Motor;
 import josx.robotics.Behavior;
 
 public class StopAndLook implements Behavior {
@@ -16,6 +17,8 @@ public class StopAndLook implements Behavior {
 		abort = false;
 		boolean obstacleLeft = false;
 		boolean obstacleRight = false;
+		Motor.A.setPower(3);
+		Motor.B.setPower(3);
 		
 		try {
 			Thread.sleep(100);
