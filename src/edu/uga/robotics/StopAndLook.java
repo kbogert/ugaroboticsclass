@@ -8,6 +8,8 @@ public class StopAndLook implements Behavior {
 	private boolean abort = false;
 	
 	private final static float ROTATE_AMOUNT = 5.0f;
+	public static boolean obstacleLeft = false;
+	public static boolean obstacleRight = false;
 	
 	public void action() {
 		

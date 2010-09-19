@@ -31,6 +31,16 @@ public class Project2a {
 	public static ProximitySensor proxSensor;
 	public static TimingNavigator navigator;
 	
+	private static int lastProxEvent;
+	
+	public static synchronized int getLastProxEvent() {
+		return lastProxEvent;
+	}
+	
+	protected static synchronized void setLastProxEvent() {
+		lastProxEvent = getCurTime();
+	}
+	
 	public static ProximitySensor getProxSensor() {
 		return proxSensor;
 	}
@@ -42,7 +52,10 @@ public class Project2a {
 	
 	private static void initializeSensors() {
 		proxSensor = new ProximitySensor(Sensor.S1);
-		
+		Thread temp = new Project2a.AvoidObstacleThread();
+//		temp.setDaemon(true);
+		temp.start();
+
 		Sensor.S2.setTypeAndMode(3, 0x80); // light sensor, percentage mode
 		Sensor.S2.activate();
 	}
@@ -70,6 +83,24 @@ public class Project2a {
 		Arbitrator arb = new Arbitrator(behaviors);
 		arb.start();
 		
+		
+	}
+	
+	
+	private static class AvoidObstacleThread extends Thread {
+		
+		public void run() {
+			while (true) {
+				try {
+					Project2a.proxSensor.waitTillNear(0);
+
+					Project2a.setLastProxEvent();
+
+				} catch (InterruptedException e) {
+
+				}
+			}
+		}
 		
 	}
 	

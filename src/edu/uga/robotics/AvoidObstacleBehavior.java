@@ -13,9 +13,6 @@ public class AvoidObstacleBehavior implements Behavior {
 	
 	
 	AvoidObstacleBehavior(EventMgr event) {
-		Thread temp = new AvoidObstacleThread(this);
-//		temp.setDaemon(true);
-		temp.start();
 		this.event = event;
 	}
 	
@@ -84,28 +81,5 @@ public class AvoidObstacleBehavior implements Behavior {
 			return isNearObject;
 		}
 	}
-	
-	public class AvoidObstacleThread extends Thread {
-		AvoidObstacleBehavior parent;
-		
-		AvoidObstacleThread(AvoidObstacleBehavior a) {
-			parent = a;
-		}
-		
-		public void run() {
-			while (true) {
-				try {
-					Project2a.proxSensor.waitTillNear(0);
-					
-					synchronized(parent) {
-						parent.isNearObject = true;
-					}
-					event.setEvent();
-				} catch (InterruptedException e) {
 
-				}
-			}
-		}
-		
-	}
 }
