@@ -29,8 +29,8 @@ public class AvoidEdgeBehavior implements Behavior, SensorListener {
 			Thread.sleep(250);
 		} catch (InterruptedException e) {
 		}
-		Motor.A.setPower(2);
-		Motor.B.setPower(2);
+		Motor.A.setPower(4);
+		Motor.B.setPower(4);
 		Project2a.navigator.travel(MOVE_BACKWARD_DISTANCE);
 		try {
 			Thread.sleep(100);
