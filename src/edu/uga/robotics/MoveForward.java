@@ -10,8 +10,8 @@ public class MoveForward implements Behavior {
 	public void action() {
 		startTime = Project2a.getCurTime();
 		
-		Motor.A.setPower(1);
-		Motor.B.setPower(1);
+		Motor.A.setPower(3);
+		Motor.B.setPower(3);
 		
 		Project2a.curState = Project2a.RobotState.Forward;
 		Project2a.navigator.forward();
