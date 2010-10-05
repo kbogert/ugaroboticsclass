@@ -3,9 +3,16 @@ package edu.uga.robotics;
 import josx.platform.rcx.Motor;
 import josx.robotics.Behavior;
 
+/**
+ * After moving around a detected object, we turn back toward the endzone before allowing
+ * the MoveForward behavior to have control again.
+ * 
+ * @author kbogert
+ *
+ */
 public class TurnTowardsObjectBehavior implements Behavior {
 
-	private final int blackThreshold = 39;
+	private final int blackThreshold = 39; // provided from testing
 	
 	public void action() {
 		
