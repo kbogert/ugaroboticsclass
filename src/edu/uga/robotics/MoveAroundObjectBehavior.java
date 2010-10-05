@@ -8,6 +8,7 @@ public class MoveAroundObjectBehavior implements Behavior {
 	private boolean abort = false;
 	
 	public void action() {
+		abort = false;
 		
 		Motor.A.setPower(2);
 		Motor.B.setPower(2);
