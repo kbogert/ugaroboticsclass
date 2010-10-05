@@ -51,7 +51,7 @@ public class Project2a {
 	}
 	
 	private static void initializeSensors() {
-		proxSensor = new ProximitySensor(Sensor.S1);
+		proxSensor = new ProximitySensor(Sensor.S1, 23);
 		Thread temp = new Project2a.AvoidObstacleThread();
 //		temp.setDaemon(true);
 		temp.start();
