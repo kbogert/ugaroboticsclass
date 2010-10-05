@@ -3,9 +3,16 @@ package edu.uga.robotics;
 import josx.platform.rcx.Motor;
 import josx.robotics.Behavior;
 
+/**
+ * After backing up from a detected object, we decide which way to turn
+ * based on the sensor reading
+ * 
+ * @author kbogert
+ *
+ */
 public class TurnFromObjectBehavior implements Behavior {
 
-	private final int blackThreshold = 39;
+	private final int blackThreshold = 39; // provided from testing
 	private boolean abort = false;
 	
 	public void action() {
