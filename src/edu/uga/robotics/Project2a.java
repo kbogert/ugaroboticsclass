@@ -7,7 +7,13 @@ import josx.robotics.Arbitrator;
 import josx.robotics.Behavior;
 import josx.robotics.TimingNavigator;
 
-
+/**
+ * Primary class of the project, contains a few global variables and the main method,
+ * which initializes the system and then hands off control to the arbitrator
+ * 
+ * @author kbogert
+ *
+ */
 public class Project2a {
 	
 	public class RobotState {
@@ -25,7 +31,9 @@ public class Project2a {
 		
 		
 	}
-	
+	/**
+	 * Current state the robot is in, used for easier switching between behaviors
+	 */
 	public static byte curState;
 	
 	public static ProximitySensor proxSensor;
@@ -45,13 +53,18 @@ public class Project2a {
 		return proxSensor;
 	}
 	
+	/**
+	 * For reasons known only to the idiot who wrote it, System.currentTimeMillis() returns a long, however LejOS can't work with
+	 * 64 bit numbers, so we must convert it to an int before we can make any use of it.
+	 * 
+	 */
 	public static int getCurTime() {
 		return (int)System.currentTimeMillis();
 
 	}
 	
 	private static void initializeSensors() {
-		proxSensor = new ProximitySensor(Sensor.S1, 23);
+		proxSensor = new ProximitySensor(Sensor.S1, 23); // set the threshold for proximity sensor triggering, provided from testing
 		Thread temp = new Project2a.AvoidObstacleThread();
 //		temp.setDaemon(true);
 		temp.start();
@@ -65,7 +78,7 @@ public class Project2a {
 		curState = RobotState.Stopped;
 		Motor.A.setPower(2);
 		Motor.B.setPower(2);
-		navigator = new TimingNavigator(Motor.B,Motor.A, 2.5f,1.3f);
+		navigator = new TimingNavigator(Motor.B,Motor.A, 2.5f,1.3f);  // TimingNavigator takes values that tell it how long to turn the wheels for, provided from testing
 //		navigator.setMomentumDelay(1);
 		
 		initializeSensors();
@@ -81,13 +94,23 @@ public class Project2a {
 		behaviors[6] = new BackupFromObjectBehavior();
 		behaviors[7] = new AvoidEdgeBehavior();
 		
+		// give the behaviors to the arbitrator, then run start on it
+		// the arbitrator uses sub-threads to run the behaviors, and the main thread to check for 
+		// behavior change instances.  This means it never returns.
+		
 		Arbitrator arb = new Arbitrator(behaviors);
 		arb.start();
 		
 		
 	}
 	
-	
+	/**
+	 * Monitor the proximity sensor using a seperate thread, since it's crap api only provides a usable blocking 
+	 * method call
+	 * 
+	 * @author kbogert
+	 *
+	 */
 	private static class AvoidObstacleThread extends Thread {
 		
 		public void run() {
