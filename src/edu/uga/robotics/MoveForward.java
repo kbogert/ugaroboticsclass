@@ -3,6 +3,13 @@ package edu.uga.robotics;
 import josx.platform.rcx.Motor;
 import josx.robotics.Behavior;
 
+/**
+ * Simple behavior that sets the robot moving forward and then returns (call is async)
+ * Should have the least priority
+ * 
+ * @author kbogert
+ *
+ */
 public class MoveForward implements Behavior {
 
 	public static int startTime = 0;
