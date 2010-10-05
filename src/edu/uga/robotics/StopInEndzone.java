@@ -6,10 +6,16 @@ import josx.platform.rcx.Sound;
 import josx.platform.rcx.TextLCD;
 import josx.robotics.Behavior;
 
+/**
+ * Simple behavior to turn off the robot if we detect the 
+ * end zone conditions.
+ * 
+ * @author kbogert
+ *
+ */
 public class StopInEndzone implements Behavior, SensorListener {
 
-	private final int MOVE_FORWARD_DISTANCE = 30;
-	private final int THRESHOLD = 45;
+	private final int THRESHOLD = 45; // provided from testing
 	private int lastvalue = 0;
 	
 	StopInEndzone() {
@@ -22,10 +28,8 @@ public class StopInEndzone implements Behavior, SensorListener {
 		if (Project2a.curState == Project2a.RobotState.Finished) 
 			return;
 		
-		// move forward into endzone, then stop
 		Project2a.curState = Project2a.RobotState.Finished;
 		Project2a.navigator.stop();
-//		Project2a.navigator.travel(MOVE_FORWARD_DISTANCE);
 
 		Sound.beep();
 		TextLCD.print("END");
@@ -44,6 +48,10 @@ public class StopInEndzone implements Behavior, SensorListener {
 		Project2a.curState = Project2a.RobotState.Finished;
 	}
 
+	/**
+	 * To prevent false positives, only allow the robot to stop if it's in one of the following states:
+	 * Moving Forward, Avoiding an edge, Scanning, or Moving around an obstacle.
+	 */
 	public synchronized boolean takeControl() {
 		return lastvalue >= THRESHOLD && (Project2a.curState == Project2a.RobotState.Forward || Project2a.curState == Project2a.RobotState.AvoidEdge  || Project2a.curState == Project2a.RobotState.Scan || Project2a.curState == Project2a.RobotState.MoveAroundObstacle);
 	}
