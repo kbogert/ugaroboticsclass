@@ -1,0 +1,7 @@
+Cookie=hbp
+Version=1
+MainClass=SensorTest
+StackSize=200
+Autorun=false
+BuildBeforeLoad=true
+OpenFile=SensorTest.java
