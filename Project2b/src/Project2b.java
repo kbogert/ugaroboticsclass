@@ -45,7 +45,7 @@ public class Project2b {
 		tableEdgeSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(2), null);
 		leftTableSensor = new TableSensor(IntelliBrain.getAnalogInput(6));
 		rightTableSensor = new TableSensor(IntelliBrain.getAnalogInput(7));
-		AnalogShaftEncoder leftEncoder = new AnalogShaftEncoder(IntelliBrain.getAnalogInput(5), 250, 750, 30, Thread.MAX_PRIORITY); // Need to modify the polling time based on how fast the wheel is moving
+		AnalogShaftEncoder leftEncoder = new AnalogShaftEncoder(IntelliBrain.getAnalogInput(5), 250, 750, 30, Thread.MAX_PRIORITY);
 		AnalogShaftEncoder rightEncoder = new AnalogShaftEncoder(IntelliBrain.getAnalogInput(4), 250, 750, 30, Thread.MAX_PRIORITY);
 		
 		odometer = new OdometricLocalizer(leftEncoder, rightEncoder, 2.65f, 4.55f, 16, Thread.MAX_PRIORITY - 1, 30);
