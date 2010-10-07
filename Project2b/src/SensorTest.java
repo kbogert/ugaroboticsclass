@@ -14,7 +14,7 @@ public class SensorTest {
         Display display = IntelliBrain.getLcdDisplay();
 
         while (true) {
-        	int thumbWheelPos = (int) ((float)thumbwheel.sample()) / thumbwheel.getMaximum() * 8;
+        	int thumbWheelPos = (int) ((float)thumbwheel.sample() / thumbwheel.getMaximum() * 6) + 1;
         	
         	display.print(0, "A Sensor: " + Integer.toString(thumbWheelPos));
         	
