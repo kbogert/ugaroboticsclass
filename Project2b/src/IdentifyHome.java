@@ -1,6 +1,7 @@
+import Map.MapObj;
+
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorListener;
-import com.ridgesoft.robotics.Navigator;
 
 
 /**
@@ -14,11 +15,10 @@ import com.ridgesoft.robotics.Navigator;
 public class IdentifyHome implements Behavior2 {
 
 	private boolean isEnabled;
-	private Navigator myNav;
+	private boolean hasRun = false;
 	
-	public IdentifyHome(Navigator nav) {
+	public IdentifyHome() {
 		isEnabled = true;
-		myNav = nav;
 	}
 	
 	public void setEnabled(boolean arg0) {
@@ -32,7 +32,12 @@ public class IdentifyHome implements Behavior2 {
 	public boolean poll() {
 		if (! isEnabled)
 			return false;
-		
+	
+		if (! hasRun) {
+			Map.MapObj start = Project2b.map.getPos(0, 0);
+			start.setType(Map.MapObj.HOME);
+			hasRun = true;
+		}
 		return false;
 	}
 
