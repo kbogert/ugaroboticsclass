@@ -2,29 +2,27 @@ import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorListener;
 
 
+/**
+ * If we found an object that we haven't explored yet, move to it.
+ *  
+ * @author kbogert
+ *
+ */
 public class MoveToObject implements Behavior2 {
 
-	@Override
 	public void setEnabled(boolean arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void setListener(BehaviorListener arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public boolean poll() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public void setActive(boolean arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
