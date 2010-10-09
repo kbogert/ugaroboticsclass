@@ -1,30 +1,29 @@
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorListener;
 
-
+/**
+ * Halt the robot immediately if an edge of the table is detected.
+ * 
+ * Also, if we're running parallel to the edge, turn away from it
+ * 
+ * @author kbogert
+ *
+ */
 public class AvoidEdge implements Behavior2 {
 
-	@Override
 	public void setEnabled(boolean arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void setListener(BehaviorListener arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public boolean poll() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public void setActive(boolean arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
