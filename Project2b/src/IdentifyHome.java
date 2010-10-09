@@ -6,6 +6,8 @@ import com.ridgesoft.robotics.Navigator;
 /**
  * Only runs once, when the robot is started, to localize it's home location
  * 
+ * Right now only records home on the map, but eventually we want to localize to help with finding home later
+ * 
  * Basically spins in a circle to find the edges of the table, and if it can't find it, backup and try again
  * 
  * @author kbogert
