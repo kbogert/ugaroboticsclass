@@ -2,29 +2,27 @@ import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorListener;
 
 
+/**
+ * Choose a square on our map we haven't visited yet and move to it
+ * 
+ * @author kbogert
+ *
+ */
 public class Explore implements Behavior2 {
 
-	@Override
 	public void setEnabled(boolean arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void setListener(BehaviorListener arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public boolean poll() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public void setActive(boolean arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
