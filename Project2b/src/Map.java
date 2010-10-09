@@ -55,19 +55,19 @@ public class Map {
 			hasExaminedObject = false;
 		}
 
-		public byte getType() {
+		public synchronized byte getType() {
 			return type;
 		}
 
-		public void setType(byte type) {
+		public synchronized void setType(byte type) {
 			this.type = type;
 		}
 
-		public boolean isHasExaminedObject() {
+		public synchronized boolean isHasExaminedObject() {
 			return hasExaminedObject;
 		}
 
-		public void setHasExaminedObject(boolean hasExaminedObject) {
+		public synchronized void setHasExaminedObject(boolean hasExaminedObject) {
 			this.hasExaminedObject = hasExaminedObject;
 		}
 		
