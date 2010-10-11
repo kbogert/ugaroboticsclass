@@ -44,6 +44,7 @@ public class Map {
 		private byte type;
 		private boolean hasExaminedObject;
 		private float robotProbability;
+		private float [] headingProbability = new float[12];
 		
 		public static final byte UNEXPLORED = -1;
 		public static final byte EMPTY_SQUARE = 0;
@@ -79,7 +80,14 @@ public class Map {
 		public void setRobotProbability(float robotProbability) {
 			this.robotProbability = robotProbability;
 		}
-		
+
+		public float[] getHeadingProbability() {
+			return headingProbability;
+		}
+
+		public void setHeadingProbability(float[] headingProbability) {
+			this.headingProbability = headingProbability;
+		}
 		
 		
 	}
