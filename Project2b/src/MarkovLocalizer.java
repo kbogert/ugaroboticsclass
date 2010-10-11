@@ -149,7 +149,7 @@ public class MarkovLocalizer implements Localizer, Runnable {
 				
 				// update our believed position
 				
-				setPose(largesti * ((float)Math.PI /6.0f), largesti, largestj);
+				setPose(largestk * ((float)Math.PI /6.0f), largesti, largestj);
 				
 			}
 		} catch (InterruptedException e) {
@@ -171,6 +171,38 @@ public class MarkovLocalizer implements Localizer, Runnable {
 	 * @return
 	 */
 	private float Transition(int tox, int toy, int toh, float actionx, float actiony, float actionh, int fromx, int fromy, int fromh) {
+		if (Math.abs(Math.abs(tox) - Math.abs(fromx)) <= 1 && Math.abs(Math.abs(toy) - Math.abs(fromy)) <= 1 && Math.abs(Math.abs(toh) - Math.abs(fromh)) <= 2) {
+			
+			/*
+			 * The heading can vary based on distance travelled.  If toh = fromh but x and y does not, multiple by an uncertainty based on the distance travelled
+			 * 
+			 * Based on the heading, the given action x and y, it is more or less likely for the following:
+			 * Move up - toy != fromy, and heading is 2,3,4
+			 * Move down - toy != fromy, and heading is 8,9,10
+			 * Move left - tox != fromx, and heading is 5,6,7
+			 * Move right - tox != fromx, and heading is 1,0,11
+			 * Move up-right - tox != fromx, toy != fromy, and heading is 0,1,2,3
+			 * move up-left - tox != fromx, toy != fromy, and heading is 6,5,4,3
+			 * move down-right - tox != fromx, toy != fromy, and heading is 6,7,8,9
+			 * move down-left - tox != fromx, toy != fromy, and heading is 9,10,11,0
+			 * 
+			 * The robot is assumed to stop before turning
+			 * 
+			 *  if tox == fromx and toy = fromy
+			 *  	convert actionh from radians into our simple index
+			 *  	assume that the robot can correctly turn in a direction, then if actionh is positive, and toh < fromh the probability is 0
+			 *  	same for reverse
+			 *  	otherwise, multiple actionh * the distance between toh and fromh * the probability of actually turning that much to get the new probability  
+			 *  
+			 */
+			
+			
+		}
+		// if the distance between the x and y's is greater than one, probability is zero
+		
+		// if the actionh is positive, and toh < fromh, return zero (except if we go over the zero point
+
+		return 0.0f;
 		
 	}
 	
@@ -194,6 +226,8 @@ public class MarkovLocalizer implements Localizer, Runnable {
 	 * @return
 	 */
 	private float Observation(byte observationNum, boolean received, float actionx, float actiony, float actionh, int fromx, int fromy, int fromh) {
+		switch (observationNum) {
 		
+		}
 	}
 }
