@@ -43,6 +43,7 @@ public class Map {
 	public class MapObj {
 		private byte type;
 		private boolean hasExaminedObject;
+		private float robotProbability;
 		
 		public static final byte UNEXPLORED = -1;
 		public static final byte EMPTY_SQUARE = 0;
@@ -70,6 +71,16 @@ public class Map {
 		public synchronized void setHasExaminedObject(boolean hasExaminedObject) {
 			this.hasExaminedObject = hasExaminedObject;
 		}
+
+		public float getRobotProbability() {
+			return robotProbability;
+		}
+
+		public void setRobotProbability(float robotProbability) {
+			this.robotProbability = robotProbability;
+		}
+		
+		
 		
 	}
 }
