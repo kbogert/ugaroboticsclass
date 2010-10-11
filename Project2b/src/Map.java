@@ -44,7 +44,7 @@ public class Map {
 		private byte type;
 		private boolean hasExaminedObject;
 		private float robotProbability;
-		private float [] headingProbability = new float[12];
+		private float [] headingProbability = new float[12]; // each entry is pi / 6 radians * the index
 		
 		public static final byte UNEXPLORED = -1;
 		public static final byte EMPTY_SQUARE = 0;
