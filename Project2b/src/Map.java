@@ -1,7 +1,9 @@
 
 public class Map {
 
-	private MapObj [][][] myMap;
+	private MapObj [][][] myMap1;
+	private MapObj [][][] myMap2;
+	private boolean whichMap;
 	private int xlen;
 	private int ylen;
 	private int hlen;
