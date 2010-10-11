@@ -43,6 +43,7 @@ public class IdentifyHome implements Behavior2 {
 			Map.MapObj start = map.getPos(0, 0);
 			start.setType(Map.MapObj.HOME);
 			start.setRobotProbability(1.0f);
+			start.getHeadingProbability()[0] = 1.0f;
 			hasRun = true;
 		}
 		return false;
