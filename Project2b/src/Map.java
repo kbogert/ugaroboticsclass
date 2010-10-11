@@ -1,50 +1,62 @@
 
 public class Map {
 
-	private MapObj [][] myMap;
+	private MapObj [][][] myMap;
 	private int xlen;
 	private int ylen;
+	private int hlen;
 	
-	public Map(int sizex, int sizey) {
-		myMap = new MapObj[sizex][sizey];
+	public Map(int sizex, int sizey, int sizeh) {
+		myMap = new MapObj[sizex][sizey][sizeh];
 		
 		for (int i = 0; i < sizex; i ++) {
 			for (int j = 0; j < sizey; j ++) {
-				myMap[i][j] = new MapObj();
+				for (int k = 0; k < sizeh; k ++) {
+					myMap[i][j][k] = new MapObj();
+				}
 			}
 		}
 		
 		xlen = sizex;
 		ylen = sizey;
+		hlen = sizeh;
 	}
 	
-	public MapObj getPos(int x,int y) {
-		int xshift = x + (xlen / 2);
-		int yshift = y + (ylen / 2);
-		return myMap[xshift][yshift];
+	public MapObj getPos(int x,int y,int h) {
+		int xshift = x + (xlen - 1);
+		int yshift = y + (ylen - 1);
+		int hshift = h + (hlen - 1);
+		return myMap[xshift][yshift][hshift];
 	}
 	
 	public int getMaxX() {
-		return xlen / 2; 
+		return xlen - 1; 
 	}
 	
 	public int getMinX() {
-		return - xlen / 2;
+		return -1;
 	}
 
 	public int getMaxY() {
-		return ylen / 2;
+		return ylen - 1 ;
 	}
 	
 	public int getMinY() {
-		return - ylen / 2;
+		return -1;
+	}
+
+	public int getMaxH() {
+		return hlen - 1 ;
 	}
 	
+	public int getMinH() {
+		return -1;
+	}
+		
 	public class MapObj {
 		private byte type;
 		private boolean hasExaminedObject;
 		private float robotProbability;
-		private float [] headingProbability = new float[12]; // each entry is pi / 6 radians * the index
 		
 		public static final byte UNEXPLORED = -1;
 		public static final byte EMPTY_SQUARE = 0;
@@ -80,15 +92,6 @@ public class Map {
 		public void setRobotProbability(float robotProbability) {
 			this.robotProbability = robotProbability;
 		}
-
-		public float[] getHeadingProbability() {
-			return headingProbability;
-		}
-
-		public void setHeadingProbability(float[] headingProbability) {
-			this.headingProbability = headingProbability;
-		}
-		
 		
 	}
 }
