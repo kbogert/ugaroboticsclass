@@ -9,23 +9,45 @@ public class Map {
 	private int hlen;
 	
 	public Map(int sizex, int sizey, int sizeh) {
-		myMap = new MapObj[sizex][sizey][sizeh];
+		myMap1 = new MapObj[sizex][sizey][sizeh];
 		
 		for (int i = 0; i < sizex; i ++) {
 			for (int j = 0; j < sizey; j ++) {
 				for (int k = 0; k < sizeh; k ++) {
-					myMap[i][j][k] = new MapObj();
+					myMap1[i][j][k] = new MapObj();
 				}
 			}
 		}
+		myMap2 = new MapObj[sizex][sizey][sizeh];
 		
+		for (int i = 0; i < sizex; i ++) {
+			for (int j = 0; j < sizey; j ++) {
+				for (int k = 0; k < sizeh; k ++) {
+					myMap2[i][j][k] = new MapObj();
+				}
+			}
+		}		
 		xlen = sizex;
 		ylen = sizey;
 		hlen = sizeh;
 	}
 	
-	public MapObj getPos(int x,int y,int h) {
-		return myMap[x+1][y+1][h+1];
+	public synchronized MapObj getPos(int x,int y,int h) {
+		if (whichMap)
+			return myMap1[x+1][y+1][h+1];
+		else 
+			return myMap2[x+1][y+1][h+1];		
+	}
+
+	public synchronized MapObj getNewPos(int x,int y,int h) {
+		if (whichMap)
+			return myMap2[x+1][y+1][h+1];
+		else 
+			return myMap1[x+1][y+1][h+1];		
+	}
+	
+	public synchronized void switchMaps() {
+		whichMap = !whichMap;
 	}
 	
 	public int getMaxX() {
