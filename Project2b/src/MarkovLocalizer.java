@@ -73,22 +73,100 @@ public class MarkovLocalizer implements Localizer, Runnable {
 				Thread.sleep(30);
 
 				Pose odometerPose = odometer.getPose();
+				long time = System.currentTimeMillis();
 				
-				for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
-					for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
-						// multiply heading and position probabilities by how much the odometer says we've moved since last update
-						
-						// doing the exact same thing for every single square, sensor updates refine it later
-						
+				// add the delta odometer reading to our pose,
+				// treat the map locations as a gradiant
+				// pose is then 
+
+				float deltax = odometerPose.x - lastOdometerReading.x;
+				float deltay = odometerPose.y - lastOdometerReading.y;
+				float deltah = odometerPose.heading - lastOdometerReading.heading;
+				
+				for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
+					for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
+						for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
+							
+							// sum up the probability for all possible transitions given the action
+
+							float sum = 0.0f;
+							for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
+								for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
+									for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
+										sum += Transition(iprime, jprime, kprime, deltax, deltay, deltah, i, j, k) * map.getPos(i, j, k).getRobotProbability(); 
+										
+									}
+								}
+							}
+							
+							// set the probability of the current mapobj to the sum
+							map.getNewPos(iprime, jprime, kprime).setRobotProbability(sum);
+							
+						}
 					}
 				}
 				
+				float largestSum = 0;
+				int largesti = 0;
+				int largestj = 0;
+				int largestk = 0;
 				
+				for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
+					for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
+						for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
+							
+							// sum up the probability for all possible observations given the action
+							float sum = 0.0f;
+							
+							for (int o = 0; i < observations.length; o ++) {
+								for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
+									for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
+										for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
+											sum += Observation(o, observations[o], deltax, deltay, deltah, i, j, k) * map.getNewPos(i, j, k).getRobotProbability(); 
+										}
+									}
+								}
+							}
+							if (sum > largestSum) {
+								largestSum = sum;
+								largesti = iprime;
+								largestj = jprime;
+								largestk = kprime;
+								
+							}
+							// set the probability of the current mapobj to the sum
+							map.getNewPos(iprime, jprime, kprime).setRobotProbability(sum);
+							
+						}
+					}
+				}
 				
+				map.switchMaps();	
 				
 			}
 		} catch (InterruptedException e) {
 		}
 	}
 
+	/**
+	 * Returns the probability of ending up in position (tox, toy, toh) starting from (fromx, fromy, fromh) and performing (actionx, actiony, actionh) 
+	 * 
+	 * @param tox
+	 * @param toy
+	 * @param toh
+	 * @param actionx
+	 * @param actiony
+	 * @param actionh
+	 * @param fromx
+	 * @param fromy
+	 * @param fromh
+	 * @return
+	 */
+	private float Transition(int tox, int toy, int toh, float actionx, float actiony, float actionh, int fromx, int fromy, int fromh) {
+		
+	}
+	
+	private float Observation(byte observationNum, boolean received, float actionx, float actiony, float actionh, int fromx, int fromy, int fromh) {
+		
+	}
 }
