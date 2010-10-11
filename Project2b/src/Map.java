@@ -23,9 +23,9 @@ public class Map {
 	}
 	
 	public MapObj getPos(int x,int y,int h) {
-		int xshift = x + (xlen - 1);
-		int yshift = y + (ylen - 1);
-		int hshift = h + (hlen - 1);
+		int xshift = x - 1;
+		int yshift = y - 1;
+		int hshift = h - 1;
 		return myMap[xshift][yshift][hshift];
 	}
 	
