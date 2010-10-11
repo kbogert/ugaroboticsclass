@@ -23,10 +23,7 @@ public class Map {
 	}
 	
 	public MapObj getPos(int x,int y,int h) {
-		int xshift = x - 1;
-		int yshift = y - 1;
-		int hshift = h - 1;
-		return myMap[xshift][yshift][hshift];
+		return myMap[x][y][h];
 	}
 	
 	public int getMaxX() {
