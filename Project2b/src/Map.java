@@ -23,7 +23,7 @@ public class Map {
 	}
 	
 	public MapObj getPos(int x,int y,int h) {
-		return myMap[x][y][h];
+		return myMap[x+1][y+1][h+1];
 	}
 	
 	public int getMaxX() {
