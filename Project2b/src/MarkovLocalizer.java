@@ -73,7 +73,12 @@ public class MarkovLocalizer implements Localizer, Runnable {
 				Thread.sleep(30);
 
 				Pose odometerPose = odometer.getPose();
-				long time = System.currentTimeMillis();
+				boolean [] observations = new boolean[4];
+				observations[0] = objectSensor.getDistanceCm() > 7;
+				observations[1] = tableEdgeSensor.getDistanceCm() > 30;
+				observations[2] = ! leftTableSensor.isOnTable();
+				observations[3] = ! rightTableSensor.isOnTable();
+				
 				
 				// add the delta odometer reading to our pose,
 				// treat the map locations as a gradiant
@@ -118,7 +123,7 @@ public class MarkovLocalizer implements Localizer, Runnable {
 							// sum up the probability for all possible observations given the action
 							float sum = 0.0f;
 							
-							for (int o = 0; i < observations.length; o ++) {
+							for (int o = 0; o < observations.length; o ++) {
 								for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
 									for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
 										for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
@@ -141,7 +146,9 @@ public class MarkovLocalizer implements Localizer, Runnable {
 					}
 				}
 				
-				map.switchMaps();	
+				map.switchMaps();
+				
+				// update our believed position
 				
 			}
 		} catch (InterruptedException e) {
@@ -166,6 +173,25 @@ public class MarkovLocalizer implements Localizer, Runnable {
 		
 	}
 	
+	/**
+	 * Returns the probability of receiving an observation given an action and a starting state
+	 * 
+	 * @param observationNum
+	 * 0 = Object Sensor triggered
+	 * 1 = Front table edge sensor triggered
+	 * 2 = Left Rear table edge sensor triggered
+	 * 3 = Right rear table edge sensor triggered
+	 *  
+	 * @param received
+	 * Has the sensor been triggered or not?
+	 * @param actionx
+	 * @param actiony
+	 * @param actionh
+	 * @param fromx
+	 * @param fromy
+	 * @param fromh
+	 * @return
+	 */
 	private float Observation(byte observationNum, boolean received, float actionx, float actiony, float actionh, int fromx, int fromy, int fromh) {
 		
 	}
