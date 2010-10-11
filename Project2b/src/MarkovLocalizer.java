@@ -20,7 +20,6 @@ public class MarkovLocalizer implements Localizer, Runnable {
 	
 	private Pose myPose;
 	private Pose lastOdometerReading;
-	private long lastOdometerReadingTime;
 	
 	
 	public MarkovLocalizer(Localizer odometerLocalizer, SharpGP2D12 objectSensor, SharpGP2D12 tableEdgeSensor, TableSensor leftTableSensor, TableSensor rightTableSensor, Map map) {
@@ -123,7 +122,7 @@ public class MarkovLocalizer implements Localizer, Runnable {
 							// sum up the probability for all possible observations given the action
 							float sum = 0.0f;
 							
-							for (int o = 0; o < observations.length; o ++) {
+							for (byte o = 0; o < observations.length; o ++) {
 								for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
 									for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
 										for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
@@ -149,6 +148,8 @@ public class MarkovLocalizer implements Localizer, Runnable {
 				map.switchMaps();
 				
 				// update our believed position
+				
+				setPose(largesti * ((float)Math.PI /6.0f), largesti, largestj);
 				
 			}
 		} catch (InterruptedException e) {
