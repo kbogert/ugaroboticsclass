@@ -19,6 +19,9 @@ public class MarkovLocalizer implements Localizer, Runnable {
 	private Map map;
 	
 	private Pose myPose;
+	private Pose lastOdometerReading;
+	private long lastOdometerReadingTime;
+	
 	
 	public MarkovLocalizer(Localizer odometerLocalizer, SharpGP2D12 objectSensor, SharpGP2D12 tableEdgeSensor, TableSensor leftTableSensor, TableSensor rightTableSensor, Map map) {
 		odometer = odometerLocalizer;
@@ -65,7 +68,27 @@ public class MarkovLocalizer implements Localizer, Runnable {
 		 *  4.  Set pose = the most likely location for the robot (keep the highest belief as we go so we don't have to look again)
 		 */
 		
-		
+		try {
+			while (true) {
+				Thread.sleep(30);
+
+				Pose odometerPose = odometer.getPose();
+				
+				for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
+					for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
+						// multiply heading and position probabilities by how much the odometer says we've moved since last update
+						
+						// doing the exact same thing for every single square, sensor updates refine it later
+						
+					}
+				}
+				
+				
+				
+				
+			}
+		} catch (InterruptedException e) {
+		}
 	}
 
 }
