@@ -55,7 +55,6 @@ public class Map {
 		
 	public class MapObj {
 		private byte type;
-		private boolean hasExaminedObject;
 		private float robotProbability;
 		
 		public static final byte UNEXPLORED = -1;
@@ -63,10 +62,10 @@ public class Map {
 		public static final byte TABLE_EDGE = 1;
 		public static final byte OBJECT = 2;
 		public static final byte HOME = 3;
+		public static final byte EXAMINED_OBJECT = 4;
 	
 		public MapObj() {
 			type = UNEXPLORED;
-			hasExaminedObject = false;
 		}
 
 		public synchronized byte getType() {
@@ -78,11 +77,11 @@ public class Map {
 		}
 
 		public synchronized boolean isHasExaminedObject() {
-			return hasExaminedObject;
+			return type == EXAMINED_OBJECT;
 		}
 
 		public synchronized void setHasExaminedObject(boolean hasExaminedObject) {
-			this.hasExaminedObject = hasExaminedObject;
+			this.type = EXAMINED_OBJECT;
 		}
 
 		public float getRobotProbability() {
