@@ -32,21 +32,21 @@ public class Map {
 		hlen = sizeh;
 	}
 	
-	public synchronized MapObj getPos(int x,int y,int h) {
+	public MapObj getPos(int x,int y,int h) {
 		if (whichMap)
 			return myMap1[x+1][y+1][h+1];
 		else 
 			return myMap2[x+1][y+1][h+1];		
 	}
 
-	public synchronized MapObj getNewPos(int x,int y,int h) {
+	public MapObj getNewPos(int x,int y,int h) {
 		if (whichMap)
 			return myMap2[x+1][y+1][h+1];
 		else 
 			return myMap1[x+1][y+1][h+1];		
 	}
 	
-	public synchronized void switchMaps() {
+	public void switchMaps() {
 		whichMap = !whichMap;
 	}
 	
@@ -89,19 +89,19 @@ public class Map {
 			type = UNEXPLORED;
 		}
 
-		public synchronized byte getType() {
+		public byte getType() {
 			return type;
 		}
 
-		public synchronized void setType(byte type) {
+		public void setType(byte type) {
 			this.type = type;
 		}
 
-		public synchronized boolean isHasExaminedObject() {
+		public boolean isHasExaminedObject() {
 			return type == EXAMINED_OBJECT;
 		}
 
-		public synchronized void setHasExaminedObject(boolean hasExaminedObject) {
+		public void setHasExaminedObject(boolean hasExaminedObject) {
 			this.type = EXAMINED_OBJECT;
 		}
 
