@@ -97,14 +97,14 @@ public class MarkovLocalizer implements Localizer, Runnable {
 							for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
 								for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
 									for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
-										sum += Transition(iprime, jprime, kprime, deltax, deltay, deltah, i, j, k) * map.getPos(i, j, k).getRobotProbability(); 
+										sum += Transition(iprime, jprime, kprime, deltax, deltay, deltah, i, j, k) * map.getPos(i, j, k); 
 										
 									}
 								}
 							}
 							
 							// set the probability of the current mapobj to the sum
-							map.getNewPos(iprime, jprime, kprime).setRobotProbability(sum);
+							map.setNewPos(iprime, jprime, kprime, sum);
 							
 						}
 					}
@@ -126,7 +126,7 @@ public class MarkovLocalizer implements Localizer, Runnable {
 								for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
 									for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
 										for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
-											sum += Observation(o, observations[o], deltax, deltay, deltah, i, j, k) * map.getNewPos(i, j, k).getRobotProbability(); 
+											sum += Observation(o, observations[o], deltax, deltay, deltah, i, j, k) * map.getNewPos(i, j, k); 
 										}
 									}
 								}
@@ -139,7 +139,7 @@ public class MarkovLocalizer implements Localizer, Runnable {
 								
 							}
 							// set the probability of the current mapobj to the sum
-							map.getNewPos(iprime, jprime, kprime).setRobotProbability(sum);
+							map.setNewPos(iprime, jprime, kprime, sum);
 							
 						}
 					}
@@ -231,5 +231,6 @@ public class MarkovLocalizer implements Localizer, Runnable {
 		switch (observationNum) {
 		
 		}
+		return 0.0f;
 	}
 }
