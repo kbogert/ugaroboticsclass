@@ -40,10 +40,12 @@ public class IdentifyHome implements Behavior2 {
 	
 		if (! hasRun) {
 			nav.moveTo(0, 0, true);
-			Map.MapObj start = map.getPos(0, 0);
-			start.setType(Map.MapObj.HOME);
-			start.setRobotProbability(1.0f);
-			start.getHeadingProbability()[0] = 1.0f;
+			MapObj start = new MapObj();
+			start.setX(0);
+			start.setY(0);
+			start.setH(0);
+			start.setType(MapObj.HOME);
+			map.setPos(0, 0, 0, 1.0f);
 			hasRun = true;
 		}
 		return false;
