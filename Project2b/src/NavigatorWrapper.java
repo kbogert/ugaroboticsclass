@@ -26,6 +26,9 @@ public class NavigatorWrapper {
 	 * Go the specified distance in the specified direction
 	 * 
 	 * @param distance
+	 * @param direction
+	 * true = forward
+	 * false = backward
 	 */
 	public void go(float distance, boolean direction, boolean wait) {
 		float angle = loc.getPose().heading;
