@@ -73,5 +73,7 @@ public class NavigatorWrapper {
 				
 	}
 	
-	
+	public void stop() {
+		nav.stop();
+	}
 }
