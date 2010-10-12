@@ -1,49 +1,49 @@
 
 public class Map {
 
-	private MapObj [][][] myMap1;
-	private MapObj [][][] myMap2;
+	private float [][][] myMap1;
+	private float [][][] myMap2;
 	private boolean whichMap;
+	private MapObj head;
 	private int xlen;
 	private int ylen;
 	private int hlen;
 	
 	public Map(int sizex, int sizey, int sizeh) {
-		myMap1 = new MapObj[sizex][sizey][sizeh];
+		myMap1 = new float[sizex][sizey][sizeh];
+		myMap2 = new float[sizex][sizey][sizeh];
 		
-		for (int i = 0; i < sizex; i ++) {
-			for (int j = 0; j < sizey; j ++) {
-				for (int k = 0; k < sizeh; k ++) {
-					myMap1[i][j][k] = new MapObj();
-				}
-			}
-		}
-		myMap2 = new MapObj[sizex][sizey][sizeh];
-		
-		for (int i = 0; i < sizex; i ++) {
-			for (int j = 0; j < sizey; j ++) {
-				for (int k = 0; k < sizeh; k ++) {
-					myMap2[i][j][k] = new MapObj();
-				}
-			}
-		}		
 		xlen = sizex;
 		ylen = sizey;
 		hlen = sizeh;
 	}
 	
-	public MapObj getPos(int x,int y,int h) {
+	public float getPos(int x,int y,int h) {
 		if (whichMap)
 			return myMap1[x+1][y+1][h+1];
 		else 
 			return myMap2[x+1][y+1][h+1];		
 	}
 
-	public MapObj getNewPos(int x,int y,int h) {
+	public float getNewPos(int x,int y,int h) {
 		if (whichMap)
 			return myMap2[x+1][y+1][h+1];
 		else 
 			return myMap1[x+1][y+1][h+1];		
+	}
+	
+	public void setPos(int x,int y,int h, float prob) {
+		if (whichMap)
+			myMap1[x+1][y+1][h+1] = prob;
+		else 
+			myMap2[x+1][y+1][h+1] = prob;		
+	}
+
+	public void setNewPos(int x,int y,int h, float prob) {
+		if (whichMap)
+			myMap2[x+1][y+1][h+1] = prob;
+		else 
+			myMap1[x+1][y+1][h+1] = prob;		
 	}
 	
 	public void switchMaps() {
@@ -73,10 +73,18 @@ public class Map {
 	public int getMinH() {
 		return -1;
 	}
+	
+	public void setMapObjs(MapObj newhead) {
+		head = newhead;
+	}
+	
+	public MapObj getMapObjs() {
+		return head;
+	}
 		
 	public class MapObj {
 		private byte type;
-		private float robotProbability;
+		private MapObj next;
 		
 		public static final byte UNEXPLORED = -1;
 		public static final byte EMPTY_SQUARE = 0;
@@ -104,13 +112,13 @@ public class Map {
 		public void setHasExaminedObject(boolean hasExaminedObject) {
 			this.type = EXAMINED_OBJECT;
 		}
-
-		public float getRobotProbability() {
-			return robotProbability;
+		
+		public MapObj getNext() {
+			return next;
 		}
-
-		public void setRobotProbability(float robotProbability) {
-			this.robotProbability = robotProbability;
+		
+		public void setNext(MapObj newnext) {
+			next = newnext;
 		}
 		
 	}
