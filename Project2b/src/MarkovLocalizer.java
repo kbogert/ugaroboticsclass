@@ -186,6 +186,11 @@ public class MarkovLocalizer implements Localizer, Runnable {
 			 * move down-right - tox != fromx, toy != fromy, and heading is 6,7,8,9
 			 * move down-left - tox != fromx, toy != fromy, and heading is 9,10,11,0
 			 * 
+			 */
+			
+			
+		} else {
+			/*
 			 * The robot is assumed to stop before turning
 			 * 
 			 *  if tox == fromx and toy = fromy
@@ -193,10 +198,7 @@ public class MarkovLocalizer implements Localizer, Runnable {
 			 *  	assume that the robot can correctly turn in a direction, then if actionh is positive, and toh < fromh the probability is 0
 			 *  	same for reverse
 			 *  	otherwise, multiple actionh * the distance between toh and fromh * the probability of actually turning that much to get the new probability  
-			 *  
-			 */
-			
-			
+			 */  
 		}
 		// if the distance between the x and y's is greater than one, probability is zero
 		
