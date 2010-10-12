@@ -82,44 +82,4 @@ public class Map {
 		return head;
 	}
 		
-	public class MapObj {
-		private byte type;
-		private MapObj next;
-		
-		public static final byte UNEXPLORED = -1;
-		public static final byte EMPTY_SQUARE = 0;
-		public static final byte TABLE_EDGE = 1;
-		public static final byte OBJECT = 2;
-		public static final byte HOME = 3;
-		public static final byte EXAMINED_OBJECT = 4;
-	
-		public MapObj() {
-			type = UNEXPLORED;
-		}
-
-		public byte getType() {
-			return type;
-		}
-
-		public void setType(byte type) {
-			this.type = type;
-		}
-
-		public boolean isHasExaminedObject() {
-			return type == EXAMINED_OBJECT;
-		}
-
-		public void setHasExaminedObject(boolean hasExaminedObject) {
-			this.type = EXAMINED_OBJECT;
-		}
-		
-		public MapObj getNext() {
-			return next;
-		}
-		
-		public void setNext(MapObj newnext) {
-			next = newnext;
-		}
-		
-	}
 }
