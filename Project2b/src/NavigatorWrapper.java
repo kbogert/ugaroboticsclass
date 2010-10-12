@@ -22,6 +22,14 @@ public class NavigatorWrapper {
 		nav.turnTo(loc.getPose().heading + amount, wait);
 	}
 	
+	public void goForward(float distance, boolean wait) {
+		go(distance, true, wait);
+	}
+	
+	public void goBackward(float distance, boolean wait) {
+		go(distance, false, wait);		
+	}
+	
 	/**
 	 * Go the specified distance in the specified direction
 	 * 
@@ -64,5 +72,6 @@ public class NavigatorWrapper {
 		}
 				
 	}
+	
 	
 }
