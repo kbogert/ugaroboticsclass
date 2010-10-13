@@ -38,7 +38,7 @@ public class Project2b {
     private static final Object mSemaphore = new Object();
     private static final BehaviorListener mListener = new Listener();
 //    public static int MAPSCALE = 3;  // size of each map square in inches (along a side)
-    public static Map map = new Map(10, 40, 8);
+    public static Map map = new Map(8, 14, 8); // table size is 4ft x 7ft, square size is 6"x6"
 	
 	public static void main(String[] args) throws InterruptedException {
 
