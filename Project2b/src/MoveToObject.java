@@ -1,4 +1,5 @@
 import com.ridgesoft.robotics.Behavior2;
+import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
 import com.ridgesoft.robotics.Localizer;
 import com.ridgesoft.robotics.Pose;
@@ -41,7 +42,21 @@ public class MoveToObject implements Behavior2 {
 			return false;
 		
 		if (active) {
+			// all stop
+			nav.stop();
 			
+			
+			// make sure we're still pointed at the object, if not:
+				// search a little to the left
+				// if not there, search a little to the right
+				// if not there, return as this behavior is done
+			
+			// move forward towards the object, when we're < 4 inches stop and return
+			float distance = objectSensor.getDistanceInches();
+			nav.goForward(distance - 4, true);
+			
+			listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
+			return false;
 		}
 		float distance = objectSensor.getDistanceInches();
 		if (distance <= 24) {
