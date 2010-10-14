@@ -40,6 +40,16 @@ public class Project2b {
     public static int MAPSCALE = 6;  // size of each map square in inches (along a side)
     public static Map map = new Map(8, 14, 8); // table size is 4ft x 7ft, square size is 6"x6"
 	
+    private static byte robotState;
+    public static byte getCurrentState() {
+    	synchronized(mSemaphore) {
+    		return robotState;
+    		
+    	}
+    }
+    
+    public static final byte IDLE = 0;
+    
 	public static void main(String[] args) throws InterruptedException {
 
 		objectSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(1), null);
@@ -132,4 +142,5 @@ public class Project2b {
             }
         }
     }
+
 }
