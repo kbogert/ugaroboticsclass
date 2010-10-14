@@ -49,6 +49,7 @@ public class Project2b {
     }
     
     public static final byte IDLE = 0;
+    public static final byte EXPLORE = 1;
     
 	public static void main(String[] args) throws InterruptedException {
 
