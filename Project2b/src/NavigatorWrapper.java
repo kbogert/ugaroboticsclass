@@ -43,33 +43,14 @@ public class NavigatorWrapper {
 		float x = loc.getPose().x;
 		float y = loc.getPose().y;
 		
-		if (angle > 3 * Math.PI / 2) {
-			angle -= 3 * Math.PI / 2;
-		} else if (angle > Math.PI ) {
-			angle -= Math.PI;
-		} else if (angle > Math.PI/ 2) {
-			angle -= Math.PI;
-		}
+		if (!direction)
+			distance *= -1;
 		
-		float opposite = (float)(distance * Math.sin(angle));
-		float adjacent = (float)(distance * Math.cos(angle));
+		float targetX = distance * (float)Math.cos(angle) + x;
+		float targetY = distance * (float)Math.sin(angle) + y;
 		
-		if (! direction) {
-			opposite *= -1;
-			adjacent *= -1;
-		}
+		nav.moveTo(targetX, targetY, wait);
 		
-		angle = loc.getPose().heading;
-		
-		if (angle > 3 * Math.PI / 2) {
-			nav.moveTo(x + opposite, y - adjacent, wait);
-		} else if (angle > Math.PI ) {
-			nav.moveTo(x - adjacent, y - opposite, wait);			
-		} else if (angle > Math.PI/ 2) {
-			nav.moveTo(x - opposite, y + adjacent, wait);			
-		} else {
-			nav.moveTo(x + adjacent, y + opposite, wait);
-		}
 				
 	}
 	
