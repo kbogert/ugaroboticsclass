@@ -1,7 +1,5 @@
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorListener;
-import com.ridgesoft.robotics.Localizer;
-import com.ridgesoft.robotics.Navigator;
 import com.ridgesoft.robotics.sensors.SharpGP2D12;
 
 /**
@@ -15,19 +13,16 @@ import com.ridgesoft.robotics.sensors.SharpGP2D12;
 public class AvoidEdge implements Behavior2 {
 
 	private boolean isEnabled;
-	private boolean isActive;
 	private SharpGP2D12 forwardSensor;
 	private TableSensor leftRear;
 	private TableSensor rightRear;
-	private Navigator nav;
-	private Localizer loc;
+	private NavigatorWrapper nav;
 	
-	AvoidEdge(Navigator nav, Localizer loc, SharpGP2D12 forward, TableSensor leftRear, TableSensor rightRear) {
+	AvoidEdge(NavigatorWrapper nav, SharpGP2D12 forward, TableSensor leftRear, TableSensor rightRear) {
 		this.forwardSensor = forward;
 		this.leftRear = leftRear;
 		this.rightRear = rightRear;
 		this.nav = nav;
-		this.loc = loc;
 	}
 	
 	public void setEnabled(boolean arg0) {
@@ -60,23 +55,21 @@ public class AvoidEdge implements Behavior2 {
 				
 				// if both, turn away from the rear detection
 				if (! leftRear.isOnTable()) {
-					float turn = loc.getPose().heading + (float)(Math.PI / 2);
 					
-					nav.turnTo(turn, true);
+					nav.turn((float)(Math.PI / 2), true);
 					
 				} else if ( ! rightRear.isOnTable()) {
-					float turn = loc.getPose().heading - (float)(Math.PI / 2);
 
-					nav.turnTo(turn, true);
+					nav.turn(-(float)(Math.PI / 2), true);
 					
 				} else {
-					nav.go(-3);
+					nav.goBackward(-3, true);
 				}
 				
 			} else {
 				// if we detected the edge in back, Move Forward
 				
-				nav.go(3);
+				nav.goForward(3, true);
 				
 			}
 			
@@ -88,7 +81,6 @@ public class AvoidEdge implements Behavior2 {
 	}
 
 	public void setActive(boolean arg0) {
-		isActive = arg0;
 	}
 
 }
