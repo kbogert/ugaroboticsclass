@@ -1,3 +1,5 @@
+import java.util.Random;
+
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -14,9 +16,10 @@ public class Explore implements Behavior2 {
 	private boolean enabled = true;
 	private boolean active = false;
 	private BehaviorListener listener;
+	private NavigatorWrapper nav;
 	
-	public Explore() {
-		
+	public Explore(NavigatorWrapper n) {
+		nav = n;
 	}
 	
 	public void setEnabled(boolean arg0) {
@@ -30,20 +33,26 @@ public class Explore implements Behavior2 {
 	public boolean poll() {
 		if (! enabled)
 			return false;
-		// for right now, choose a random direction and distance and try to go there
-		// change this when we get a working map
 		if (active) {
 			
+			// for right now, choose a random direction and distance and try to go there
+			// change this when we get a working map
+			Random random = new Random();
 			
-	
+			int distance = random.nextInt(4);
+			int direction = random.nextInt(8);
+
+			nav.turn(direction * (float)Math.PI / 4, true);
+			nav.goForward(distance, false);
+			
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
-			
+		
+			return false;
 		}
 		
 		// if the robot is in an idle state, request that this behavior be activated
-		
-		return false;
+		return Project2b.getCurrentState() == Project2b.IDLE;
 	}
 
 	public void setActive(boolean arg0) {
