@@ -1,4 +1,5 @@
 import com.ridgesoft.robotics.Behavior2;
+import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
 import com.ridgesoft.robotics.sensors.SharpGP2D12;
 
@@ -17,6 +18,7 @@ public class AvoidEdge implements Behavior2 {
 	private TableSensor leftRear;
 	private TableSensor rightRear;
 	private NavigatorWrapper nav;
+	private BehaviorListener listener;
 	
 	AvoidEdge(NavigatorWrapper nav, SharpGP2D12 forward, TableSensor leftRear, TableSensor rightRear) {
 		this.forwardSensor = forward;
@@ -30,7 +32,7 @@ public class AvoidEdge implements Behavior2 {
 	}
 
 	public void setListener(BehaviorListener arg0) {
-
+		listener = arg0;
 	}
 
 	public boolean poll() {
@@ -75,7 +77,8 @@ public class AvoidEdge implements Behavior2 {
 			
 			
 		}
-		
+		if (listener != null)
+			listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
 		
 		return false;
 	}
