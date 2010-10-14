@@ -149,7 +149,7 @@ public class MarkovLocalizer implements Localizer, Runnable {
 				
 				// update our believed position
 				
-				setPose(largestk * ((float)Math.PI /6.0f), largesti, largestj);
+				setPose(largestk * ((float)Math.PI /(map.getMaxH() / 2)), largesti, largestj);
 				
 			}
 		} catch (InterruptedException e) {
