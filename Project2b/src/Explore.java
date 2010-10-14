@@ -39,7 +39,7 @@ public class Explore implements Behavior2 {
 			// change this when we get a working map
 			Random random = new Random();
 			
-			int distance = random.nextInt(4);
+			int distance = random.nextInt(18);
 			int direction = random.nextInt(8);
 
 			nav.turn(direction * (float)Math.PI / 4, true);
