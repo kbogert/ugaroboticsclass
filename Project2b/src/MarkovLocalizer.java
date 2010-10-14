@@ -204,6 +204,12 @@ public class MarkovLocalizer implements Localizer, Runnable {
 		
 		// if the actionh is positive, and toh < fromh, return zero (except if we go over the zero point
 
+		// TEMPORARY, TAKE THE ODOMETER AT FACE VALUE AS OUR LOCATION
+		Pose pose = odometer.getPose();
+		if (Project2b.MAPSCALE * tox >= pose.x && Project2b.MAPSCALE * (tox - 1) <= pose.x
+				&& Project2b.MAPSCALE * toy >= pose.y && Project2b.MAPSCALE * (toy - 1) <= pose.x &&
+				(float)(toh + 1) >= pose.heading / Math.PI / 4 && (float)toh <= pose.heading / Math.PI / 4 )
+			return 1.0f;
 		return 0.0f;
 		
 	}
@@ -231,6 +237,6 @@ public class MarkovLocalizer implements Localizer, Runnable {
 		switch (observationNum) {
 		
 		}
-		return 0.0f;
+		return 1.0f;
 	}
 }
