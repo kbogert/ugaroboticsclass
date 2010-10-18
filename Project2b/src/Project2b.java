@@ -10,8 +10,6 @@ import com.ridgesoft.robotics.DirectionListener;
 import com.ridgesoft.robotics.Motor;
 import com.ridgesoft.robotics.Navigator;
 import com.ridgesoft.robotics.OdometricLocalizer;
-import com.ridgesoft.robotics.behaviors.GoToBehavior;
-import com.ridgesoft.robotics.behaviors.StopBehavior;
 import com.ridgesoft.robotics.sensors.SharpGP2D12;
 
 
@@ -135,9 +133,11 @@ public class Project2b {
         	case LOOK_AROUND:
         		mLookAroundBehavior.setActive(true);
         		break;
+        		
         	case EXAMINE_OBJECT:
         		mExamineObjectBehavior.setActive(true);
         		break;
+        		
         	case FINISHED:
         		navigator.stop();
         		Thread.sleep(200);
