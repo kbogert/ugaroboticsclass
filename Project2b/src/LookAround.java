@@ -38,6 +38,7 @@ public class LookAround implements Behavior2 {
 			if (turnLeft <= 0) {
 				turnLeft = 360;
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
+				setActive(false);
 				return false;
 			}
 	
