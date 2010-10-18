@@ -17,14 +17,6 @@ import com.ridgesoft.robotics.sensors.SharpGP2D12;
 
 public class Project2b {
 
-    private static final float DISTANCE = 100.0f;
-
-    private static final int GO_1 = 1;
-    private static final int AT_1 = 2;
-    private static final int GO_HOME = 3;
-    private static final int AT_HOME = 4;
-    private static final int DONE = 5;
-
     private static BehaviorArbiter mArbiter;
     private static int mState;
 	private static SharpGP2D12 objectSensor;
@@ -32,9 +24,16 @@ public class Project2b {
 	private static TableSensor leftTableSensor;
 	private static TableSensor rightTableSensor;
 	private static OdometricLocalizer odometer;
-    private static Behavior2 mGoHomeBehavior;
-    private static Behavior2 mGoDest1Behavior;
-    private static Behavior2 mStopBehavior;
+    
+	private static Behavior2 mAvoidEdgeBehavior;
+    private static Behavior2 mAvoidObstacleBehavior;
+    private static Behavior2 mExamineObjectBehavior;
+    private static Behavior2 mExploreBehavior;
+    private static Behavior2 mIdentifyHomeBehavior;
+    private static Behavior2 mLookAroundBehavior;
+    private static Behavior2 mMoveToHomeBehavior;
+    private static Behavior2 mMoveToObjectBehavior;
+    
     private static final Object mSemaphore = new Object();
     private static final BehaviorListener mListener = new Listener();
     public static int MAPSCALE = 6;  // size of each map square in inches (along a side)
@@ -50,6 +49,15 @@ public class Project2b {
     
     public static final byte IDLE = 0;
     public static final byte EXPLORE = 1;
+    public static final byte LOOK_AROUND = 2;
+    public static final byte MOVE_TO_OBJECT = 3;
+    public static final byte AVOID = 4;
+    public static final byte EXAMINE_OBJECT = 5;
+    public static final byte MOVE_TO_HOME = 6;
+    public static final byte IDENTIFY_HOME = 7;
+    public static final byte FINISHED = 8;
+    
+    
     
 	public static void main(String[] args) throws InterruptedException {
 
@@ -71,29 +79,46 @@ public class Project2b {
                 rightMotor, odometer, 8, 6, 25.0f, 0.5f, 0.08f,
                 Thread.MAX_PRIORITY - 2, 50);
 
-        mGoHomeBehavior = new GoToBehavior(navigator, 0.0f, 0.0f, false);
-        mGoHomeBehavior.setListener(mListener);
-        mGoDest1Behavior = new GoToBehavior(navigator, 20.0f, 0.0f, true);
-        mGoDest1Behavior.setListener(mListener);
-        mStopBehavior = new StopBehavior(navigator, true);
+        NavigatorWrapper navWrap = new NavigatorWrapper(odometer, navigator);
+        MarkovLocalizer localizer = new MarkovLocalizer(odometer, objectSensor, tableEdgeSensor, leftTableSensor, rightTableSensor, map);
+        
 
+        mAvoidEdgeBehavior = new AvoidEdge(navWrap, tableEdgeSensor, leftTableSensor, rightTableSensor);
+        mAvoidObstacleBehavior = new AvoidObstacle(objectSensor, navWrap);
+        mExamineObjectBehavior = new ExamineObject();
+        mExploreBehavior = new Explore(navWrap);
+        mIdentifyHomeBehavior = new IdentifyHome(navigator, map);
+        mLookAroundBehavior = new LookAround(navWrap);
+        mMoveToHomeBehavior = new MoveToHome();
+        mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, localizer, map);
+        
+        
 
-        mGoDest1Behavior.setActive(true);
+        mIdentifyHomeBehavior.setActive(true);
 
 
 
         Behavior2 behaviors[] = new Behavior2[] { 
-        		mGoHomeBehavior, 
-        		mGoDest1Behavior, 
-        		mStopBehavior 
+        		mAvoidEdgeBehavior, 
+        		mAvoidObstacleBehavior, 
+        		mExamineObjectBehavior,
+        		mExploreBehavior,
+        		mIdentifyHomeBehavior,
+        		mLookAroundBehavior,
+        		mMoveToHomeBehavior,
+        		mMoveToObjectBehavior
         };
 
+        for (int i = 0; i < behaviors.length; i ++) {
+        	behaviors[i].setListener(mListener);
+        }
+        
         mArbiter = new BehaviorArbiter(behaviors, IntelliBrain
         		.getStatusLed(), 500);
         mArbiter.setPriority(Thread.MAX_PRIORITY - 4);
 
 
-        mState = GO_1;
+        mState = IDENTIFY_HOME;
         mArbiter.start();
 
         while (true) {
@@ -103,14 +128,19 @@ public class Project2b {
         	}
 
         	switch (state) {
-        	case AT_1:
-        		mGoDest1Behavior.setEnabled(false);
-        		mState = GO_HOME;
-        		mGoHomeBehavior.setEnabled(true);
+        	case EXPLORE:
+        		mExploreBehavior.setActive(true);
         		break;
 
-        	case AT_HOME:
+        	case LOOK_AROUND:
+        		mLookAroundBehavior.setActive(true);
+        		break;
+        	case EXAMINE_OBJECT:
+        		mExamineObjectBehavior.setActive(true);
+        		break;
+        	case FINISHED:
         		navigator.stop();
+        		Thread.sleep(200);
         		System.exit(0);
         		break;
         	}
@@ -127,14 +157,31 @@ public class Project2b {
             try {
                 synchronized (mSemaphore) {
                     if (event.type == BehaviorEvent.BEHAVIOR_COMPLETED) {
-                        if (event.behavior == mGoDest1Behavior) {
-                            mState = AT_1;
-                            mSemaphore.notify();
+                        if (event.behavior == mIdentifyHomeBehavior) {
+                            mState = IDLE;
                         }
-                        else if (event.behavior == mGoHomeBehavior) {
-                            mState = AT_HOME;
-                            mSemaphore.notify();
+                        else if (event.behavior == mAvoidEdgeBehavior) {
+                            mState = IDLE;
                         }
+                        else if (event.behavior == mAvoidObstacleBehavior) {
+                        	mState = EXPLORE;
+                        }
+                        else if (event.behavior == mExamineObjectBehavior) {
+                        	mState = IDLE;
+                        }
+                        else if (event.behavior == mExploreBehavior) {
+                        	mState = LOOK_AROUND;
+                        }
+                        else if (event.behavior == mLookAroundBehavior) {
+                        	mState = IDLE;
+                        }
+                        else if (event.behavior == mMoveToHomeBehavior) {
+                        	mState = FINISHED;
+                        }
+                        else if (event.behavior == mMoveToObjectBehavior) {
+                        	mState = EXAMINE_OBJECT;
+                        }
+                        mSemaphore.notify();
                     }
                 }
             }
