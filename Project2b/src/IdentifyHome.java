@@ -1,4 +1,5 @@
 import com.ridgesoft.robotics.Behavior2;
+import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
 import com.ridgesoft.robotics.Navigator;
 
@@ -19,6 +20,7 @@ public class IdentifyHome implements Behavior2 {
 	private boolean hasRun = false;
 	private Navigator nav;
 	private Map map;
+	private BehaviorListener listener;
 	
 	public IdentifyHome(Navigator myNav, Map theMap) {
 		isEnabled = true;
@@ -31,7 +33,7 @@ public class IdentifyHome implements Behavior2 {
 	}
 
 	public void setListener(BehaviorListener arg0) {
-
+		listener = arg0;
 	}
 
 	public boolean poll() {
@@ -47,6 +49,10 @@ public class IdentifyHome implements Behavior2 {
 			start.setType(MapObj.HOME);
 			map.setPos(0, 0, 0, 1.0f);
 			hasRun = true;
+			
+			if (listener != null)
+				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
+
 		}
 		return false;
 	}
