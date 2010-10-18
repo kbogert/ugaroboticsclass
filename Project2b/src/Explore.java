@@ -40,7 +40,7 @@ public class Explore implements Behavior2 {
 			Random random = new Random();
 			
 			int distance = random.nextInt(18);
-			int direction = random.nextInt(8);
+			int direction = random.nextInt(5) - 2;
 
 			nav.turn(direction * (float)Math.PI / 4, true);
 			nav.goForward(distance, false);
