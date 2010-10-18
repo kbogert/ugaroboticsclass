@@ -109,6 +109,7 @@ public class Project2b {
 
         for (int i = 0; i < behaviors.length; i ++) {
         	behaviors[i].setListener(mListener);
+        	behaviors[i].setEnabled(true);
         }
         
         mArbiter = new BehaviorArbiter(behaviors, IntelliBrain

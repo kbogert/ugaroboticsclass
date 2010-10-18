@@ -78,6 +78,7 @@ public class MoveToObject implements Behavior2 {
 					if (distance > 24) {
 						listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
 						
+						setActive(false);
 						return false;
 					}
 				}
@@ -88,6 +89,8 @@ public class MoveToObject implements Behavior2 {
 			nav.goForward(distance - 4, true);
 			
 			listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
+			
+			setActive(false);
 			return false;
 		}
 		float distance = objectSensor.getDistanceInches();
