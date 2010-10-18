@@ -1,4 +1,5 @@
 import com.ridgesoft.robotics.Behavior2;
+import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
 
 
@@ -14,20 +15,28 @@ import com.ridgesoft.robotics.BehaviorListener;
  */
 public class ExamineObject implements Behavior2 {
 
+	private boolean enabled;
+	private boolean active;
+	private BehaviorListener listener;
+	
 	public void setEnabled(boolean arg0) {
-
+		enabled = arg0;
 	}
 
 	public void setListener(BehaviorListener arg0) {
-
+		listener = arg0;
 	}
 
 	public boolean poll() {
+		if (active) {
+			if (listener != null)
+				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
+		}
 		return false;
 	}
 
 	public void setActive(boolean arg0) {
-
+		active = arg0;
 	}
 
 }
