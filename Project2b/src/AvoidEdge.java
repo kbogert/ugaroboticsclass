@@ -65,7 +65,7 @@ public class AvoidEdge implements Behavior2 {
 					nav.turn(-(float)(Math.PI / 2), true);
 					
 				} else {
-					nav.goBackward(-3, true);
+					nav.goBackward(4, true);
 				}
 				
 			} else {
