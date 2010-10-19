@@ -118,6 +118,7 @@ public class Project2b {
 
 
         mState = IDENTIFY_HOME;
+        mIdentifyHomeBehavior.setActive(true);
         mArbiter.start();
 
         while (true) {
