@@ -39,12 +39,11 @@ public class Explore implements Behavior2 {
 			// change this when we get a working map
 			Random random = new Random();
 			
-			int distance = random.nextInt(18);
-			int direction = random.nextInt(5) - 2;
-
-			nav.turn(direction * (float)Math.PI / 4, true);
-			nav.goForward(distance, false);
+			int x = random.nextInt(8);
+			int y = random.nextInt(14);
 			
+			nav.setGoal(x, y, 20, .2f);
+						
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
 		
