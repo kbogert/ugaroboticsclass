@@ -87,6 +87,11 @@ public class NavigatorWrapper {
 		}
 	}
 	
+	public boolean atGoal(float x, float y) {
+		float distanceNotSqrt = (x - goal.x)*(x - goal.x) + (y - goal.y)*(y - goal.y);
+		return distanceNotSqrt <  .04f;
+	}
+	
 	/**
 	 * 
 	 * Calculates heading based on goal and obstacle weights

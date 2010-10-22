@@ -90,7 +90,7 @@ public class Project2b {
         mLookAroundBehavior = new LookAround(navWrap);
         mMoveToHomeBehavior = new MoveToHome();
         mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, localizer, map);
-        mNavigateBehavior = new Navigate();
+        mNavigateBehavior = new Navigate(navWrap, localizer);
         
         
 

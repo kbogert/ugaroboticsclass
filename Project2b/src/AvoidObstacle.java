@@ -36,7 +36,7 @@ public class AvoidObstacle implements Behavior2 {
 			return false;
 		}
 		
-		if (Project2b.getCurrentState() == Project2b.EXPLORE && objectSensor.getDistanceInches() < 6) {
+		if (Project2b.getCurrentState() == Project2b.NAVIGATE && objectSensor.getDistanceInches() < 6) {
 
 			nav.stop();
 			
