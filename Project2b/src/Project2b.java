@@ -88,7 +88,7 @@ public class Project2b {
         mExploreBehavior = new Explore(navWrap);
         mIdentifyHomeBehavior = new IdentifyHome(navigator, map);
         mLookAroundBehavior = new LookAround(navWrap);
-        mMoveToHomeBehavior = new MoveToHome();
+        mMoveToHomeBehavior = new MoveToHome(navWrap);
         mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, localizer, map);
         mNavigateBehavior = new Navigate(navWrap, localizer);
         
@@ -184,7 +184,7 @@ public class Project2b {
                         	mState = IDLE;
                         }
                         else if (event.behavior == mMoveToHomeBehavior) {
-                        	mState = FINISHED;
+                        	mState = NAVIGATE;
                         }
                         else if (event.behavior == mMoveToObjectBehavior) {
                         	mState = EXAMINE_OBJECT;
