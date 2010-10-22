@@ -31,6 +31,7 @@ public class Project2b {
     private static Behavior2 mLookAroundBehavior;
     private static Behavior2 mMoveToHomeBehavior;
     private static Behavior2 mMoveToObjectBehavior;
+    private static Behavior2 mNavigateBehavior;
     
     private static final Object mSemaphore = new Object();
     private static final BehaviorListener mListener = new Listener();
@@ -46,7 +47,7 @@ public class Project2b {
     }
     
     public static final byte IDLE = 0;
-    public static final byte EXPLORE = 1;
+    public static final byte NAVIGATE = 1;
     public static final byte LOOK_AROUND = 2;
     public static final byte MOVE_TO_OBJECT = 3;
     public static final byte AVOID = 4;
@@ -89,6 +90,7 @@ public class Project2b {
         mLookAroundBehavior = new LookAround(navWrap);
         mMoveToHomeBehavior = new MoveToHome();
         mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, localizer, map);
+        mNavigateBehavior = new Navigate();
         
         
 
@@ -104,7 +106,8 @@ public class Project2b {
         		mIdentifyHomeBehavior,
         		mLookAroundBehavior,
         		mMoveToHomeBehavior,
-        		mMoveToObjectBehavior
+        		mMoveToObjectBehavior,
+        		mNavigateBehavior
         };
 
         for (int i = 0; i < behaviors.length; i ++) {
@@ -128,8 +131,8 @@ public class Project2b {
         	}
 
         	switch (state) {
-        	case EXPLORE:
-        		mExploreBehavior.setActive(true);
+        	case NAVIGATE:
+        		mNavigateBehavior.setActive(true);
         		break;
 
         	case LOOK_AROUND:
@@ -166,12 +169,15 @@ public class Project2b {
                             mState = IDLE;
                         }
                         else if (event.behavior == mAvoidObstacleBehavior) {
-                        	mState = EXPLORE;
+                        	mState = NAVIGATE;
                         }
                         else if (event.behavior == mExamineObjectBehavior) {
                         	mState = IDLE;
                         }
                         else if (event.behavior == mExploreBehavior) {
+                        	mState = NAVIGATE;
+                        }
+                        else if (event.behavior == mNavigateBehavior) {
                         	mState = LOOK_AROUND;
                         }
                         else if (event.behavior == mLookAroundBehavior) {
