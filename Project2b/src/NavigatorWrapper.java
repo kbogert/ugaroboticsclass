@@ -6,6 +6,8 @@ public class NavigatorWrapper {
 
 	private Localizer loc;
 	private Navigator nav;
+	private Gradient obstacles;
+	private Gradient goal;
 	
 	public NavigatorWrapper(Localizer odometer, Navigator nav) {
 	
@@ -56,5 +58,85 @@ public class NavigatorWrapper {
 	
 	public void stop() {
 		nav.stop();
+	}
+	
+	public void setGoal(float x, float y, float strength, float factor) {
+		Gradient temp = new Gradient();
+		temp.x = x;
+		temp.y = y;
+		temp.strength = -strength;
+		temp.factor = factor;
+		goal = temp;
+	}
+	
+	public void addObstacle(float x, float y, float strength, float factor) {
+		Gradient temp = new Gradient();
+		temp.x = x;
+		temp.y = y;
+		temp.strength = strength;
+		temp.factor = factor;
+
+		if (obstacles == null) {
+			obstacles = temp;
+		} else {
+			Gradient pointer = obstacles;
+			while (pointer.next != null) {
+				pointer = pointer.next;
+			}
+			pointer.next = temp;
+		}
+	}
+	
+	/**
+	 * 
+	 * Calculates heading based on goal and obstacle weights
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public float getHeadingFrom(float x, float y) {
+		float [] Xs = new float[8];
+		float [] Ys = new float[8];
+		float [] elevations = new float[8];
+		
+		int min = 0;
+		for (int i = 0; i < 8; i ++) {
+			Xs[i] = .2f * (float)Math.cos(Math.PI / (4.0 * i)) + x;
+			Ys[i] = .2f * (float)Math.sin(Math.PI / (4.0 * i)) + y;
+			
+			float distanceNotSqrt = (Xs[i] - goal.x)*(Xs[i] - goal.x) + (Ys[i] - goal.y)*(Ys[i] - goal.y);
+			elevations[i] = goal.strength / (distanceNotSqrt * goal.factor);
+			
+			Gradient cursor = obstacles;
+			while (cursor != null) {
+				distanceNotSqrt = (Xs[i] - cursor.x)*(Xs[i] - cursor.x) + (Ys[i] - cursor.y)*(Ys[i] - cursor.y);
+				elevations[i] += cursor.strength / (distanceNotSqrt * cursor.factor);
+				
+				cursor = cursor.next;
+			}
+			
+			if (elevations[i] < elevations[min])
+				min = i;
+
+		}
+		
+		return (float)Math.PI / (4.0f * min);
+		
+	}
+	
+	public void clearGradients() {
+		obstacles = null;
+		goal = null;
+	}
+	
+	private class Gradient {
+		public float x;
+		public float y;
+		
+		public float strength;
+		public float factor;
+		
+		public Gradient next;
 	}
 }
