@@ -1,7 +1,7 @@
-import java.util.Random;
-
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorListener;
+import com.ridgesoft.robotics.Localizer;
+import com.ridgesoft.robotics.Pose;
 import com.ridgesoft.robotics.sensors.SharpGP2D12;
 
 
@@ -17,6 +17,7 @@ public class AvoidObstacle implements Behavior2 {
 	private BehaviorListener listener;
 	private SharpGP2D12 objectSensor;
 	private NavigatorWrapper nav;
+	private Localizer loc;
 	
 	public void setEnabled(boolean arg0) {
 		enabled = arg0;
@@ -26,9 +27,10 @@ public class AvoidObstacle implements Behavior2 {
 		listener = arg0;
 	}
 
-	public AvoidObstacle(SharpGP2D12 objectSensor, NavigatorWrapper nav) {
+	public AvoidObstacle(SharpGP2D12 objectSensor, NavigatorWrapper nav, Localizer loc) {
 		this.objectSensor = objectSensor;
 		this.nav = nav;
+		this.loc = loc;
 	}
 	
 	public boolean poll() {
@@ -40,16 +42,20 @@ public class AvoidObstacle implements Behavior2 {
 
 			nav.stop();
 			
+			// add an obstacle to nav
+			float distance = (objectSensor.getDistanceInches() / Project2b.MAPSCALE);
+			
+			Pose pose = loc.getPose();
+			float x = distance * (float)Math.cos(pose.heading) + pose.x;
+			float y = distance * (float)Math.sin(pose.heading) + pose.y;
+
+			nav.addObstacle(x, y, 10, 2);
 			
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
 
 			}
-			
-			Random rand = new Random();
-			
-			nav.turn(rand.nextInt(8) * (float)Math.PI / 4, true);
 			
 			
 		}
