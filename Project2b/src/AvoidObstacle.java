@@ -1,4 +1,5 @@
 import com.ridgesoft.robotics.Behavior2;
+import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
 import com.ridgesoft.robotics.Localizer;
 import com.ridgesoft.robotics.Pose;
@@ -57,7 +58,8 @@ public class AvoidObstacle implements Behavior2 {
 
 			}
 			
-			
+			if (listener != null)
+				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
 		}
 		return false;
 		
