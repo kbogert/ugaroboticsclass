@@ -17,9 +17,11 @@ public class Explore implements Behavior2 {
 	private boolean active = false;
 	private BehaviorListener listener;
 	private NavigatorWrapper nav;
+	private Map map;
 	
-	public Explore(NavigatorWrapper n) {
+	public Explore(NavigatorWrapper n, Map m) {
 		nav = n;
+		map = m;
 	}
 	
 	public void setEnabled(boolean arg0) {
@@ -39,8 +41,8 @@ public class Explore implements Behavior2 {
 			// change this when we get a working map
 			Random random = new Random();
 			
-			int x = random.nextInt(8);
-			int y = random.nextInt(14);
+			int x = random.nextInt(map.getMaxX() - map.getMinX());
+			int y = random.nextInt(map.getMaxY() - map.getMinY());
 			
 			nav.setGoal(x, y, 20, .2f);
 						
