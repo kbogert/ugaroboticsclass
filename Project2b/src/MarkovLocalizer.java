@@ -73,7 +73,7 @@ public class MarkovLocalizer implements Localizer, Runnable {
 
 				Pose odometerPose = odometer.getPose();
 				boolean [] observations = new boolean[4];
-				observations[0] = objectSensor.getDistanceCm() > 7;
+				observations[0] = objectSensor.getDistanceCm() > 7 && objectSensor.getDistanceCm() < 91;
 				observations[1] = tableEdgeSensor.getDistanceCm() > 30;
 				observations[2] = ! leftTableSensor.isOnTable();
 				observations[3] = ! rightTableSensor.isOnTable();
@@ -87,6 +87,21 @@ public class MarkovLocalizer implements Localizer, Runnable {
 				float deltay = odometerPose.y - lastOdometerReading.y;
 				float deltah = odometerPose.heading - lastOdometerReading.heading;
 				
+				
+				// build a lookup table to limit the amount of gaussian calculations we do
+				float [] xGaussianLookup = new float[(map.getMaxX() - map.getMinX()) * 2];
+				float offset = map.getMinX() - map.getMaxX() + (deltax / Project2b.MAPSCALE);
+				calcGaussianLookupTable(xGaussianLookup, offset, xAxisVariance, xIota);
+
+				float [] yGaussianLookup = new float[(map.getMaxX() - map.getMinX()) * 2];
+				offset = map.getMinY() - map.getMaxY() + (deltay / Project2b.MAPSCALE);
+				calcGaussianLookupTable(yGaussianLookup, offset, yAxisVariance, yIota);
+
+				float [] hGaussianLookup = new float[(map.getMaxH() - map.getMinH()) * 2];
+				offset = map.getMinH() - map.getMaxH() + (deltah / ((float)Math.PI / map.getMaxH() / 2));
+				calcGaussianLookupTable(hGaussianLookup, offset, headingVariance, hIota);
+				
+				
 				for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
 					for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
 						for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
@@ -97,7 +112,7 @@ public class MarkovLocalizer implements Localizer, Runnable {
 							for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
 								for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
 									for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
-										sum += Transition(iprime, jprime, kprime, deltax, deltay, deltah, i, j, k) * map.getPos(i, j, k); 
+										sum += Transition(iprime, jprime, kprime, xGaussianLookup, yGaussianLookup, hGaussianLookup, i, j, k) * map.getPos(i, j, k); 
 										
 									}
 								}
@@ -170,48 +185,9 @@ public class MarkovLocalizer implements Localizer, Runnable {
 	 * @param fromh
 	 * @return
 	 */
-	private float Transition(int tox, int toy, int toh, float actionx, float actiony, float actionh, int fromx, int fromy, int fromh) {
-		if (Math.abs(Math.abs(tox) - Math.abs(fromx)) <= 1 && Math.abs(Math.abs(toy) - Math.abs(fromy)) <= 1 && Math.abs(Math.abs(toh) - Math.abs(fromh)) <= 2) {
-			
-			/*
-			 * The heading can vary based on distance travelled.  If toh = fromh but x and y does not, multiple by an uncertainty based on the distance travelled
-			 * 
-			 * Based on the heading, the given action x and y, it is more or less likely for the following:
-			 * Move up - toy != fromy, and heading is 2,3,4
-			 * Move down - toy != fromy, and heading is 8,9,10
-			 * Move left - tox != fromx, and heading is 5,6,7
-			 * Move right - tox != fromx, and heading is 1,0,11
-			 * Move up-right - tox != fromx, toy != fromy, and heading is 0,1,2,3
-			 * move up-left - tox != fromx, toy != fromy, and heading is 6,5,4,3
-			 * move down-right - tox != fromx, toy != fromy, and heading is 6,7,8,9
-			 * move down-left - tox != fromx, toy != fromy, and heading is 9,10,11,0
-			 * 
-			 */
-			
-			
-		} else {
-			/*
-			 * The robot is assumed to stop before turning
-			 * 
-			 *  if tox == fromx and toy = fromy
-			 *  	convert actionh from radians into our simple index
-			 *  	assume that the robot can correctly turn in a direction, then if actionh is positive, and toh < fromh the probability is 0
-			 *  	same for reverse
-			 *  	otherwise, multiple actionh * the distance between toh and fromh * the probability of actually turning that much to get the new probability  
-			 */  
-		}
-		// if the distance between the x and y's is greater than one, probability is zero
+	private float Transition(int tox, int toy, int toh, float [] xGaussianLookup, float [] yGaussianLookup, float [] hGaussianLookup, int fromx, int fromy, int fromh) {
 		
-		// if the actionh is positive, and toh < fromh, return zero (except if we go over the zero point
-
-		// TEMPORARY, TAKE THE ODOMETER AT FACE VALUE AS OUR LOCATION
-		Pose pose = odometer.getPose();
-		if (Project2b.MAPSCALE * tox >= pose.x && Project2b.MAPSCALE * (tox - 1) <= pose.x
-				&& Project2b.MAPSCALE * toy >= pose.y && Project2b.MAPSCALE * (toy - 1) <= pose.x &&
-				(float)(toh + 1) >= pose.heading / Math.PI / 4 && (float)toh <= pose.heading / Math.PI / 4 )
-			return 1.0f;
-		return 0.0f;
-		
+		return xGaussianLookup[fromx - tox + (xGaussianLookup.length / 2)] * yGaussianLookup[fromy - toy + (yGaussianLookup.length / 2)] * hGaussianLookup[fromh - toh + (hGaussianLookup.length / 2)];
 	}
 	
 	/**
@@ -235,8 +211,32 @@ public class MarkovLocalizer implements Localizer, Runnable {
 	 */
 	private float Observation(byte observationNum, boolean received, float actionx, float actiony, float actionh, int fromx, int fromy, int fromh) {
 		switch (observationNum) {
-		
+		case 0:
+			if (received) {
+				// if moved towards an edge, high probability, otherwise low
+			} else {
+				// if moved away from an edge, high probability, otherwise low
+				
+			}
+			break;
 		}
 		return 1.0f;
 	}
+	
+	private void calcGaussianLookupTable(float [] table, float offset, float variance, float iota) {
+		for (int i = 1; i < table.length; i ++) {
+			table[i] = (float) Math.exp(-(offset + i) * (offset + i) / (2* xAxisVariance)) / xIota;			
+		}
+	}
+
+	// these give the standard distribution squared for the transition between states for the 3 dimensions (x, y, and heading)
+	private static final float xAxisVariance = 0.4f * 0.4f;
+	private static final float yAxisVariance = 0.4f * 0.4f;
+	private static final float headingVariance = 0.4f * 0.4f;
+	
+	private static final float xIota = (float)Math.sqrt(2 * Math.PI * xAxisVariance);
+	private static final float yIota = (float)Math.sqrt(2 * Math.PI * yAxisVariance);
+	private static final float hIota = (float)Math.sqrt(2 * Math.PI * headingVariance);
+	
+	
 }
