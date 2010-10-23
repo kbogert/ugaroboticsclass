@@ -1,3 +1,4 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -43,14 +44,14 @@ public class Navigate implements Behavior2 {
 			float diff = Math.abs(heading - pose.heading);
 			
 			if (diff > 0.1f) {
-				nav.stop();
+				nav.stop();				
 				nav.turn(heading - pose.heading, true);
 			}
 			
 			nav.goForward(Project2b.MAPSCALE, true);
 			
 			pose = loc.getPose();
-			if (nav.atGoal(pose.x, pose.y)) {
+			if (nav.atGoal(pose.x * Project2b.MAPSCALE, pose.y * Project2b.MAPSCALE)) {
 				if (listener != null) {
 					listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
 				}

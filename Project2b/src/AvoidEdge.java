@@ -40,7 +40,7 @@ public class AvoidEdge implements Behavior2 {
 			return false;
 		}
 		
-		if (forwardSensor.getDistanceInches() > 12 ||
+		if (forwardSensor.getDistanceInches() > 18 ||
 				! leftRear.isOnTable() || ! rightRear.isOnTable()) {
 			
 			nav.stop();

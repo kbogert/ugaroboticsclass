@@ -41,7 +41,7 @@ public class IdentifyHome implements Behavior2 {
 			return false;
 	
 		if (! hasRun) {
-			nav.moveTo(0, 0, true);
+//			nav.moveTo(0, 0, true);
 			MapObj start = new MapObj();
 			start.setX(0);
 			start.setY(0);

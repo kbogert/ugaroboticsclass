@@ -1,4 +1,5 @@
 import com.ridgesoft.intellibrain.IntelliBrain;
+import com.ridgesoft.io.Display;
 import com.ridgesoft.robotics.AnalogShaftEncoder;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorArbiter;
@@ -59,6 +60,9 @@ public class Project2b {
     
     
 	public static void main(String[] args) throws InterruptedException {
+        Display display = IntelliBrain.getLcdDisplay();
+
+    	display.print(0, "Create Sensors");
 
 		objectSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(1), null);
 		tableEdgeSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(2), null);
@@ -74,13 +78,16 @@ public class Project2b {
         Motor rightMotor = new ContinuousRotationServo(IntelliBrain.getServo(2), 
                 true, 14, (DirectionListener) rightEncoder);
         
-        Navigator navigator = new DifferentialDriveNavigator(leftMotor,
+    	display.print(0, "Create Navigators");
+
+    	Navigator navigator = new DifferentialDriveNavigator(leftMotor,
                 rightMotor, odometer, 8, 6, 25.0f, 0.5f, 0.08f,
                 Thread.MAX_PRIORITY - 2, 50);
 
         NavigatorWrapper navWrap = new NavigatorWrapper(odometer, navigator);
         MarkovLocalizer localizer = new MarkovLocalizer(odometer, objectSensor, tableEdgeSensor, leftTableSensor, rightTableSensor, map);
         
+    	display.print(0, "Create Behaviors");
 
         mAvoidEdgeBehavior = new AvoidEdge(navWrap, tableEdgeSensor, leftTableSensor, rightTableSensor);
         mAvoidObstacleBehavior = new AvoidObstacle(objectSensor, navWrap, localizer);
@@ -92,21 +99,21 @@ public class Project2b {
         mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, localizer, map);
         mNavigateBehavior = new Navigate(navWrap, localizer);
         
-        
+
+        localizer.start();
 
         mIdentifyHomeBehavior.setActive(true);
 
 
-
         Behavior2 behaviors[] = new Behavior2[] { 
-        		mAvoidEdgeBehavior, 
-        		mAvoidObstacleBehavior, 
-        		mExamineObjectBehavior,
+//        		mAvoidEdgeBehavior, 
+//        		mAvoidObstacleBehavior, 
+//        		mExamineObjectBehavior,
         		mExploreBehavior,
         		mIdentifyHomeBehavior,
-        		mLookAroundBehavior,
-        		mMoveToHomeBehavior,
-        		mMoveToObjectBehavior,
+//        		mLookAroundBehavior,
+//        		mMoveToHomeBehavior,
+//        		mMoveToObjectBehavior,
         		mNavigateBehavior
         };
 
@@ -119,6 +126,7 @@ public class Project2b {
         		.getStatusLed(), 500);
         mArbiter.setPriority(Thread.MAX_PRIORITY - 4);
 
+    	display.print(0, "Start Arbitrator");
 
         mState = IDENTIFY_HOME;
         mIdentifyHomeBehavior.setActive(true);
@@ -130,7 +138,12 @@ public class Project2b {
         		state = mState;
         	}
 
+//        	display.print(0, Integer.toString(state));
+
         	switch (state) {
+        	case IDLE:
+        		mExploreBehavior.setActive(true);
+        		break;
         	case NAVIGATE:
         		mNavigateBehavior.setActive(true);
         		break;

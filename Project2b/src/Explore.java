@@ -1,8 +1,10 @@
 import java.util.Random;
 
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
+import com.ridgesoft.vmmanager.gui.RoboJDE;
 
 
 /**
@@ -41,9 +43,9 @@ public class Explore implements Behavior2 {
 			// change this when we get a working map
 			Random random = new Random();
 			
-			int x = random.nextInt(map.getMaxX() - map.getMinX());
-			int y = random.nextInt(map.getMaxY() - map.getMinY());
-			
+			int x = random.nextInt(map.getMaxX() - map.getMinX()) * Project2b.MAPSCALE;
+			int y = random.nextInt(map.getMaxY() - map.getMinY()) * Project2b.MAPSCALE;
+						
 			nav.setGoal(x, y, 20, .2f);
 						
 			if (listener != null)
