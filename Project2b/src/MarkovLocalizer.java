@@ -219,16 +219,119 @@ public class MarkovLocalizer implements Localizer, Runnable {
 	 */
 	private float Observation(byte observationNum, boolean received, float actionx, float actiony, float actionh, int fromx, int fromy, int fromh) {
 		switch (observationNum) {
-		case 0:
+		case 0: // forward edge sensor
 			if (received) {
-				// if moved towards an edge, high probability, otherwise low
+				if (isLookingAtEdge(fromx, fromy, fromh))
+					return .9f;
+				return .1f;
 			} else {
-				// if moved away from an edge, high probability, otherwise low
+				if (isLookingAtEdge(fromx, fromy, fromh))
+					return .1f;
+				return .9f;
+			}
+		case 1: // object sensor
+			if (received) {
+				if (isLookingAtEdge(fromx, fromy, fromh))
+					return .1f;
+				return .6f - (.4f * percentDistanceFromCenter(fromx, fromy));
+			} else {
+				if (isLookingAtEdge(fromx, fromy, fromh))
+					return .9f;
+				return .2f + (.4f * percentDistanceFromCenter(fromx, fromy));
+			}
+		case 2: // left rear table sensor
+			if (received) {
+				if (isLeftAlignedToEdge(fromx, fromy, fromh))
+					return .95f;
+				return .01f;
+				
+			} else {
+				if (isLeftAlignedToEdge(fromx, fromy, fromh))
+					return .01f;
+				return .95f;
 				
 			}
-			break;
+			
+		case 3: // right rear table sensor
+			if (received) {
+				if (isRightAlignedToEdge(fromx, fromy, fromh))
+					return .95f;
+				return .01f;
+				
+			} else {
+				if (isRightAlignedToEdge(fromx, fromy, fromh))
+					return .01f;
+				return .95f;
+				
+			}			
 		}
 		return 1.0f;
+	}
+	
+	private float percentDistanceFromCenter(int x, int y) {
+		float deltax = x - ((map.getMaxX() - map.getMinX()) / 2.0f);
+		float deltay = y - ((map.getMaxY() - map.getMinY()) / 2.0f);
+		
+		int radius = (map.getMaxY() - map.getMinY()) / 2;
+		if ((map.getMaxX() - map.getMinX())  / 2> radius)
+			radius = (map.getMaxX() - map.getMinX()) / 2;
+		
+		return (deltax * deltax) + (deltay * deltay) / (float) (radius * radius);
+		
+	}
+	
+	private boolean isLeftAlignedToEdge(int x, int y, int h) {
+		if (x == map.getMinX() && (h >=2 && h <= 4)) {
+			return true;
+		}
+		if (x == map.getMaxX() && (h >=6 || h <= 0)) {
+			return true;
+		}
+		if (y == map.getMinY() && (h >=0 && h <= 2)) {
+			return true;
+		}
+		if (y == map.getMaxY() && (h >=4 && h <= 6)) {
+			return true;
+		}
+		
+		return false;
+				
+	}
+	
+	private boolean isRightAlignedToEdge(int x, int y, int h) {
+		if (x == map.getMinX() && (h >=0 && h <= 2)) {
+			return true;
+		}
+		if (x == map.getMaxX() && (h >=4 && h <= 6)) {
+			return true;
+		}
+		if (y == map.getMinY() && (h <=0 || h >= 6)) {
+			return true;
+		}
+		if (y == map.getMaxY() && (h >=2 && h <= 4)) {
+			return true;
+		}
+		
+		return false;
+				
+	}
+	
+	private boolean isLookingAtEdge(int x, int y, int h) {
+		if (x == map.getMinX() && (h >=5 && h <= 7)) {
+			return true;
+		}
+		if (x == map.getMaxX() && (h >=1 && h <= 3)) {
+			return true;
+		}
+		if (y == map.getMinY() && (h >=3 && h <= 5)) {
+			return true;
+		}
+		if (y == map.getMaxY() && (h <=1 || h >= 7)) {
+			return true;
+		}
+		
+		return false;
+		
 	}
 	
 	private void calcGaussianLookupTable(float [] table, float offset, float variance, float iota) {
