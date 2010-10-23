@@ -85,7 +85,7 @@ public class Project2b {
         mAvoidEdgeBehavior = new AvoidEdge(navWrap, tableEdgeSensor, leftTableSensor, rightTableSensor);
         mAvoidObstacleBehavior = new AvoidObstacle(objectSensor, navWrap, localizer);
         mExamineObjectBehavior = new ExamineObject();
-        mExploreBehavior = new Explore(navWrap);
+        mExploreBehavior = new Explore(navWrap, map);
         mIdentifyHomeBehavior = new IdentifyHome(navigator, map);
         mLookAroundBehavior = new LookAround(navWrap);
         mMoveToHomeBehavior = new MoveToHome(navWrap);
