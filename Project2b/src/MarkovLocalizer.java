@@ -86,6 +86,8 @@ public class MarkovLocalizer implements Localizer, Runnable {
 				float deltax = odometerPose.x - lastOdometerReading.x;
 				float deltay = odometerPose.y - lastOdometerReading.y;
 				float deltah = odometerPose.heading - lastOdometerReading.heading;
+				if (deltah > Math.PI) deltah -= 2 * Math.PI;
+				if (deltah < -Math.PI) deltah += 2 * Math.PI;				
 				
 				
 				// build a lookup table to limit the amount of gaussian calculations we do
@@ -97,8 +99,9 @@ public class MarkovLocalizer implements Localizer, Runnable {
 				offset = map.getMinY() - map.getMaxY() + (deltay / Project2b.MAPSCALE);
 				calcGaussianLookupTable(yGaussianLookup, offset, yAxisVariance, yIota);
 
-				float [] hGaussianLookup = new float[(map.getMaxH() - map.getMinH()) * 2];
-				offset = map.getMinH() - map.getMaxH() + (deltah / ((float)Math.PI / map.getMaxH() / 2));
+				// this one's a little weird, since there's only half as many possibilities, due to the heading being circular
+				float [] hGaussianLookup = new float[(map.getMaxH() - map.getMinH())];
+				offset = ((map.getMinH() - map.getMaxH()) / 2) - (deltah / ((float)Math.PI / (map.getMaxH() / 2)));
 				calcGaussianLookupTable(hGaussianLookup, offset, headingVariance, hIota);
 				
 				
@@ -187,7 +190,12 @@ public class MarkovLocalizer implements Localizer, Runnable {
 	 */
 	private float Transition(int tox, int toy, int toh, float [] xGaussianLookup, float [] yGaussianLookup, float [] hGaussianLookup, int fromx, int fromy, int fromh) {
 		
-		return xGaussianLookup[fromx - tox + (xGaussianLookup.length / 2)] * yGaussianLookup[fromy - toy + (yGaussianLookup.length / 2)] * hGaussianLookup[fromh - toh + (hGaussianLookup.length / 2)];
+		int headingDistance = toh - fromh;
+		if (headingDistance >= 4) headingDistance -= 8;
+		if (headingDistance < -4) headingDistance += 8;
+		
+		return xGaussianLookup[fromx - tox + (xGaussianLookup.length / 2)] + yGaussianLookup[fromy - toy + (yGaussianLookup.length / 2)] + hGaussianLookup[headingDistance + (hGaussianLookup.length / 2)];
+		
 	}
 	
 	/**
@@ -224,8 +232,8 @@ public class MarkovLocalizer implements Localizer, Runnable {
 	}
 	
 	private void calcGaussianLookupTable(float [] table, float offset, float variance, float iota) {
-		for (int i = 1; i < table.length; i ++) {
-			table[i] = (float) Math.exp(-(offset + i) * (offset + i) / (2* xAxisVariance)) / xIota;			
+		for (int i = 0; i < table.length; i ++) {
+			table[i] = (float) Math.exp(-(offset + i) * (offset + i) / (2* variance)) / iota;			
 		}
 	}
 

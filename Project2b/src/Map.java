@@ -51,19 +51,19 @@ public class Map {
 	}
 	
 	public int getMaxX() {
-		return xlen - 1; 
+		return xlen; 
 	}
 	
 	public int getMinX() {
-		return -1;
+		return 0;
 	}
 
 	public int getMaxY() {
-		return ylen - 1 ;
+		return ylen ;
 	}
 	
 	public int getMinY() {
-		return -1;
+		return 0;
 	}
 
 	public int getMaxH() {
