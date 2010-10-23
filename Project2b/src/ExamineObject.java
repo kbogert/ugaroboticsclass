@@ -28,7 +28,15 @@ public class ExamineObject implements Behavior2 {
 	}
 
 	public boolean poll() {
+		if (!enabled)
+			return false;
+		
 		if (active) {
+			// use the color tracking to center the object in view, allow the measurements from the cmucam to control left/right/forward movements
+			
+			
+			// add the object to the map and nav
+			
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
 		}

@@ -1,7 +1,13 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Localizer;
 import com.ridgesoft.robotics.Navigator;
 
-
+/**
+ * All parameters must be in inches and radians
+ * 
+ * @author kbogert
+ *
+ */
 public class NavigatorWrapper {
 
 	private Localizer loc;
@@ -107,8 +113,8 @@ public class NavigatorWrapper {
 		
 		int min = 0;
 		for (int i = 0; i < 8; i ++) {
-			Xs[i] = .2f * (float)Math.cos(Math.PI / (4.0 * i)) + x;
-			Ys[i] = .2f * (float)Math.sin(Math.PI / (4.0 * i)) + y;
+			Xs[i] = .2f * (float)Math.cos((Math.PI / 4.0) * i) + x;
+			Ys[i] = .2f * (float)Math.sin((Math.PI / 4.0) * i) + y;
 			
 			float distanceNotSqrt = (Xs[i] - goal.x)*(Xs[i] - goal.x) + (Ys[i] - goal.y)*(Ys[i] - goal.y);
 			elevations[i] = goal.strength / (distanceNotSqrt * goal.factor);
@@ -126,7 +132,7 @@ public class NavigatorWrapper {
 
 		}
 		
-		return (float)Math.PI / (4.0f * min);
+		return (float)(Math.PI / 4.0f) * min;
 		
 	}
 	

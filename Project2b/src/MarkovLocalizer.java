@@ -9,7 +9,7 @@ import com.ridgesoft.robotics.sensors.SharpGP2D12;
  * @author kbogert
  *
  */
-public class MarkovLocalizer implements Localizer, Runnable {
+public class MarkovLocalizer extends Thread implements Localizer {
 
 	private Localizer odometer;
 	private SharpGP2D12 objectSensor;
@@ -69,7 +69,7 @@ public class MarkovLocalizer implements Localizer, Runnable {
 		
 		try {
 			while (true) {
-				Thread.sleep(30);
+				Thread.sleep(200);
 
 				Pose odometerPose = odometer.getPose();
 				boolean [] observations = new boolean[4];

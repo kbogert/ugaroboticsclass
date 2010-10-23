@@ -36,7 +36,7 @@ public class MoveToHome implements Behavior2 {
 			return false;
 		if (active) {
 			
-			nav.setGoal(0, 0, 20, .2f); 
+			nav.setGoal(0 * Project2b.MAPSCALE, 0 * Project2b.MAPSCALE, 20, .2f); 
 
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));

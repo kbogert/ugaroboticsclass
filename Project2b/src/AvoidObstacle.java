@@ -50,7 +50,7 @@ public class AvoidObstacle implements Behavior2 {
 			float x = distance * (float)Math.cos(pose.heading) + pose.x;
 			float y = distance * (float)Math.sin(pose.heading) + pose.y;
 
-			nav.addObstacle(x, y, 10, 2);
+			nav.addObstacle(x * Project2b.MAPSCALE, y * Project2b.MAPSCALE, 10, 2);
 			
 			try {
 				Thread.sleep(200);
