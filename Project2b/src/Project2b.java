@@ -17,7 +17,8 @@ import com.ridgesoft.robotics.sensors.SharpGP2D12;
 public class Project2b {
 
     private static BehaviorArbiter mArbiter;
-    private static int mState;
+    private static byte mState;
+    private static byte programState;
 	private static SharpGP2D12 objectSensor;
 	private static SharpGP2D12 tableEdgeSensor;
 	private static TableSensor leftTableSensor;
@@ -57,6 +58,11 @@ public class Project2b {
     public static final byte IDENTIFY_HOME = 7;
     public static final byte FINISHED = 8;
     
+    
+    public static final byte PROGRAM_FIND_FIRST_BLOCK = 0;
+    public static final byte PROGRAM_RETURN_FIRST_BLOCK = 1;
+    public static final byte PROGRAM_FIND_SECOND_BLOCK = 2;
+    public static final byte PROGRAM_RETURN_SECOND_BLOCK = 3;
     
     
 	public static void main(String[] args) throws InterruptedException {
@@ -147,7 +153,11 @@ public class Project2b {
         		break;
 
         	case LOOK_AROUND:
-        		mLookAroundBehavior.setActive(true);
+        		if (programState == PROGRAM_FIND_FIRST_BLOCK || programState == PROGRAM_FIND_SECOND_BLOCK)
+        			mLookAroundBehavior.setActive(true);
+        		else {
+        			// activate the drop-behavior here
+        		}
         		break;
         		
         	case EXAMINE_OBJECT:
