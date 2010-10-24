@@ -20,30 +20,30 @@ public class Map {
 	
 	public float getPos(int x,int y,int h) {
 		if (whichMap)
-			return myMap1[x+1][y+1][h];
+			return myMap1[x][y][h];
 		else 
-			return myMap2[x+1][y+1][h];		
+			return myMap2[x][y][h];		
 	}
 
 	public float getNewPos(int x,int y,int h) {
 		if (whichMap)
-			return myMap2[x+1][y+1][h];
+			return myMap2[x][y][h];
 		else 
-			return myMap1[x+1][y+1][h];		
+			return myMap1[x][y][h];		
 	}
 	
 	public void setPos(int x,int y,int h, float prob) {
 		if (whichMap)
-			myMap1[x+1][y+1][h] = prob;
+			myMap1[x][y][h] = prob;
 		else 
-			myMap2[x+1][y+1][h] = prob;		
+			myMap2[x][y][h] = prob;		
 	}
 
 	public void setNewPos(int x,int y,int h, float prob) {
 		if (whichMap)
-			myMap2[x+1][y+1][h] = prob;
+			myMap2[x][y][h] = prob;
 		else 
-			myMap1[x+1][y+1][h] = prob;		
+			myMap1[x][y][h] = prob;		
 	}
 	
 	public void switchMaps() {

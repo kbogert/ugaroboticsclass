@@ -64,111 +64,123 @@ public class MarkovLocalizer extends Thread implements Localizer {
 		 *  4.  Set pose = the most likely location for the robot (keep the highest belief as we go so we don't have to look again)
 		 */
 
+		int counter = 0;
+		lastOdometerReading = odometer.getPose();
+		try {
 		while (true) {
-			Pose odometerPose = odometer.getPose();
-			boolean [] observations = new boolean[4];
-			observations[0] = objectSensor.getDistanceCm() > 7 && objectSensor.getDistanceCm() < 91;
-			observations[1] = tableEdgeSensor.getDistanceCm() > 30;
-			observations[2] = ! leftTableSensor.isOnTable();
-			observations[3] = ! rightTableSensor.isOnTable();
+				IntelliBrain.getLcdDisplay().print(0, "Markov Iter: " + counter);
+				counter ++;
+
+				Pose odometerPose = odometer.getPose();
+				boolean [] observations = new boolean[4];
+				observations[0] = objectSensor.getDistanceCm() > 7 && objectSensor.getDistanceCm() < 91;
+				observations[1] = tableEdgeSensor.getDistanceCm() > 30;
+				observations[2] = ! leftTableSensor.isOnTable();
+				observations[3] = ! rightTableSensor.isOnTable();
 
 
-			// add the delta odometer reading to our pose,
-			// treat the map locations as a gradiant
-			// pose is then 
+				IntelliBrain.getLcdDisplay().print(1, "Read Sensors");
+				// add the delta odometer reading to our pose,
+				// treat the map locations as a gradiant
+				// pose is then 
 
-			float deltax = odometerPose.x - lastOdometerReading.x;
-			float deltay = odometerPose.y - lastOdometerReading.y;
-			float deltah = odometerPose.heading - lastOdometerReading.heading;
-			if (deltah > Math.PI) deltah -= 2 * Math.PI;
-			if (deltah < -Math.PI) deltah += 2 * Math.PI;				
+				float deltax = odometerPose.x - lastOdometerReading.x;
+				float deltay = odometerPose.y - lastOdometerReading.y;
+				float deltah = odometerPose.heading - lastOdometerReading.heading;
+				if (deltah > Math.PI) deltah -= 2 * Math.PI;
+				if (deltah < -Math.PI) deltah += 2 * Math.PI;				
 
-			IntelliBrain.getLcdDisplay().print(0, "CalcTables... ");
+				IntelliBrain.getLcdDisplay().print(1, "CalcTables... ");
 
-			// build a lookup table to limit the amount of gaussian calculations we do
-			float [] xGaussianLookup = new float[(map.getMaxX() - map.getMinX()) * 2];
-			float offset = map.getMinX() - map.getMaxX() + (deltax / Project2b.MAPSCALE);
-			calcGaussianLookupTable(xGaussianLookup, offset, xAxisVariance, xIota);
+				// build a lookup table to limit the amount of gaussian calculations we do
+				float [] xGaussianLookup = new float[(map.getMaxX() - map.getMinX()) * 2];
+				float offset = map.getMinX() - map.getMaxX() + (deltax / Project2b.MAPSCALE);
+				calcGaussianLookupTable(xGaussianLookup, offset, xAxisVariance, xIota);
 
-			float [] yGaussianLookup = new float[(map.getMaxX() - map.getMinX()) * 2];
-			offset = map.getMinY() - map.getMaxY() + (deltay / Project2b.MAPSCALE);
-			calcGaussianLookupTable(yGaussianLookup, offset, yAxisVariance, yIota);
+				float [] yGaussianLookup = new float[(map.getMaxY() - map.getMinY()) * 2];
+				offset = map.getMinY() - map.getMaxY() + (deltay / Project2b.MAPSCALE);
+				calcGaussianLookupTable(yGaussianLookup, offset, yAxisVariance, yIota);
 
-			// this one's a little weird, since there's only half as many possibilities, due to the heading being circular
-			float [] hGaussianLookup = new float[(map.getMaxH() - map.getMinH())];
-			offset = ((map.getMinH() - map.getMaxH()) / 2) - (deltah / ((float)Math.PI / (map.getMaxH() / 2)));
-			calcGaussianLookupTable(hGaussianLookup, offset, headingVariance, hIota);
+				// this one's a little weird, since there's only half as many possibilities, due to the heading being circular
+				float [] hGaussianLookup = new float[(map.getMaxH() - map.getMinH())];
+				offset = ((map.getMinH() - map.getMaxH()) / 2) - (deltah / ((float)Math.PI / (map.getMaxH() / 2)));
+				calcGaussianLookupTable(hGaussianLookup, offset, headingVariance, hIota);
 
 
-			for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
-				IntelliBrain.getLcdDisplay().print(0, "i: " + iprime);
-				for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
-					for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
+				for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
+					for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
+						for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
+							IntelliBrain.getLcdDisplay().print(1, "k: " + kprime);
 
-						// sum up the probability for all possible transitions given the action
+							// sum up the probability for all possible transitions given the action
 
-						float sum = 0.0f;
-						for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
-							for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
-								for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
-									sum += Transition(iprime, jprime, kprime, xGaussianLookup, yGaussianLookup, hGaussianLookup, i, j, k) * map.getPos(i, j, k); 
-
-								}
-							}
-						}
-
-						// set the probability of the current mapobj to the sum
-						map.setNewPos(iprime, jprime, kprime, sum);
-
-					}
-				}
-			}
-
-			float largestSum = 0;
-			int largesti = 0;
-			int largestj = 0;
-			int largestk = 0;
-
-			for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
-				IntelliBrain.getLcdDisplay().print(0, "i: " + iprime);
-				for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
-					for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
-
-						// sum up the probability for all possible observations given the action
-						float sum = 0.0f;
-
-						for (byte o = 0; o < observations.length; o ++) {
+							float sum = 0.0f;
 							for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
 								for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
 									for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
-										sum += Observation(o, observations[o], deltax, deltay, deltah, i, j, k) * map.getNewPos(i, j, k); 
+										sum += Transition(iprime, jprime, kprime, xGaussianLookup, yGaussianLookup, hGaussianLookup, i, j, k) * map.getPos(i, j, k); 
+
 									}
 								}
 							}
-						}
-						if (sum > largestSum) {
-							largestSum = sum;
-							largesti = iprime;
-							largestj = jprime;
-							largestk = kprime;
+
+							// set the probability of the current mapobj to the sum
+							map.setNewPos(iprime, jprime, kprime, sum);
 
 						}
-						// set the probability of the current mapobj to the sum
-						map.setNewPos(iprime, jprime, kprime, sum);
-
 					}
 				}
-			}
 
-			map.switchMaps();
+				float largestSum = 0;
+				int largesti = 0;
+				int largestj = 0;
+				int largestk = 0;
 
-			// update our believed position
+				for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
+					IntelliBrain.getLcdDisplay().print(0, "i: " + iprime);
+					for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
+						for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
 
-			setPose(largestk * ((float)Math.PI /(map.getMaxH() / 2)), largesti, largestj);
+							// sum up the probability for all possible observations given the action
+							float sum = 0.0f;
 
-			IntelliBrain.getLcdDisplay().print(0, "Belief: " + largesti + ", " + largestj);
-			IntelliBrain.getLcdDisplay().print(1, "Heading: " + largestk + ", " + map.getPos(largesti, largestj, largestk));
+							for (byte o = 0; o < observations.length; o ++) {
+								for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
+									for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
+										for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
+											sum += Observation(o, observations[o], deltax, deltay, deltah, i, j, k) * map.getNewPos(i, j, k); 
+										}
+									}
+								}
+							}
+							if (sum > largestSum) {
+								largestSum = sum;
+								largesti = iprime;
+								largestj = jprime;
+								largestk = kprime;
 
+							}
+							// set the probability of the current mapobj to the sum
+							map.setNewPos(iprime, jprime, kprime, sum);
+
+						}
+					}
+				}
+
+				map.switchMaps();
+
+				// update our believed position
+
+				setPose(largestk * ((float)Math.PI /(map.getMaxH() / 2)), largesti, largestj);
+				lastOdometerReading = odometerPose;
+				
+				IntelliBrain.getLcdDisplay().print(0, "Belief: " + largesti + ", " + largestj);
+				IntelliBrain.getLcdDisplay().print(1, "Heading: " + largestk + ", " + map.getPos(largesti, largestj, largestk));
+
+		}
+		} catch (RuntimeException e) {
+			// TODO Auto-generated catch block
+			IntelliBrain.getLcdDisplay().print(1, "Err: " + e.getMessage());
 		}
 	}
 

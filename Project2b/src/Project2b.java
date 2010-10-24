@@ -66,9 +66,6 @@ public class Project2b {
     
     
 	public static void main(String[] args) throws InterruptedException {
-        Display display = IntelliBrain.getLcdDisplay();
-
-    	display.print(0, "Create Sensors");
 
 		objectSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(1), null);
 		tableEdgeSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(2), null);
@@ -84,8 +81,6 @@ public class Project2b {
         Motor rightMotor = new ContinuousRotationServo(IntelliBrain.getServo(2), 
                 true, 14, (DirectionListener) rightEncoder);
         
-    	display.print(0, "Create Navigators");
-
     	Navigator navigator = new DifferentialDriveNavigator(leftMotor,
                 rightMotor, odometer, 8, 6, 25.0f, 0.5f, 0.08f,
                 Thread.MAX_PRIORITY - 2, 50);
@@ -93,8 +88,6 @@ public class Project2b {
         NavigatorWrapper navWrap = new NavigatorWrapper(odometer, navigator);
         MarkovLocalizer localizer = new MarkovLocalizer(odometer, objectSensor, tableEdgeSensor, leftTableSensor, rightTableSensor, map);
         
-    	display.print(0, "Create Behaviors");
-
         mAvoidEdgeBehavior = new AvoidEdge(navWrap, tableEdgeSensor, leftTableSensor, rightTableSensor);
         mAvoidObstacleBehavior = new AvoidObstacle(objectSensor, navWrap, localizer);
         mExamineObjectBehavior = new ExamineObject();
@@ -105,7 +98,6 @@ public class Project2b {
         mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, localizer, map);
         mNavigateBehavior = new Navigate(navWrap, localizer);
         
-
         localizer.start();
 
         mIdentifyHomeBehavior.setActive(true);
@@ -134,7 +126,7 @@ public class Project2b {
 
         mState = IDENTIFY_HOME;
         mIdentifyHomeBehavior.setActive(true);
-        mArbiter.start();
+ //       mArbiter.start();
 
         while (true) {
         	int state;
