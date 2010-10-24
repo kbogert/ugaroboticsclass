@@ -38,7 +38,7 @@ public class Explore implements Behavior2 {
 		if (! enabled)
 			return false;
 		if (active) {
-			
+		
 			// for right now, choose a random direction and distance and try to go there
 			// change this when we get a working map
 			Random random = new Random();
@@ -47,7 +47,8 @@ public class Explore implements Behavior2 {
 			int y = random.nextInt(map.getMaxY() - map.getMinY()) * Project2b.MAPSCALE;
 						
 			nav.setGoal(x, y, 20, .2f);
-						
+			
+			setActive(false);
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
 

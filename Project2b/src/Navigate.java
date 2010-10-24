@@ -38,6 +38,7 @@ public class Navigate implements Behavior2 {
 			return false;
 		
 		if (active) {
+
 			if (thread == null) {
 				thread = new InternalThread(this);
 				thread.start();
@@ -88,6 +89,7 @@ public class Navigate implements Behavior2 {
 				}
 				if (!active)
 					return;
+				IntelliBrain.getLcdDisplay().print(1, "At:" + pose.x + "," + pose.y);
 
 				nav.goForward(Project2b.MAPSCALE, true);
 				if (!active)
@@ -95,11 +97,23 @@ public class Navigate implements Behavior2 {
 
 				pose = loc.getPose();
 				if (nav.atGoal(pose.x * Project2b.MAPSCALE, pose.y * Project2b.MAPSCALE)) {
+					IntelliBrain.getLcdDisplay().print(1, "REACHED GOAL");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+
+					}
 
 					parent.setActive(false);
 					if (listener != null) {
 						listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
 					}
+
+				}
+				
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
 
 				}
 			}
