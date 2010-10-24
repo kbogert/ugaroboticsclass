@@ -1,3 +1,4 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Localizer;
 import com.ridgesoft.robotics.Pose;
 import com.ridgesoft.robotics.sensors.SharpGP2D12;
@@ -39,22 +40,18 @@ public class MarkovLocalizer extends Thread implements Localizer {
 
 	public synchronized void setHeading(float arg0) {
 		myPose = new Pose(arg0, myPose.x, myPose.y);
-		odometer.setPose(myPose);
 	}
 
 	public synchronized void setPose(Pose arg0) {
 		myPose = arg0;
-		odometer.setPose(arg0);
 	}
 
 	public synchronized void setPose(float arg0, float arg1, float arg2) {
 		myPose = new Pose(arg0, arg1, arg2);
-		odometer.setPose(myPose);
 	}
 
 	public synchronized void setPosition(float arg0, float arg1) {
 		myPose = new Pose(myPose.heading, arg0, arg1);
-		odometer.setPose(myPose);
 	}
 
 	public void run() {
@@ -66,111 +63,112 @@ public class MarkovLocalizer extends Thread implements Localizer {
 		 *  3.  Perform a belief update for the sensor readings
 		 *  4.  Set pose = the most likely location for the robot (keep the highest belief as we go so we don't have to look again)
 		 */
-		
-		try {
-			while (true) {
-				Thread.sleep(200);
 
-				Pose odometerPose = odometer.getPose();
-				boolean [] observations = new boolean[4];
-				observations[0] = objectSensor.getDistanceCm() > 7 && objectSensor.getDistanceCm() < 91;
-				observations[1] = tableEdgeSensor.getDistanceCm() > 30;
-				observations[2] = ! leftTableSensor.isOnTable();
-				observations[3] = ! rightTableSensor.isOnTable();
-				
-				
-				// add the delta odometer reading to our pose,
-				// treat the map locations as a gradiant
-				// pose is then 
+		while (true) {
+			Pose odometerPose = odometer.getPose();
+			boolean [] observations = new boolean[4];
+			observations[0] = objectSensor.getDistanceCm() > 7 && objectSensor.getDistanceCm() < 91;
+			observations[1] = tableEdgeSensor.getDistanceCm() > 30;
+			observations[2] = ! leftTableSensor.isOnTable();
+			observations[3] = ! rightTableSensor.isOnTable();
 
-				float deltax = odometerPose.x - lastOdometerReading.x;
-				float deltay = odometerPose.y - lastOdometerReading.y;
-				float deltah = odometerPose.heading - lastOdometerReading.heading;
-				if (deltah > Math.PI) deltah -= 2 * Math.PI;
-				if (deltah < -Math.PI) deltah += 2 * Math.PI;				
-				
-				
-				// build a lookup table to limit the amount of gaussian calculations we do
-				float [] xGaussianLookup = new float[(map.getMaxX() - map.getMinX()) * 2];
-				float offset = map.getMinX() - map.getMaxX() + (deltax / Project2b.MAPSCALE);
-				calcGaussianLookupTable(xGaussianLookup, offset, xAxisVariance, xIota);
 
-				float [] yGaussianLookup = new float[(map.getMaxX() - map.getMinX()) * 2];
-				offset = map.getMinY() - map.getMaxY() + (deltay / Project2b.MAPSCALE);
-				calcGaussianLookupTable(yGaussianLookup, offset, yAxisVariance, yIota);
+			// add the delta odometer reading to our pose,
+			// treat the map locations as a gradiant
+			// pose is then 
 
-				// this one's a little weird, since there's only half as many possibilities, due to the heading being circular
-				float [] hGaussianLookup = new float[(map.getMaxH() - map.getMinH())];
-				offset = ((map.getMinH() - map.getMaxH()) / 2) - (deltah / ((float)Math.PI / (map.getMaxH() / 2)));
-				calcGaussianLookupTable(hGaussianLookup, offset, headingVariance, hIota);
-				
-				
-				for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
-					for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
-						for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
-							
-							// sum up the probability for all possible transitions given the action
+			float deltax = odometerPose.x - lastOdometerReading.x;
+			float deltay = odometerPose.y - lastOdometerReading.y;
+			float deltah = odometerPose.heading - lastOdometerReading.heading;
+			if (deltah > Math.PI) deltah -= 2 * Math.PI;
+			if (deltah < -Math.PI) deltah += 2 * Math.PI;				
 
-							float sum = 0.0f;
+			IntelliBrain.getLcdDisplay().print(0, "CalcTables... ");
+
+			// build a lookup table to limit the amount of gaussian calculations we do
+			float [] xGaussianLookup = new float[(map.getMaxX() - map.getMinX()) * 2];
+			float offset = map.getMinX() - map.getMaxX() + (deltax / Project2b.MAPSCALE);
+			calcGaussianLookupTable(xGaussianLookup, offset, xAxisVariance, xIota);
+
+			float [] yGaussianLookup = new float[(map.getMaxX() - map.getMinX()) * 2];
+			offset = map.getMinY() - map.getMaxY() + (deltay / Project2b.MAPSCALE);
+			calcGaussianLookupTable(yGaussianLookup, offset, yAxisVariance, yIota);
+
+			// this one's a little weird, since there's only half as many possibilities, due to the heading being circular
+			float [] hGaussianLookup = new float[(map.getMaxH() - map.getMinH())];
+			offset = ((map.getMinH() - map.getMaxH()) / 2) - (deltah / ((float)Math.PI / (map.getMaxH() / 2)));
+			calcGaussianLookupTable(hGaussianLookup, offset, headingVariance, hIota);
+
+
+			for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
+				IntelliBrain.getLcdDisplay().print(0, "i: " + iprime);
+				for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
+					for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
+
+						// sum up the probability for all possible transitions given the action
+
+						float sum = 0.0f;
+						for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
+							for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
+								for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
+									sum += Transition(iprime, jprime, kprime, xGaussianLookup, yGaussianLookup, hGaussianLookup, i, j, k) * map.getPos(i, j, k); 
+
+								}
+							}
+						}
+
+						// set the probability of the current mapobj to the sum
+						map.setNewPos(iprime, jprime, kprime, sum);
+
+					}
+				}
+			}
+
+			float largestSum = 0;
+			int largesti = 0;
+			int largestj = 0;
+			int largestk = 0;
+
+			for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
+				IntelliBrain.getLcdDisplay().print(0, "i: " + iprime);
+				for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
+					for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
+
+						// sum up the probability for all possible observations given the action
+						float sum = 0.0f;
+
+						for (byte o = 0; o < observations.length; o ++) {
 							for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
 								for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
 									for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
-										sum += Transition(iprime, jprime, kprime, xGaussianLookup, yGaussianLookup, hGaussianLookup, i, j, k) * map.getPos(i, j, k); 
-										
+										sum += Observation(o, observations[o], deltax, deltay, deltah, i, j, k) * map.getNewPos(i, j, k); 
 									}
 								}
 							}
-							
-							// set the probability of the current mapobj to the sum
-							map.setNewPos(iprime, jprime, kprime, sum);
-							
 						}
+						if (sum > largestSum) {
+							largestSum = sum;
+							largesti = iprime;
+							largestj = jprime;
+							largestk = kprime;
+
+						}
+						// set the probability of the current mapobj to the sum
+						map.setNewPos(iprime, jprime, kprime, sum);
+
 					}
 				}
-				
-				float largestSum = 0;
-				int largesti = 0;
-				int largestj = 0;
-				int largestk = 0;
-				
-				for (int iprime = map.getMinX(); iprime < map.getMaxX(); iprime ++) {
-					for (int jprime = map.getMinY(); jprime < map.getMaxY(); jprime ++) {
-						for (int kprime = map.getMinH(); kprime < map.getMaxH(); kprime ++) {
-							
-							// sum up the probability for all possible observations given the action
-							float sum = 0.0f;
-							
-							for (byte o = 0; o < observations.length; o ++) {
-								for (int i = map.getMinX(); i < map.getMaxX(); i ++) {
-									for (int j = map.getMinY(); j < map.getMaxY(); j ++) {
-										for (int k = map.getMinH(); k < map.getMaxH(); k ++) {
-											sum += Observation(o, observations[o], deltax, deltay, deltah, i, j, k) * map.getNewPos(i, j, k); 
-										}
-									}
-								}
-							}
-							if (sum > largestSum) {
-								largestSum = sum;
-								largesti = iprime;
-								largestj = jprime;
-								largestk = kprime;
-								
-							}
-							// set the probability of the current mapobj to the sum
-							map.setNewPos(iprime, jprime, kprime, sum);
-							
-						}
-					}
-				}
-				
-				map.switchMaps();
-				
-				// update our believed position
-				
-				setPose(largestk * ((float)Math.PI /(map.getMaxH() / 2)), largesti, largestj);
-				
 			}
-		} catch (InterruptedException e) {
+
+			map.switchMaps();
+
+			// update our believed position
+
+			setPose(largestk * ((float)Math.PI /(map.getMaxH() / 2)), largesti, largestj);
+
+			IntelliBrain.getLcdDisplay().print(0, "Belief: " + largesti + ", " + largestj);
+			IntelliBrain.getLcdDisplay().print(1, "Heading: " + largestk + ", " + map.getPos(largesti, largestj, largestk));
+
 		}
 	}
 
