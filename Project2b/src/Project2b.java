@@ -106,14 +106,14 @@ public class Project2b {
 
 
         Behavior2 behaviors[] = new Behavior2[] { 
+        		mIdentifyHomeBehavior,
 //        		mAvoidEdgeBehavior, 
 //        		mAvoidObstacleBehavior, 
+//        		mMoveToHomeBehavior,
 //        		mExamineObjectBehavior,
         		mExploreBehavior,
-        		mIdentifyHomeBehavior,
-//        		mLookAroundBehavior,
-//        		mMoveToHomeBehavior,
 //        		mMoveToObjectBehavior,
+//        		mLookAroundBehavior,
         		mNavigateBehavior
         };
 
@@ -125,8 +125,6 @@ public class Project2b {
         mArbiter = new BehaviorArbiter(behaviors, IntelliBrain
         		.getStatusLed(), 500);
         mArbiter.setPriority(Thread.MAX_PRIORITY - 4);
-
-    	display.print(0, "Start Arbitrator");
 
         mState = IDENTIFY_HOME;
         mIdentifyHomeBehavior.setActive(true);

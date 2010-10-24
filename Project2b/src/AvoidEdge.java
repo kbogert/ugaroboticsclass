@@ -19,6 +19,8 @@ public class AvoidEdge implements Behavior2 {
 	private TableSensor rightRear;
 	private NavigatorWrapper nav;
 	private BehaviorListener listener;
+	private boolean active;
+	private InternalThread thread;
 	
 	AvoidEdge(NavigatorWrapper nav, SharpGP2D12 forward, TableSensor leftRear, TableSensor rightRear) {
 		this.forwardSensor = forward;
@@ -40,12 +42,50 @@ public class AvoidEdge implements Behavior2 {
 			return false;
 		}
 		
+		if (active) {
+			if (thread == null) {
+				nav.stop();
+				thread = new InternalThread(this);
+				thread.start();
+			}
+			return true;
+		}
+		
+		if (thread != null) {
+			thread.setActive(false);
+			thread = null;
+		}
+		
 		if (forwardSensor.getDistanceInches() > 18 ||
 				! leftRear.isOnTable() || ! rightRear.isOnTable()) {
+			return true;
+		}
+		return false;
 			
-			nav.stop();
-			
-			
+	}
+
+	public void setActive(boolean arg0) {
+		active = arg0;
+		if (thread != null)
+			thread.setActive(arg0);
+	}
+
+	
+	
+	private class InternalThread extends Thread {
+		private AvoidEdge parent;
+		private boolean active = true;
+		
+		public InternalThread(AvoidEdge p) {
+			parent = p;
+		}
+
+		public void setActive(boolean b) {
+			active = b;
+		}
+		
+		
+		public void run() {
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
@@ -75,15 +115,10 @@ public class AvoidEdge implements Behavior2 {
 				
 			}
 			
+			if (listener != null)
+				listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+
 			
 		}
-		if (listener != null)
-			listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
-		
-		return false;
 	}
-
-	public void setActive(boolean arg0) {
-	}
-
 }

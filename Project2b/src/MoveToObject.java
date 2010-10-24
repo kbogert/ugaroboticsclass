@@ -21,6 +21,7 @@ public class MoveToObject implements Behavior2 {
 	private SharpGP2D12 objectSensor;
 	private Localizer localizer;
 	private Map myMap;
+	private InternalThread thread;
 	
 	MoveToObject(NavigatorWrapper n, SharpGP2D12 objectSensor, Localizer l, Map m) {
 		nav = n;
@@ -42,56 +43,18 @@ public class MoveToObject implements Behavior2 {
 			return false;
 		
 		if (active) {
-			// all stop
-			nav.stop();
-			
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
+			if (thread == null) {
+				// all stop
+				nav.stop();
+				thread = new InternalThread(this);
+				thread.start();
 			}
-			// make sure we're still pointed at the object, if not:
-				// search a little to the left
-				// if not there, search a little to the right
-				// if not there, return as this behavior is done
-			
-			float distance = objectSensor.getDistanceInches();
-			
-			if (distance > 24) {
-				nav.turn((float)Math.toRadians(5), true);
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-				}	
-				distance = objectSensor.getDistanceInches();
-				
-				if (distance > 24) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-					}
-					nav.turn((float)Math.toRadians(-10), true);
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException e) {
-					}
-					distance = objectSensor.getDistanceInches();
-					if (distance > 24) {
-						listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
-						
-						setActive(false);
-						return false;
-					}
-				}
-			}
-			
-			// move forward towards the object, when we're < 4 inches stop and return
-			distance = objectSensor.getDistanceInches();
-			nav.goForward(distance - 4, true);
-			
-			listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
-			
-			setActive(false);
-			return false;
+
+			return true;
+		}
+		if (thread != null) {
+			thread.setActive(false);
+			thread = null;
 		}
 		float distance = objectSensor.getDistanceInches();
 		if (distance <= 24) {
@@ -123,6 +86,83 @@ public class MoveToObject implements Behavior2 {
 
 	public void setActive(boolean arg0) {
 		active = arg0;
+		if (thread != null)
+			thread.setActive(arg0);
+	}
+	
+	private class InternalThread extends Thread {
+		private MoveToObject parent;
+		private boolean active = true;
+		
+		public InternalThread(MoveToObject p) {
+			parent = p;
+		}
+
+		public void setActive(boolean b) {
+			active = b;
+		}
+
+		public void run() {
+			
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+			}
+			if (!active)
+				return;
+			// make sure we're still pointed at the object, if not:
+				// search a little to the left
+				// if not there, search a little to the right
+				// if not there, return as this behavior is done
+			
+			float distance = objectSensor.getDistanceInches();
+			
+			if (distance > 24) {
+				nav.turn((float)Math.toRadians(5), true);
+				if (!active)
+					return;
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+				}	
+				if (!active)
+					return;
+				distance = objectSensor.getDistanceInches();
+				
+				if (distance > 24) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+					}
+					if (!active)
+						return;
+					nav.turn((float)Math.toRadians(-10), true);
+					if (!active)
+						return;
+					try {
+						Thread.sleep(50);
+					} catch (InterruptedException e) {
+					}
+					distance = objectSensor.getDistanceInches();
+					if (distance > 24) {
+						listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+						
+						parent.setActive(false);
+					}
+				}
+			}
+			
+			// move forward towards the object, when we're < 4 inches stop and return
+			distance = objectSensor.getDistanceInches();
+			nav.goForward(distance - 4, true);
+			if (!active)
+				return;
+		
+			listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+			
+			parent.setActive(false);
+		}
+		
 	}
 
 }

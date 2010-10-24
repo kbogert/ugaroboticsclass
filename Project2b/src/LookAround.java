@@ -16,6 +16,7 @@ public class LookAround implements Behavior2 {
 	private BehaviorListener listener;
 	private int turnLeft = 360;
 	private NavigatorWrapper nav;
+	private InternalThread thread;
 	
 	public LookAround(NavigatorWrapper nav) {
 		this.nav = nav;
@@ -34,22 +35,60 @@ public class LookAround implements Behavior2 {
 			return false;
 		
 		if (active ) {
-			
-			if (turnLeft <= 0) {
-				turnLeft = 360;
-				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
-				setActive(false);
-				return false;
+			if (thread == null) {
+				thread = new InternalThread(this);
+				thread.start();
 			}
-	
-			nav.turn((float)Math.toRadians(5), true);
+
+			return true;
 			
 		}
-		return true;
+		if (thread != null) {
+			thread.setActive(false);
+			thread = null;
+		}
+		
+		
+		return false;
 	}
 
 	public void setActive(boolean arg0) {
 		active = arg0;
+		if (thread != null)
+			thread.setActive(arg0);
 	}
 
+	private class InternalThread extends Thread {
+		private LookAround parent;
+		private boolean active = true;
+		
+		public InternalThread(LookAround p) {
+			parent = p;
+		}
+
+		public void setActive(boolean b) {
+			active = b;
+		}
+		
+		public void run() {
+			try {
+				while(active) {
+					if (turnLeft <= 0) {
+						turnLeft = 360;
+						listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+						parent.setActive(false);
+						return;
+					}
+
+					nav.turn((float)Math.toRadians(5), true);
+					turnLeft -= 5;
+
+					Thread.sleep(30);
+
+				}
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+		
 }

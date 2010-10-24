@@ -50,8 +50,7 @@ public class Explore implements Behavior2 {
 						
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
-		
-			setActive(false);
+
 			return false;
 		}
 		
