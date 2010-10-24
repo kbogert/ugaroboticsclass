@@ -19,6 +19,8 @@ public class AvoidObstacle implements Behavior2 {
 	private SharpGP2D12 objectSensor;
 	private NavigatorWrapper nav;
 	private Localizer loc;
+	private boolean active;
+	private InternalThread thread;
 	
 	public void setEnabled(boolean arg0) {
 		enabled = arg0;
@@ -39,10 +41,46 @@ public class AvoidObstacle implements Behavior2 {
 			return false;
 		}
 		
+		if (active) {
+			if (thread == null) {
+				nav.stop();
+				thread = new InternalThread(this);
+				thread.start();
+			}
+			return true;
+		}
+		if (thread != null) {
+			thread.setActive(false);
+			thread = null;
+		}
+		
 		if (Project2b.getCurrentState() == Project2b.NAVIGATE && objectSensor.getDistanceInches() < 6) {
+			return true;
 
-			nav.stop();
-			
+		}
+		return false;
+		
+	}
+
+	public void setActive(boolean arg0) {
+		active = arg0;
+		if (thread != null)
+			thread.setActive(arg0);
+	}
+	
+	private class InternalThread extends Thread {
+		private AvoidObstacle parent;
+		private boolean active = true;
+		
+		public InternalThread(AvoidObstacle p) {
+			parent = p;
+		}
+
+		public void setActive(boolean b) {
+			active = b;
+		}
+		
+		public void run() {
 			// add an obstacle to nav
 			float distance = (objectSensor.getDistanceInches() / Project2b.MAPSCALE);
 			
@@ -59,14 +97,9 @@ public class AvoidObstacle implements Behavior2 {
 			}
 			
 			if (listener != null)
-				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
+				listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+			
+			parent.setActive(false);
 		}
-		return false;
-		
 	}
-
-	public void setActive(boolean arg0) {
-
-	}
-
 }

@@ -18,6 +18,7 @@ public class Navigate implements Behavior2 {
 	private BehaviorListener listener;
 	private NavigatorWrapper nav;
 	private Localizer loc;
+	private InternalThread thread;
 	
 	public Navigate(NavigatorWrapper nav, Localizer loc) {
 		this.nav = nav;
@@ -37,34 +38,72 @@ public class Navigate implements Behavior2 {
 			return false;
 		
 		if (active) {
-			// Turn to where the navigatorWrapper says, then go forward 1 unit
-			Pose pose = loc.getPose();
-			float heading = nav.getHeadingFrom(pose.x, pose.y);
-			
-			float diff = Math.abs(heading - pose.heading);
-			
-			if (diff > 0.1f) {
-				nav.stop();				
-				nav.turn(heading - pose.heading, true);
+			if (thread == null) {
+				thread = new InternalThread(this);
+				thread.start();
 			}
 			
-			nav.goForward(Project2b.MAPSCALE, true);
-			
-			pose = loc.getPose();
-			if (nav.atGoal(pose.x * Project2b.MAPSCALE, pose.y * Project2b.MAPSCALE)) {
-				if (listener != null) {
-					listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
-				}
-				setActive(false);
-				
-			}
+			return true;
+		}
+		if (thread != null) {
+			thread.setActive(false);
+			thread = null;
 		}
 		return false;
 	}
 
 	public void setActive(boolean arg0) {
 		active = arg0;
+		if (thread != null)
+			thread.setActive(arg0);
 		
+	}
+	
+	private class InternalThread extends Thread {
+		private Navigate parent;
+		private boolean active = true;
+		
+		public InternalThread(Navigate p) {
+			parent = p;
+		}
+
+		public void setActive(boolean b) {
+			active = b;
+		}
+		
+		public void run() {
+			while (active) {
+				// Turn to where the navigatorWrapper says, then go forward 1 unit
+				Pose pose = loc.getPose();
+				float heading = nav.getHeadingFrom(pose.x, pose.y);
+
+				float diff = Math.abs(heading - pose.heading);
+
+				if (diff > 0.1f) {
+					nav.stop();			
+					if (!active)
+						return;
+
+					nav.turn(heading - pose.heading, true);
+				}
+				if (!active)
+					return;
+
+				nav.goForward(Project2b.MAPSCALE, true);
+				if (!active)
+					return;
+
+				pose = loc.getPose();
+				if (nav.atGoal(pose.x * Project2b.MAPSCALE, pose.y * Project2b.MAPSCALE)) {
+
+					parent.setActive(false);
+					if (listener != null) {
+						listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+					}
+
+				}
+			}
+		}
 	}
 
 }
