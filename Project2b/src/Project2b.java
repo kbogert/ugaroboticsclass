@@ -1,5 +1,4 @@
 import com.ridgesoft.intellibrain.IntelliBrain;
-import com.ridgesoft.io.Display;
 import com.ridgesoft.robotics.AnalogShaftEncoder;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorArbiter;
@@ -37,8 +36,8 @@ public class Project2b {
     
     private static final Object mSemaphore = new Object();
     private static final BehaviorListener mListener = new Listener();
-    public static int MAPSCALE = 6;  // size of each map square in inches (along a side)
-    public static Map map = new Map(8, 14, 8); // table size is 4ft x 7ft, square size is 6"x6"
+    public static int MAPSCALE = 1;  // size of each map square in inches (along a side)
+    public static Map map = new Map(48, 84); // table size is 4ft x 7ft, square size is 6"x6"
 	
     private static byte robotState;
     public static byte getCurrentState() {
@@ -86,20 +85,17 @@ public class Project2b {
                 Thread.MAX_PRIORITY - 2, 50);
 
         NavigatorWrapper navWrap = new NavigatorWrapper(odometer, navigator);
-        MarkovLocalizer localizer = new MarkovLocalizer(odometer, objectSensor, tableEdgeSensor, leftTableSensor, rightTableSensor, map);
         
         mAvoidEdgeBehavior = new AvoidEdge(navWrap, tableEdgeSensor, leftTableSensor, rightTableSensor);
-        mAvoidObstacleBehavior = new AvoidObstacle(objectSensor, navWrap, localizer);
+        mAvoidObstacleBehavior = new AvoidObstacle(objectSensor, navWrap, odometer);
         mExamineObjectBehavior = new ExamineObject();
         mExploreBehavior = new Explore(navWrap, map);
         mIdentifyHomeBehavior = new IdentifyHome(navigator, map);
         mLookAroundBehavior = new LookAround(navWrap);
         mMoveToHomeBehavior = new MoveToHome(navWrap);
-        mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, localizer, map);
-        mNavigateBehavior = new Navigate(navWrap, localizer);
+        mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, odometer, map);
+        mNavigateBehavior = new Navigate(navWrap, odometer);
         
-        localizer.start();
-
         mIdentifyHomeBehavior.setActive(true);
 
 

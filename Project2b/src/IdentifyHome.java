@@ -49,7 +49,6 @@ public class IdentifyHome implements Behavior2 {
 			start.setY(0);
 			start.setH(0);
 			start.setType(MapObj.HOME);
-			map.setPos(0, 0, 0, 1.0f);
 			hasRun = true;
 			
 			if (listener != null)
