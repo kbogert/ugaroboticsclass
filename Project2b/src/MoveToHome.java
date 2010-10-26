@@ -1,8 +1,6 @@
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
-import com.ridgesoft.robotics.Localizer;
-import com.ridgesoft.robotics.Pose;
 
 
 /**
