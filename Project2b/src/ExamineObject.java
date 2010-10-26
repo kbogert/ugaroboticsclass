@@ -32,10 +32,11 @@ public class ExamineObject implements Behavior2 {
 			return false;
 		
 		if (active) {
-			// use the color tracking to center the object in view, allow the measurements from the cmucam to control left/right/forward movements
 			
+			// the cmucam has been set to only track the color (white) of our block, if this behavior is activated
+			// and there is no significant tracking data, we either missed the block or it's the wrong color
 			
-			// add the object to the map and nav
+			// if we found the block, maneuver using the camera's data to get it into the right position for pickup
 			
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
