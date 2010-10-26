@@ -101,13 +101,13 @@ public class Project2b {
 
         Behavior2 behaviors[] = new Behavior2[] { 
         		mIdentifyHomeBehavior,
-//        		mAvoidEdgeBehavior, 
-//        		mAvoidObstacleBehavior, 
-//        		mMoveToHomeBehavior,
-//        		mExamineObjectBehavior,
+        		mAvoidEdgeBehavior, 
+        		mAvoidObstacleBehavior, 
+        		mMoveToHomeBehavior,
+        		mExamineObjectBehavior,
         		mExploreBehavior,
-//        		mMoveToObjectBehavior,
-//        		mLookAroundBehavior,
+        		mMoveToObjectBehavior,
+        		mLookAroundBehavior,
         		mNavigateBehavior
         };
 

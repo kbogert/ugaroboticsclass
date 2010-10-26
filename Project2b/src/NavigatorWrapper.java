@@ -1,4 +1,3 @@
-import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Localizer;
 import com.ridgesoft.robotics.Navigator;
 
