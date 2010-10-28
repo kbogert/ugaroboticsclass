@@ -39,6 +39,8 @@ public class LookAround implements Behavior2 {
 			if (thread == null) {
 				thread = new InternalThread(this);
 				thread.start();
+			} else if (! thread.isAlive() || thread.isInterrupted()) {
+				return false;
 			}
 
 			return true;
@@ -50,7 +52,7 @@ public class LookAround implements Behavior2 {
 		}
 		
 		
-		return false;
+		return Project2b.getCurrentState() == Project2b.LOOK_AROUND && (Project2b.getProgramState() == Project2b.PROGRAM_FIND_FIRST_BLOCK || Project2b.getProgramState() == Project2b.PROGRAM_FIND_SECOND_BLOCK);
 	}
 
 	public void setActive(boolean arg0) {
@@ -87,10 +89,18 @@ public class LookAround implements Behavior2 {
 					nav.turn((float)Math.PI / 12, true);
 					turnLeft -= 30;
 
-					Thread.sleep(30);
+					Thread.sleep(250);
 
 				}
 			} catch (InterruptedException e) {
+				IntelliBrain.getLcdDisplay().print(1, "CRASH: Look Arnd");
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e1) {
+				}
+				
+			} finally {
+				parent.setActive(false);
 			}
 		}
 	}

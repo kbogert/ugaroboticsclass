@@ -48,6 +48,8 @@ public class AvoidEdge implements Behavior2 {
 				nav.stop();
 				thread = new InternalThread(this);
 				thread.start();
+			} else if (! thread.isAlive() || thread.isInterrupted() ) {
+				return false;
 			}
 			return true;
 		}
@@ -56,9 +58,14 @@ public class AvoidEdge implements Behavior2 {
 			thread.setActive(false);
 			thread = null;
 		}
-		
-		if (forwardSensor.getDistanceInches() > 18 ||
-				! leftRear.isOnTable() || ! rightRear.isOnTable()) {
+
+		if (Project2b.getProgramState() == Project2b.PROGRAM_RETURN_FIRST_BLOCK || Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK)
+			return false;
+			
+		forwardSensor.ping();
+		IntelliBrain.getLcdDisplay().print(1, "Edge: " + forwardSensor.getDistanceInches());
+		if (forwardSensor.getDistanceInches() > 18 ) {
+			
 			return true;
 		}
 		return false;
@@ -88,42 +95,50 @@ public class AvoidEdge implements Behavior2 {
 		
 		public void run() {
 			
-			IntelliBrain.getLcdDisplay().print(0, "Avoid Edge");
-			
-			Project2b.setCurrentState(Project2b.AVOID);
-			
 			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-
-			}
-
-			// if we detected the edge in front of us, backup
-			if (forwardSensor.getDistanceInches() > 18) {
+				IntelliBrain.getLcdDisplay().print(0, "Avoid Edge");
 				
-				// if both, turn away from the rear detection
-				if (! leftRear.isOnTable()) {
-					
-					nav.turn((float)(Math.PI / 2), true);
-					
-				} else if ( ! rightRear.isOnTable()) {
+				Project2b.setCurrentState(Project2b.AVOID);
+				
+				Thread.sleep(200);
 
-					nav.turn(-(float)(Math.PI / 2), true);
+				
+
+				// if we detected the edge in front of us, backup
+				forwardSensor.ping();
+				if (forwardSensor.getDistanceInches() > 18) {
+					
+					// if both, turn away from the rear detection
+					if (! leftRear.isOnTable()) {
+						
+						nav.turn((float)(Math.PI / 2), true);
+						
+					} else if ( ! rightRear.isOnTable()) {
+
+						nav.turn(-(float)(Math.PI / 2), true);
+						
+					} else {
+						nav.goBackward(4, true);
+					}
 					
 				} else {
-					nav.goBackward(4, true);
+					// if we detected the edge in back, Move Forward
+					
+					nav.goForward(3, true);
+					
 				}
 				
-			} else {
-				// if we detected the edge in back, Move Forward
-				
-				nav.goForward(3, true);
-				
+			} catch (Exception e) {
+				IntelliBrain.getLcdDisplay().print(1, "CRASH: Avd Edge");
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e1) {
+				}
+			} finally {
+				parent.setActive(false);
+				if (listener != null)
+					listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
 			}
-			
-			parent.setActive(false);
-			if (listener != null)
-				listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
 
 			
 		}

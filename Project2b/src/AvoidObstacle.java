@@ -47,6 +47,8 @@ public class AvoidObstacle implements Behavior2 {
 				nav.stop();
 				thread = new InternalThread(this);
 				thread.start();
+			} else if (! thread.isAlive() || thread.isInterrupted()) {
+				return false;
 			}
 			return true;
 		}
@@ -55,7 +57,8 @@ public class AvoidObstacle implements Behavior2 {
 			thread = null;
 		}
 		
-		if (Project2b.getCurrentState() == Project2b.NAVIGATE && objectSensor.getDistanceInches() < 6) {
+		objectSensor.ping();
+		if (Project2b.getCurrentState() == Project2b.NAVIGATE && objectSensor.getDistanceInches() < 6 && objectSensor.getDistanceInches() > 0) {
 			return true;
 
 		}
@@ -82,28 +85,35 @@ public class AvoidObstacle implements Behavior2 {
 		}
 		
 		public void run() {
-			IntelliBrain.getLcdDisplay().print(0, "Avoid Obstacle");
-			Project2b.setCurrentState(Project2b.AVOID);
-
-			// add an obstacle to nav
-			float distance = (objectSensor.getDistanceInches() / Project2b.MAPSCALE);
-			
-			Pose pose = loc.getPose();
-			float x = distance * (float)Math.cos(pose.heading) + pose.x;
-			float y = distance * (float)Math.sin(pose.heading) + pose.y;
-
-			nav.addObstacle(x * Project2b.MAPSCALE, y * Project2b.MAPSCALE, 10, 2);
-			
 			try {
+				IntelliBrain.getLcdDisplay().print(0, "Avoid Obstacle");
+				Project2b.setCurrentState(Project2b.AVOID);
+
+				// add an obstacle to nav
+				objectSensor.ping();
+				float distance = (objectSensor.getDistanceInches() / Project2b.MAPSCALE);
+				
+				Pose pose = loc.getPose();
+				float x = distance * (float)Math.cos(pose.heading) + pose.x;
+				float y = distance * (float)Math.sin(pose.heading) + pose.y;
+
+				nav.addObstacle(x * Project2b.MAPSCALE, y * Project2b.MAPSCALE, 10, 2);
+				
 				Thread.sleep(200);
-			} catch (InterruptedException e) {
 
+				parent.setActive(false);
+				
+				if (listener != null)
+					listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+			} catch (Exception e) {
+				IntelliBrain.getLcdDisplay().print(1, "CRASH: Avd Obst");
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e1) {
+				}
+			} finally {
+				parent.setActive(false);
 			}
-
-			parent.setActive(false);
-			
-			if (listener != null)
-				listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
 			
 		}
 	}

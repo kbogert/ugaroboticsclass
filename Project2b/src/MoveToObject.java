@@ -49,6 +49,8 @@ public class MoveToObject implements Behavior2 {
 				nav.stop();
 				thread = new InternalThread(this);
 				thread.start();
+			} else if (! thread.isAlive() || thread.isInterrupted()) {
+				return false;
 			}
 
 			return true;
@@ -57,10 +59,15 @@ public class MoveToObject implements Behavior2 {
 			thread.setActive(false);
 			thread = null;
 		}
+
+		if (Project2b.getProgramState() == Project2b.PROGRAM_RETURN_FIRST_BLOCK || Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK)
+			return false;
+			
+		objectSensor.ping();
 		float distance = objectSensor.getDistanceInches();
-		if (distance <= 24) {
+		if (distance <= 18 && distance > 0) {
 			// detected an object, check if we already have seen it
-			distance = distance / Project2b.MAPSCALE;
+/*			distance = distance / Project2b.MAPSCALE;
 			Pose pose = localizer.getPose();			
 			
 			int targetX = Math.round(distance * (float)Math.cos(pose.heading) + pose.x);
@@ -80,6 +87,10 @@ public class MoveToObject implements Behavior2 {
 			}
 			
 			return ! found;
+			*/
+//			IntelliBrain.getLcdDisplay().print(0, "Object at " + distance);
+
+			return true;
 		}
 		
 		return false;
@@ -93,10 +104,11 @@ public class MoveToObject implements Behavior2 {
 	
 	private class InternalThread extends Thread {
 		private MoveToObject parent;
-		private boolean active = true;
+		private boolean active;
 		
 		public InternalThread(MoveToObject p) {
 			parent = p;
+			active = true;
 		}
 
 		public void setActive(boolean b) {
@@ -104,66 +116,84 @@ public class MoveToObject implements Behavior2 {
 		}
 
 		public void run() {
-			IntelliBrain.getLcdDisplay().print(0, "Move To Object");
-			Project2b.setCurrentState(Project2b.MOVE_TO_OBJECT);
-
+			boolean notifiedListener = false;
+			
 			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-			}
-			if (!active)
-				return;
-			// make sure we're still pointed at the object, if not:
-				// search a little to the left
-				// if not there, search a little to the right
-				// if not there, return as this behavior is done
-			
-			float distance = objectSensor.getDistanceInches();
-			
-			if (distance > 24) {
-				nav.turn((float)Math.toRadians(5), true);
-				if (!active)
-					return;
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-				}	
-				if (!active)
-					return;
-				distance = objectSensor.getDistanceInches();
-				
-				if (distance > 24) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-					}
-					if (!active)
-						return;
-					nav.turn((float)Math.toRadians(-10), true);
-					if (!active)
-						return;
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException e) {
-					}
-					distance = objectSensor.getDistanceInches();
-					if (distance > 24) {
-						parent.setActive(false);
+				IntelliBrain.getLcdDisplay().print(0, "Move To Object");
+				Project2b.setCurrentState(Project2b.MOVE_TO_OBJECT);
 
-						listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+				
+				Thread.sleep(200);
+				
+				if (!active)
+					return;
+				// make sure we're still pointed at the object, if not:
+					// search a little to the left
+					// if not there, search a little to the right
+					// if not there, return as this behavior is done
+				
+				objectSensor.ping();
+				float distance = objectSensor.getDistanceInches();
+				
+				if (distance > 18 || distance < 0) {
+
+					nav.turn((float)Math.PI / 12, true);
+					if (!active)
+						return;
+
+					Thread.sleep(50);
+	
+					if (!active)
+						return;
+					
+					objectSensor.ping();
+					distance = objectSensor.getDistanceInches();
+					
+					if (distance > 18 || distance < 0) {
+						
+						Thread.sleep(100);
+
+						if (!active)
+							return;
+						nav.turn((float)Math.PI / -6, true);
+						if (!active)
+							return;
+					
+						objectSensor.ping();
+						distance = objectSensor.getDistanceInches();
+						if (distance > 18 || distance < 0) {
+							
+							parent.setActive(false);
+
+							listener.behaviorEvent(new BehaviorEvent(parent, -1));
+							notifiedListener = true;
+							
+
+							return;
+						}
 					}
 				}
+				
+				// move forward towards the object, when we're < 4 inches stop and return
+				distance = objectSensor.getDistanceInches();
+				nav.goForward(distance - 3, true);
+				if (!active)
+					return;
+
+				parent.setActive(false);
+				
+				listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+				notifiedListener = true;
+			} catch (Exception e) {
+				IntelliBrain.getLcdDisplay().print(1, "CRASH: Move To Object");
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e1) {
+				}
+				parent.setActive(false);
+				if (!notifiedListener)
+					listener.behaviorEvent(new BehaviorEvent(parent, -1));
 			}
-			
-			// move forward towards the object, when we're < 4 inches stop and return
-			distance = objectSensor.getDistanceInches();
-			nav.goForward(distance - 4, true);
-			if (!active)
-				return;
-			
-			parent.setActive(false);
-			
-			listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
 			
 
 		}

@@ -71,9 +71,10 @@ public class PutdownObject implements Behavior2 {
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));			
 			
+			return false;
 			
 		}
-		return false;
+		return Project2b.getCurrentState() == Project2b.LOOK_AROUND && ! (Project2b.getProgramState() == Project2b.PROGRAM_FIND_FIRST_BLOCK || Project2b.getProgramState() == Project2b.PROGRAM_FIND_SECOND_BLOCK);
 	}
 
 	public void setActive(boolean arg0) {
