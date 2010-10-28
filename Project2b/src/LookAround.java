@@ -1,3 +1,4 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -73,6 +74,8 @@ public class LookAround implements Behavior2 {
 		public void run() {
 			try {
 				while(active) {
+					IntelliBrain.getLcdDisplay().print(0, "Look Around");
+
 					if (turnLeft <= 0) {
 						turnLeft = 360;
 						listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));

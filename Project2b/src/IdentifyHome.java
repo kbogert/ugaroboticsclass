@@ -1,3 +1,4 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -41,7 +42,8 @@ public class IdentifyHome implements Behavior2 {
 			return false;
 	
 		if (! hasRun) {
-			
+			IntelliBrain.getLcdDisplay().print(0, "Identify Home");
+
 //			nav.moveTo(0, 0, true);
 			MapObj start = new MapObj();
 			start.setX(0);

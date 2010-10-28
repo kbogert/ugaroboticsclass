@@ -1,3 +1,4 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -81,6 +82,8 @@ public class AvoidObstacle implements Behavior2 {
 		}
 		
 		public void run() {
+			IntelliBrain.getLcdDisplay().print(0, "Avoid Obstacle");
+
 			// add an obstacle to nav
 			float distance = (objectSensor.getDistanceInches() / Project2b.MAPSCALE);
 			

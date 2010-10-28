@@ -1,5 +1,6 @@
 import java.util.Random;
 
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -36,7 +37,8 @@ public class Explore implements Behavior2 {
 		if (! enabled)
 			return false;
 		if (active) {
-		
+			IntelliBrain.getLcdDisplay().print(0, "Explore");
+
 			// for right now, choose a random direction and distance and try to go there
 			// change this when we get a working map
 			Random random = new Random();

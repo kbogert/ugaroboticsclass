@@ -1,3 +1,4 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -86,6 +87,9 @@ public class AvoidEdge implements Behavior2 {
 		
 		
 		public void run() {
+			
+			IntelliBrain.getLcdDisplay().print(0, "Avoid Edge");
+
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
@@ -93,7 +97,7 @@ public class AvoidEdge implements Behavior2 {
 			}
 
 			// if we detected the edge in front of us, backup
-			if (forwardSensor.getDistanceInches() > 12) {
+			if (forwardSensor.getDistanceInches() > 18) {
 				
 				// if both, turn away from the rear detection
 				if (! leftRear.isOnTable()) {

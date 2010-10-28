@@ -1,3 +1,4 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -31,7 +32,8 @@ public class PickupObject implements Behavior2 {
 			return false;
 		
 		if (active) {
-			
+			IntelliBrain.getLcdDisplay().print(0, "Pickup Obj");
+
 			// grab the object in front of us, then raise it up
 			
 			grabMotor.setPower(30);
@@ -54,6 +56,8 @@ public class PickupObject implements Behavior2 {
 
 			raiseMotor.stop();
 
+			setActive(false);
+			
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));			
 			

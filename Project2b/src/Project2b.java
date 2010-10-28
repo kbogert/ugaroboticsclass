@@ -11,6 +11,7 @@ import com.ridgesoft.robotics.Motor;
 import com.ridgesoft.robotics.Navigator;
 import com.ridgesoft.robotics.OdometricLocalizer;
 import com.ridgesoft.robotics.sensors.SharpGP2D12;
+import com.ridgesoft.robotics.sensors.CMUcam.CMUcam2;
 
 
 public class Project2b {
@@ -33,16 +34,17 @@ public class Project2b {
     private static Behavior2 mMoveToHomeBehavior;
     private static Behavior2 mMoveToObjectBehavior;
     private static Behavior2 mNavigateBehavior;
+    private static Behavior2 mPickupObjectBehavior;
+    private static Behavior2 mPutdownObjectBehavior;
     
     private static final Object mSemaphore = new Object();
     private static final BehaviorListener mListener = new Listener();
     public static int MAPSCALE = 1;  // size of each map square in inches (along a side)
     public static Map map = new Map(48, 84); // table size is 4ft x 7ft, square size is 6"x6"
 	
-    private static byte robotState;
     public static byte getCurrentState() {
     	synchronized(mSemaphore) {
-    		return robotState;
+    		return mState;
     		
     	}
     }
@@ -64,10 +66,10 @@ public class Project2b {
     public static final byte PROGRAM_RETURN_SECOND_BLOCK = 3;
     
     
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws Exception {
 
-		objectSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(1), null);
-		tableEdgeSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(2), null);
+		objectSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(2), null);
+		tableEdgeSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(1), null);
 		leftTableSensor = new TableSensor(IntelliBrain.getAnalogInput(6));
 		rightTableSensor = new TableSensor(IntelliBrain.getAnalogInput(7));
 		AnalogShaftEncoder leftEncoder = new AnalogShaftEncoder(IntelliBrain.getAnalogInput(5), 250, 750, 30, Thread.MAX_PRIORITY);
@@ -90,16 +92,19 @@ public class Project2b {
                 Thread.MAX_PRIORITY - 2, 50);
 
         NavigatorWrapper navWrap = new NavigatorWrapper(odometer, navigator);
-        
+        CMUcam2 camera = new CMUcam2(IntelliBrain.getCom2(), 115200);
+
         mAvoidEdgeBehavior = new AvoidEdge(navWrap, tableEdgeSensor, leftTableSensor, rightTableSensor);
         mAvoidObstacleBehavior = new AvoidObstacle(objectSensor, navWrap, odometer);
-        mExamineObjectBehavior = new ExamineObject();
+        mExamineObjectBehavior = new ExamineObject(navWrap, camera);
         mExploreBehavior = new Explore(navWrap, map);
         mIdentifyHomeBehavior = new IdentifyHome(navigator, map);
         mLookAroundBehavior = new LookAround(navWrap);
         mMoveToHomeBehavior = new MoveToHome(navWrap);
         mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, odometer, map);
         mNavigateBehavior = new Navigate(navWrap, odometer);
+        mPickupObjectBehavior = new PickupObject(grabMotor, raiseMotor);
+        mPutdownObjectBehavior = new PutdownObject(grabMotor, raiseMotor, navWrap);
         
         mIdentifyHomeBehavior.setActive(true);
 
@@ -110,6 +115,8 @@ public class Project2b {
         		mAvoidObstacleBehavior, 
         		mMoveToHomeBehavior,
         		mExamineObjectBehavior,
+        		mPickupObjectBehavior,
+        		mPutdownObjectBehavior,
         		mExploreBehavior,
         		mMoveToObjectBehavior,
         		mLookAroundBehavior,
@@ -127,7 +134,7 @@ public class Project2b {
 
         mState = IDENTIFY_HOME;
         mIdentifyHomeBehavior.setActive(true);
- //       mArbiter.start();
+        mArbiter.start();
 
         while (true) {
         	int state;
@@ -149,12 +156,15 @@ public class Project2b {
         		if (programState == PROGRAM_FIND_FIRST_BLOCK || programState == PROGRAM_FIND_SECOND_BLOCK)
         			mLookAroundBehavior.setActive(true);
         		else {
-        			// activate the drop-behavior here
+        			mPutdownObjectBehavior.setActive(true);
         		}
         		break;
         		
         	case EXAMINE_OBJECT:
         		mExamineObjectBehavior.setActive(true);
+        		break;
+        	case MOVE_TO_HOME:
+        		mMoveToHomeBehavior.setActive(true);
         		break;
         		
         	case FINISHED:
@@ -203,7 +213,26 @@ public class Project2b {
                         else if (event.behavior == mMoveToObjectBehavior) {
                         	mState = EXAMINE_OBJECT;
                         }
+                        else if (event.behavior == mPickupObjectBehavior) {
+                        	mState = MOVE_TO_HOME;
+                        	if (programState == PROGRAM_FIND_FIRST_BLOCK) {
+                        		programState = PROGRAM_RETURN_FIRST_BLOCK;
+                        	} else {
+                        		programState = PROGRAM_RETURN_SECOND_BLOCK;
+                        	}
+                        }
+                        else if (event.behavior == mPutdownObjectBehavior) {
+                        	if (programState == PROGRAM_RETURN_FIRST_BLOCK) {
+                        		mState = IDLE;
+                        		programState = PROGRAM_FIND_SECOND_BLOCK;
+                        	} else 
+                        		mState = FINISHED;
+                        }
                         mSemaphore.notify();
+                    } else if (event.type == -1) {
+                    	// the examineObject behavior has failed to find an object
+                    	mState = IDLE;
+                    	mSemaphore.notify();
                     }
                 }
             }

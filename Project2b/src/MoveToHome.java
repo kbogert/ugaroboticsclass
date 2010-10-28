@@ -1,3 +1,4 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -33,7 +34,8 @@ public class MoveToHome implements Behavior2 {
 		if (!enabled)
 			return false;
 		if (active) {
-			
+			IntelliBrain.getLcdDisplay().print(0, "Move To Home");
+
 			nav.setGoal(0 * Project2b.MAPSCALE, 0 * Project2b.MAPSCALE, 20, .2f); 
 
 			if (listener != null)

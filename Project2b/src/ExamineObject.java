@@ -1,3 +1,4 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -34,9 +35,12 @@ public class ExamineObject implements Behavior2 {
         Thread.sleep(2000);
         camera.setWhiteBalance(false);
         camera.setAutoExposure(false);
+
         
         camera.trackColor(235, 255, 235, 255, 235, 255); // white block
-        camera.sleepDeeply();
+//        camera.sleep();
+        
+        
 	}
 
 	public void setEnabled(boolean arg0) {
@@ -52,9 +56,12 @@ public class ExamineObject implements Behavior2 {
 			return false;
 		
 		if (active) {
+			IntelliBrain.getLcdDisplay().print(0, "Examine Obj");
 
 			try {
-				camera.wake();
+//				camera.wake();
+				
+				
 				
 				// the cmucam has been set to only track the color (white) of our block, if this behavior is activated
 				// and there is no significant tracking data, we either missed the block or it's the wrong color
@@ -77,8 +84,10 @@ public class ExamineObject implements Behavior2 {
 
 				    	if (trackingData.mx >=40 && trackingData.mx <= 60 && trackingData.my <= 60 && trackingData.confidence > 100) {
 				    		// we're done, grab it.
-				    		camera.sleepDeeply();
+//				    		camera.sleepDeeply();
 
+				    		setActive(false);
+				    		
 				    		if (listener != null)
 					        	listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
 				    		
@@ -116,12 +125,16 @@ public class ExamineObject implements Behavior2 {
 				    if (noDetectCounter > 10)
 				    	break;
 				}
+
+//				camera.sleepDeeply();
 			} catch (Exception e) {
 				throw new RuntimeException(e.getMessage());
 			} 
 
+			setActive(false);
 	        if (listener != null)
 	        	listener.behaviorEvent(new BehaviorEvent(this, -1));
+	        
 		}
 		return false;
 	}
