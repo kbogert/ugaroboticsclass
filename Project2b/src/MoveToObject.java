@@ -105,6 +105,7 @@ public class MoveToObject implements Behavior2 {
 
 		public void run() {
 			IntelliBrain.getLcdDisplay().print(0, "Move To Object");
+			Project2b.setCurrentState(Project2b.MOVE_TO_OBJECT);
 
 			try {
 				Thread.sleep(200);
@@ -147,9 +148,9 @@ public class MoveToObject implements Behavior2 {
 					}
 					distance = objectSensor.getDistanceInches();
 					if (distance > 24) {
-						listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
-						
 						parent.setActive(false);
+
+						listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
 					}
 				}
 			}
@@ -159,10 +160,12 @@ public class MoveToObject implements Behavior2 {
 			nav.goForward(distance - 4, true);
 			if (!active)
 				return;
-		
-			listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
 			
 			parent.setActive(false);
+			
+			listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+			
+
 		}
 		
 	}

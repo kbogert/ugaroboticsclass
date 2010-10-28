@@ -57,6 +57,7 @@ public class ExamineObject implements Behavior2 {
 		
 		if (active) {
 			IntelliBrain.getLcdDisplay().print(0, "Examine Obj");
+			Project2b.setCurrentState(Project2b.EXAMINE_OBJECT);
 
 			try {
 //				camera.wake();
@@ -134,9 +135,9 @@ public class ExamineObject implements Behavior2 {
 			setActive(false);
 	        if (listener != null)
 	        	listener.behaviorEvent(new BehaviorEvent(this, -1));
-	        
+	        return false;
 		}
-		return false;
+		return Project2b.getCurrentState() == Project2b.EXAMINE_OBJECT;
 	}
 
 	public void setActive(boolean arg0) {

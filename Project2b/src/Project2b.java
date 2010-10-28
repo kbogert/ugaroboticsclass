@@ -48,6 +48,13 @@ public class Project2b {
     		
     	}
     }
+
+    public static void setCurrentState(byte state) {
+    	synchronized(mSemaphore) {
+    		mState = state;
+    		
+    	}
+    }
     
     public static final byte IDLE = 0;
     public static final byte NAVIGATE = 1;
@@ -142,8 +149,10 @@ public class Project2b {
         		state = mState;
         	}
 
-//        	display.print(0, Integer.toString(state));
+        	IntelliBrain.getLcdDisplay().print(1, Integer.toString(state));
 
+        	inActivateAll(behaviors);
+        	
         	switch (state) {
         	case IDLE:
         		mExploreBehavior.setActive(true);
@@ -178,6 +187,11 @@ public class Project2b {
         		mSemaphore.wait();
         	}
         }
+	}
+	
+	private static void inActivateAll(Behavior2 [] b) {
+		for (int i = 0; i < b.length; i ++)
+			b[i].setActive(false);
 	}
 
     
