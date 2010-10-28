@@ -74,7 +74,7 @@ public class ExamineObject implements Behavior2 {
 
 				Display display = IntelliBrain.getLcdDisplay();
 				while (true) {
-				    Thread.sleep(500);
+				    Thread.sleep(750);
 				    CMUcamTrackingData trackingData = camera.getTrackingData();
 	                display.print(0, "mx: " + trackingData.mx + "  my: "
 	                        + trackingData.my);

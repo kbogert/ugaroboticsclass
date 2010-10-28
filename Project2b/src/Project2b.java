@@ -40,7 +40,7 @@ public class Project2b {
     private static final Object mSemaphore = new Object();
     private static final BehaviorListener mListener = new Listener();
     public static int MAPSCALE = 1;  // size of each map square in inches (along a side)
-    public static Map map = new Map(42, 24); // table size is 4ft x 7ft
+    public static Map map = new Map(40, 20); // table size is 4ft x 7ft
 	
     public static byte getProgramState() {
     	synchronized(mSemaphore) {
@@ -101,6 +101,15 @@ public class Project2b {
         Motor raiseMotor = new ContinuousRotationServo(IntelliBrain.getServo(4), 
                 true, 14, null);
         
+        grabMotor.setPower(30);
+        
+        Thread.sleep(450);
+        
+
+        grabMotor.setPower(-30);
+        
+        Thread.sleep(450);
+        
     	Navigator navigator = new DifferentialDriveNavigator(leftMotor,
                 rightMotor, odometer, 8, 6, 25.0f, 0.5f, 0.08f,
                 Thread.MAX_PRIORITY - 2, 50);
@@ -121,7 +130,6 @@ public class Project2b {
         mPutdownObjectBehavior = new PutdownObject(grabMotor, raiseMotor, navWrap);
         
         mIdentifyHomeBehavior.setActive(true);
-
 
         Behavior2 behaviors[] = new Behavior2[] { 
         		mIdentifyHomeBehavior,

@@ -94,7 +94,7 @@ public class NavigatorWrapper {
 	
 	public synchronized boolean atGoal(float x, float y) {
 		float distanceNotSqrt = (x - goal.x)*(x - goal.x) + (y - goal.y)*(y - goal.y);
-		return distanceNotSqrt <  2f;
+		return distanceNotSqrt <  4f;
 	}
 	
 	/**
