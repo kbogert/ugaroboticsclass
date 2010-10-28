@@ -43,6 +43,7 @@ public class IdentifyHome implements Behavior2 {
 	
 		if (! hasRun) {
 			IntelliBrain.getLcdDisplay().print(0, "Identify Home");
+			Project2b.setCurrentState(Project2b.IDENTIFY_HOME);
 
 //			nav.moveTo(0, 0, true);
 			MapObj start = new MapObj();

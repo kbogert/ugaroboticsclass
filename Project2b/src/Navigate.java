@@ -50,7 +50,7 @@ public class Navigate implements Behavior2 {
 			thread.setActive(false);
 			thread = null;
 		}
-		return false;
+		return Project2b.getCurrentState() == Project2b.NAVIGATE;
 	}
 
 	public void setActive(boolean arg0) {
@@ -75,6 +75,7 @@ public class Navigate implements Behavior2 {
 		public void run() {
 			while (active) {
 				IntelliBrain.getLcdDisplay().print(0, "Navigate");
+				Project2b.setCurrentState(Project2b.NAVIGATE);
 
 				// Turn to where the navigatorWrapper says, then go forward 1 unit
 				Pose pose = loc.getPose();

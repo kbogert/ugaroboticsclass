@@ -75,6 +75,7 @@ public class LookAround implements Behavior2 {
 			try {
 				while(active) {
 					IntelliBrain.getLcdDisplay().print(0, "Look Around");
+					Project2b.setCurrentState(Project2b.LOOK_AROUND);
 
 					if (turnLeft <= 0) {
 						turnLeft = 360;
@@ -83,8 +84,8 @@ public class LookAround implements Behavior2 {
 						return;
 					}
 
-					nav.turn((float)Math.toRadians(5), true);
-					turnLeft -= 5;
+					nav.turn((float)Math.PI / 12, true);
+					turnLeft -= 30;
 
 					Thread.sleep(30);
 

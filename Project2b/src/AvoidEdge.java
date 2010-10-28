@@ -89,7 +89,9 @@ public class AvoidEdge implements Behavior2 {
 		public void run() {
 			
 			IntelliBrain.getLcdDisplay().print(0, "Avoid Edge");
-
+			
+			Project2b.setCurrentState(Project2b.AVOID);
+			
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
@@ -119,6 +121,7 @@ public class AvoidEdge implements Behavior2 {
 				
 			}
 			
+			parent.setActive(false);
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
 

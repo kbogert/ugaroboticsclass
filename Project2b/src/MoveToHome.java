@@ -35,13 +35,15 @@ public class MoveToHome implements Behavior2 {
 			return false;
 		if (active) {
 			IntelliBrain.getLcdDisplay().print(0, "Move To Home");
+			Project2b.setCurrentState(Project2b.MOVE_TO_HOME);
 
 			nav.setGoal(0 * Project2b.MAPSCALE, 0 * Project2b.MAPSCALE, 20, .2f); 
 
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
+			return true;
 		}
-		return false;
+		return Project2b.getCurrentState() == Project2b.MOVE_TO_HOME;
 	}
 
 	public void setActive(boolean arg0) {

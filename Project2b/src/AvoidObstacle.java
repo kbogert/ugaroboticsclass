@@ -83,6 +83,7 @@ public class AvoidObstacle implements Behavior2 {
 		
 		public void run() {
 			IntelliBrain.getLcdDisplay().print(0, "Avoid Obstacle");
+			Project2b.setCurrentState(Project2b.AVOID);
 
 			// add an obstacle to nav
 			float distance = (objectSensor.getDistanceInches() / Project2b.MAPSCALE);
@@ -98,11 +99,12 @@ public class AvoidObstacle implements Behavior2 {
 			} catch (InterruptedException e) {
 
 			}
+
+			parent.setActive(false);
 			
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
 			
-			parent.setActive(false);
 		}
 	}
 }
