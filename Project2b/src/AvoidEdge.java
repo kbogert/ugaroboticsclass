@@ -63,7 +63,7 @@ public class AvoidEdge implements Behavior2 {
 			return false;
 			
 		forwardSensor.ping();
-		IntelliBrain.getLcdDisplay().print(1, "Edge: " + forwardSensor.getDistanceInches());
+	//	IntelliBrain.getLcdDisplay().print(1, "Edge: " + forwardSensor.getDistanceInches());
 		if (forwardSensor.getDistanceInches() > 18 ) {
 			
 			return true;

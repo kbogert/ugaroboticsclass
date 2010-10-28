@@ -141,7 +141,7 @@ public class MoveToObject implements Behavior2 {
 					if (!active)
 						return;
 
-					Thread.sleep(50);
+					Thread.sleep(250);
 	
 					if (!active)
 						return;
@@ -151,7 +151,7 @@ public class MoveToObject implements Behavior2 {
 					
 					if (distance > 18 || distance < 0) {
 						
-						Thread.sleep(100);
+						Thread.sleep(250);
 
 						if (!active)
 							return;
