@@ -89,7 +89,7 @@ public class ExamineObject implements Behavior2 {
 				    	noDetectCounter = 0;
 
 
-				    	if (trackingData.mx >=40 && trackingData.mx <= 60 && trackingData.my <= 60 && trackingData.confidence > 70 && trackingData.pixels > 100) {
+				    	if (trackingData.mx >=40 && trackingData.mx <= 60 && trackingData.my <= 60 && trackingData.confidence > 70 && trackingData.pixels > 75) {
 				    		// we're done, grab it.
 //				    		camera.sleepDeeply();
 
