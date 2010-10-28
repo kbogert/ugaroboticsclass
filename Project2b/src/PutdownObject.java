@@ -1,3 +1,4 @@
+import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -42,7 +43,8 @@ public class PutdownObject implements Behavior2 {
 			// lower the block and open the gripper
 			
 			// for right now, just drop the thing
-			
+			IntelliBrain.getLcdDisplay().print(0, "Putdown Obj");
+
 			
 			grabMotor.setPower(-30);
 
@@ -52,6 +54,7 @@ public class PutdownObject implements Behavior2 {
 
 			}
 
+			nav.goBackward((float)2.5, true);
 
 			raiseMotor.setPower(-8);
 
@@ -62,8 +65,8 @@ public class PutdownObject implements Behavior2 {
 			}
 
 			raiseMotor.stop();
-
-			nav.goBackward((float)2.5, true);
+			
+			setActive(false);
 			
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));			

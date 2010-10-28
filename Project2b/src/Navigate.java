@@ -74,6 +74,8 @@ public class Navigate implements Behavior2 {
 		
 		public void run() {
 			while (active) {
+				IntelliBrain.getLcdDisplay().print(0, "Navigate");
+
 				// Turn to where the navigatorWrapper says, then go forward 1 unit
 				Pose pose = loc.getPose();
 				float heading = nav.getHeadingFrom(pose.x, pose.y);
@@ -91,7 +93,7 @@ public class Navigate implements Behavior2 {
 					return;
 				IntelliBrain.getLcdDisplay().print(1, "At:" + pose.x + "," + pose.y);
 
-				nav.goForward(Project2b.MAPSCALE, true);
+				nav.goForward(4 * Project2b.MAPSCALE, true);
 				if (!active)
 					return;
 
