@@ -79,6 +79,11 @@ public class Project2b {
                 false, 14, (DirectionListener) leftEncoder);
         Motor rightMotor = new ContinuousRotationServo(IntelliBrain.getServo(2), 
                 true, 14, (DirectionListener) rightEncoder);
+
+        Motor grabMotor = new ContinuousRotationServo(IntelliBrain.getServo(3), 
+                false);
+        Motor raiseMotor = new ContinuousRotationServo(IntelliBrain.getServo(4), 
+                true, 14, null);
         
     	Navigator navigator = new DifferentialDriveNavigator(leftMotor,
                 rightMotor, odometer, 8, 6, 25.0f, 0.5f, 0.08f,

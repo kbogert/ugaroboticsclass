@@ -1,5 +1,7 @@
 import com.ridgesoft.robotics.Behavior2;
+import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
+import com.ridgesoft.robotics.Motor;
 
 
 public class PutdownObject implements Behavior2 {
@@ -7,7 +9,16 @@ public class PutdownObject implements Behavior2 {
 	private boolean enabled;
 	private boolean active;
 	private BehaviorListener listener;
-
+	private Motor grabMotor;
+	private Motor raiseMotor;
+	private NavigatorWrapper nav;
+	
+	public PutdownObject(Motor grabMotor, Motor raiseMotor, NavigatorWrapper navWrap) {
+		this.grabMotor = grabMotor;
+		this.raiseMotor = raiseMotor;
+		nav = navWrap;
+	}
+	
 	public void setEnabled(boolean arg0) {
 		enabled = arg0;
 	}
@@ -29,6 +40,34 @@ public class PutdownObject implements Behavior2 {
 			// need another sensor? or else keep the IR sensor fixed rather than raise it up
 			
 			// lower the block and open the gripper
+			
+			// for right now, just drop the thing
+			
+			
+			grabMotor.setPower(-30);
+
+			try {
+				Thread.sleep(450);
+			} catch (InterruptedException e) {
+
+			}
+
+
+			raiseMotor.setPower(-8);
+
+			try {
+				Thread.sleep(1200);
+			} catch (InterruptedException e) {
+
+			}
+
+			raiseMotor.stop();
+
+			nav.goBackward((float)2.5, true);
+			
+			if (listener != null)
+				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));			
+			
 			
 		}
 		return false;

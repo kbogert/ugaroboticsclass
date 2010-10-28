@@ -1,5 +1,7 @@
 import com.ridgesoft.robotics.Behavior2;
+import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
+import com.ridgesoft.robotics.Motor;
 
 
 public class PickupObject implements Behavior2 {
@@ -7,6 +9,14 @@ public class PickupObject implements Behavior2 {
 	private boolean enabled;
 	private boolean active;
 	private BehaviorListener listener;
+	private Motor grabMotor;
+	private Motor raiseMotor;
+	
+	public PickupObject(Motor grabMotor, Motor raiseMotor) {
+		this.grabMotor = grabMotor;
+		this.raiseMotor = raiseMotor;
+	}
+	
 	
 	public void setEnabled(boolean arg0) {
 		enabled = arg0;
@@ -23,6 +33,29 @@ public class PickupObject implements Behavior2 {
 		if (active) {
 			
 			// grab the object in front of us, then raise it up
+			
+			grabMotor.setPower(30);
+
+			try {
+				Thread.sleep(450);
+			} catch (InterruptedException e) {
+
+			}
+
+			grabMotor.stop();
+
+			raiseMotor.setPower(8);
+
+			try {
+				Thread.sleep(1500);
+			} catch (InterruptedException e) {
+
+			}
+
+			raiseMotor.stop();
+
+			if (listener != null)
+				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));			
 			
 		}
 		
