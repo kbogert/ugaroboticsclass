@@ -73,52 +73,54 @@ public class Navigate implements Behavior2 {
 		}
 		
 		public void run() {
-			while (active) {
-				IntelliBrain.getLcdDisplay().print(0, "Navigate");
-				Project2b.setCurrentState(Project2b.NAVIGATE);
+			try {
+				while (active) {
+					IntelliBrain.getLcdDisplay().print(0, "Navigate");
+					Project2b.setCurrentState(Project2b.NAVIGATE);
 
-				// Turn to where the navigatorWrapper says, then go forward 1 unit
-				Pose pose = loc.getPose();
-				float heading = nav.getHeadingFrom(pose.x, pose.y);
+					// Turn to where the navigatorWrapper says, then go forward 1 unit
+					Pose pose = loc.getPose();
+					float heading = nav.getHeadingFrom(pose.x, pose.y);
 
-				float diff = Math.abs(heading - pose.heading);
+					float diff = Math.abs(heading - pose.heading);
 
-				if (diff > 0.1f) {
-					nav.stop();			
+					if (diff > 0.1f) {
+						nav.stop();			
+						if (!active)
+							return;
+
+						nav.turn(heading - pose.heading, true);
+					}
+					if (!active)
+						return;
+					IntelliBrain.getLcdDisplay().print(1, "At:" + pose.x + "," + pose.y);
+
+					nav.goForward(4 * Project2b.MAPSCALE, true);
 					if (!active)
 						return;
 
-					nav.turn(heading - pose.heading, true);
-				}
-				if (!active)
-					return;
-				IntelliBrain.getLcdDisplay().print(1, "At:" + pose.x + "," + pose.y);
-
-				nav.goForward(4 * Project2b.MAPSCALE, true);
-				if (!active)
-					return;
-
-				pose = loc.getPose();
-				if (nav.atGoal(pose.x * Project2b.MAPSCALE, pose.y * Project2b.MAPSCALE)) {
-					IntelliBrain.getLcdDisplay().print(1, "REACHED GOAL");
-					try {
+					pose = loc.getPose();
+					if (nav.atGoal(pose.x * Project2b.MAPSCALE, pose.y * Project2b.MAPSCALE)) {
+						IntelliBrain.getLcdDisplay().print(1, "REACHED GOAL");
 						Thread.sleep(1000);
-					} catch (InterruptedException e) {
+					
+						parent.setActive(false);
+						if (listener != null) {
+							listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
+						}
 
 					}
-
-					parent.setActive(false);
-					if (listener != null) {
-						listener.behaviorEvent(new BehaviorEvent(parent, BehaviorEvent.BEHAVIOR_COMPLETED));
-					}
-
-				}
-				
-				try {
+					
 					Thread.sleep(100);
-				} catch (InterruptedException e) {
-
+						
 				}
+			} catch (Exception e) {
+				IntelliBrain.getLcdDisplay().print(1, "CRASH: Navigate");
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e1) {
+				}
+				parent.setActive(false);
 			}
 		}
 	}

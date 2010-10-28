@@ -34,6 +34,7 @@ public class PickupObject implements Behavior2 {
 		if (active) {
 			IntelliBrain.getLcdDisplay().print(0, "Pickup Obj");
 
+			Project2b.setCurrentState(Project2b.PICKUP_OBJECT);
 			// grab the object in front of us, then raise it up
 			
 			grabMotor.setPower(30);
@@ -60,10 +61,11 @@ public class PickupObject implements Behavior2 {
 			
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));			
-			
+		
+			return false;
 		}
 		
-		return false;
+		return Project2b.getCurrentState() == Project2b.PICKUP_OBJECT;
 	}
 
 	public void setActive(boolean arg0) {

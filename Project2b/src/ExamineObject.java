@@ -1,4 +1,5 @@
 import com.ridgesoft.intellibrain.IntelliBrain;
+import com.ridgesoft.io.Display;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
@@ -37,7 +38,7 @@ public class ExamineObject implements Behavior2 {
         camera.setAutoExposure(false);
 
         
-        camera.trackColor(235, 255, 235, 255, 235, 255); // white block
+        camera.trackColor(220, 255, 220, 255, 220, 255); // white block
 //        camera.sleep();
         
         
@@ -70,20 +71,25 @@ public class ExamineObject implements Behavior2 {
 				// if we found the block, maneuver using the camera's data to get it into the right position for pickup
 				
 				int noDetectCounter = 0;
-				
+
+				Display display = IntelliBrain.getLcdDisplay();
 				while (true) {
 				    Thread.sleep(500);
 				    CMUcamTrackingData trackingData = camera.getTrackingData();
+	                display.print(0, "mx: " + trackingData.mx + "  my: "
+	                        + trackingData.my);
+	                display.print(1, "c: " + trackingData.confidence + "  p: "
+	                        + trackingData.pixels);
 
 				    if (trackingData.mx > 100)
 				    	continue;
 
-				    if (trackingData.confidence > 50 && trackingData.pixels > 100) {
+				    if (trackingData.confidence > 50 && trackingData.pixels > 60) {
 
 				    	noDetectCounter = 0;
 
 
-				    	if (trackingData.mx >=40 && trackingData.mx <= 60 && trackingData.my <= 60 && trackingData.confidence > 100) {
+				    	if (trackingData.mx >=40 && trackingData.mx <= 60 && trackingData.my <= 60 && trackingData.confidence > 70 && trackingData.pixels > 100) {
 				    		// we're done, grab it.
 //				    		camera.sleepDeeply();
 
@@ -116,6 +122,9 @@ public class ExamineObject implements Behavior2 {
 
 				    	if ( y / 10 > 3)
 				    		y = 30;
+				    	
+				    	if (y / 10 < 1)
+				    		y = 1;
 
 				    	nav.goForward(y / 10, true);
 

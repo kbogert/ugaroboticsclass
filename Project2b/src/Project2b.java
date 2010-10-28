@@ -40,8 +40,14 @@ public class Project2b {
     private static final Object mSemaphore = new Object();
     private static final BehaviorListener mListener = new Listener();
     public static int MAPSCALE = 1;  // size of each map square in inches (along a side)
-    public static Map map = new Map(48, 84); // table size is 4ft x 7ft, square size is 6"x6"
+    public static Map map = new Map(42, 24); // table size is 4ft x 7ft
 	
+    public static byte getProgramState() {
+    	synchronized(mSemaphore) {
+    		return programState;
+    		
+    	}
+    }	
     public static byte getCurrentState() {
     	synchronized(mSemaphore) {
     		return mState;
@@ -65,6 +71,7 @@ public class Project2b {
     public static final byte MOVE_TO_HOME = 6;
     public static final byte IDENTIFY_HOME = 7;
     public static final byte FINISHED = 8;
+    public static final byte PICKUP_OBJECT = 9;
     
     
     public static final byte PROGRAM_FIND_FIRST_BLOCK = 0;
@@ -119,7 +126,7 @@ public class Project2b {
         Behavior2 behaviors[] = new Behavior2[] { 
         		mIdentifyHomeBehavior,
         		mAvoidEdgeBehavior, 
-        		mAvoidObstacleBehavior, 
+ //       		mAvoidObstacleBehavior, 
         		mMoveToHomeBehavior,
         		mExamineObjectBehavior,
         		mPickupObjectBehavior,
@@ -138,7 +145,7 @@ public class Project2b {
         mArbiter = new BehaviorArbiter(behaviors, IntelliBrain
         		.getStatusLed(), 500);
         mArbiter.setPriority(Thread.MAX_PRIORITY - 4);
-
+        
         mState = IDENTIFY_HOME;
         mIdentifyHomeBehavior.setActive(true);
         mArbiter.start();
@@ -151,31 +158,11 @@ public class Project2b {
 
         	IntelliBrain.getLcdDisplay().print(1, Integer.toString(state));
 
-        	inActivateAll(behaviors);
-        	
-        	switch (state) {
-        	case IDLE:
-        		mExploreBehavior.setActive(true);
-        		break;
-        	case NAVIGATE:
-        		mNavigateBehavior.setActive(true);
-        		break;
 
-        	case LOOK_AROUND:
-        		if (programState == PROGRAM_FIND_FIRST_BLOCK || programState == PROGRAM_FIND_SECOND_BLOCK)
-        			mLookAroundBehavior.setActive(true);
-        		else {
-        			mPutdownObjectBehavior.setActive(true);
-        		}
-        		break;
-        		
-        	case EXAMINE_OBJECT:
-        		mExamineObjectBehavior.setActive(true);
-        		break;
-        	case MOVE_TO_HOME:
-        		mMoveToHomeBehavior.setActive(true);
-        		break;
-        		
+
+        	switch(state) {
+
+    
         	case FINISHED:
         		navigator.stop();
         		Thread.sleep(200);
@@ -210,7 +197,7 @@ public class Project2b {
                         	mState = NAVIGATE;
                         }
                         else if (event.behavior == mExamineObjectBehavior) {
-                        	mState = IDLE;
+                        	mState = PICKUP_OBJECT;
                         }
                         else if (event.behavior == mExploreBehavior) {
                         	mState = NAVIGATE;
@@ -242,11 +229,21 @@ public class Project2b {
                         	} else 
                         		mState = FINISHED;
                         }
-                        mSemaphore.notify();
+                        mSemaphore.notifyAll();
                     } else if (event.type == -1) {
-                    	// the examineObject behavior has failed to find an object
+                    	
+                    	if (event.behavior == mExamineObjectBehavior) {
+                    		// the examineObject behavior has failed to find an object
+                    		mState = IDLE;
+                    	} else if (event.behavior == mMoveToObjectBehavior) {
+                    		// the moveToObject behavior has failed to find an object
+                    		mState = IDLE;
+                    	}
+                    	mSemaphore.notifyAll();
+                    		
+                    } else {
                     	mState = IDLE;
-                    	mSemaphore.notify();
+                    	mSemaphore.notifyAll();
                     }
                 }
             }
@@ -255,5 +252,24 @@ public class Project2b {
             }
         }
     }
+	
+	
+	public static class ClearScreen extends Thread {
+		
+		public void run() {
+			
+			while (true) {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			IntelliBrain.getLcdDisplay().print(0, "");
+			IntelliBrain.getLcdDisplay().print(1, Boolean.toString(mArbiter.isAlive()));
+			}
+		}
+		
+	}
 
 }

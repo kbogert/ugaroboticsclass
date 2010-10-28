@@ -25,7 +25,7 @@ public class NavigatorWrapper {
 	 * 
 	 * @param amount
 	 */
-	public void turn(float amount, boolean wait) {
+	public synchronized void turn(float amount, boolean wait) {
 		nav.turnTo(loc.getPose().heading + amount, wait);
 	}
 	
@@ -45,7 +45,7 @@ public class NavigatorWrapper {
 	 * true = forward
 	 * false = backward
 	 */
-	public void go(float distance, boolean direction, boolean wait) {
+	public synchronized void go(float distance, boolean direction, boolean wait) {
 		float angle = loc.getPose().heading;
 		float x = loc.getPose().x;
 		float y = loc.getPose().y;
@@ -61,11 +61,11 @@ public class NavigatorWrapper {
 				
 	}
 	
-	public void stop() {
+	public synchronized void stop() {
 		nav.stop();
 	}
 	
-	public void setGoal(float x, float y, float strength, float factor) {
+	public synchronized void setGoal(float x, float y, float strength, float factor) {
 		Gradient temp = new Gradient();
 		temp.x = x;
 		temp.y = y;
@@ -74,7 +74,7 @@ public class NavigatorWrapper {
 		goal = temp;
 	}
 	
-	public void addObstacle(float x, float y, float strength, float factor) {
+	public synchronized void addObstacle(float x, float y, float strength, float factor) {
 		Gradient temp = new Gradient();
 		temp.x = x;
 		temp.y = y;
@@ -92,7 +92,7 @@ public class NavigatorWrapper {
 		}
 	}
 	
-	public boolean atGoal(float x, float y) {
+	public synchronized boolean atGoal(float x, float y) {
 		float distanceNotSqrt = (x - goal.x)*(x - goal.x) + (y - goal.y)*(y - goal.y);
 		return distanceNotSqrt <  2f;
 	}
@@ -105,7 +105,7 @@ public class NavigatorWrapper {
 	 * @param y
 	 * @return
 	 */
-	public float getHeadingFrom(float x, float y) {
+	public synchronized float getHeadingFrom(float x, float y) {
 		float [] Xs = new float[8];
 		float [] Ys = new float[8];
 		float [] elevations = new float[8];
@@ -135,7 +135,7 @@ public class NavigatorWrapper {
 		
 	}
 	
-	public void clearGradients() {
+	public synchronized void clearGradients() {
 		obstacles = null;
 		goal = null;
 	}

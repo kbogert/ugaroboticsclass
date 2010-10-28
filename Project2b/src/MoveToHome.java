@@ -41,7 +41,7 @@ public class MoveToHome implements Behavior2 {
 
 			if (listener != null)
 				listener.behaviorEvent(new BehaviorEvent(this, BehaviorEvent.BEHAVIOR_COMPLETED));
-			return true;
+			return false;
 		}
 		return Project2b.getCurrentState() == Project2b.MOVE_TO_HOME;
 	}
