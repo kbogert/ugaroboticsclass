@@ -55,7 +55,7 @@ public class PickupObject implements Behavior2 {
 
 			}
 
-			grabMotor.stop();
+			grabMotor.brake();
 
 			raiseMotor.setPower(8);
 
