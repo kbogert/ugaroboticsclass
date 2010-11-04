@@ -72,6 +72,8 @@ public class Project2b {
     public static final byte IDENTIFY_HOME = 7;
     public static final byte FINISHED = 8;
     public static final byte PICKUP_OBJECT = 9;
+    public static final byte PUTDOWN_OBJECT = 10;
+    
     
     
     public static final byte PROGRAM_FIND_FIRST_BLOCK = 0;
