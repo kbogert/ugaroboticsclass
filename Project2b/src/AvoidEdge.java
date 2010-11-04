@@ -64,7 +64,7 @@ public class AvoidEdge implements Behavior2 {
 			
 		forwardSensor.ping();
 	//	IntelliBrain.getLcdDisplay().print(1, "Edge: " + forwardSensor.getDistanceInches());
-		if (forwardSensor.getDistanceInches() > 18 ) {
+		if (forwardSensor.getDistanceInches() > 10 ) {
 			
 			return true;
 		}
@@ -106,7 +106,7 @@ public class AvoidEdge implements Behavior2 {
 
 				// if we detected the edge in front of us, backup
 				forwardSensor.ping();
-				if (forwardSensor.getDistanceInches() > 18) {
+				if (forwardSensor.getDistanceInches() > 10) {
 					
 					// if both, turn away from the rear detection
 					if (! leftRear.isOnTable()) {

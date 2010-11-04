@@ -29,6 +29,10 @@ public class NavigatorWrapper {
 		nav.turnTo(loc.getPose().heading + amount, wait);
 	}
 	
+	public synchronized void turnTo(float heading, boolean wait) {
+		nav.turnTo(heading, wait);
+	}
+	
 	public void goForward(float distance, boolean wait) {
 		go(distance, true, wait);
 	}
