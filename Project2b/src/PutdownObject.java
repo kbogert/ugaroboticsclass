@@ -46,6 +46,7 @@ public class PutdownObject implements Behavior2 {
 			IntelliBrain.getLcdDisplay().print(0, "Putdown Obj");
 			Project2b.setCurrentState(Project2b.PUTDOWN_OBJECT);
 
+			nav.turnTo((float)Math.PI, true);
 			
 			grabMotor.setPower(-30);
 
