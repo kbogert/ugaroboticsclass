@@ -53,6 +53,8 @@ public class PutdownObject implements Behavior2 {
 			} catch (InterruptedException e) {
 
 			}
+			
+			grabMotor.stop();
 
 			nav.goBackward((float)2.5, true);
 
