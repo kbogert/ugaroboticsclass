@@ -36,6 +36,16 @@ public class PickupObject implements Behavior2 {
 
 			Project2b.setCurrentState(Project2b.PICKUP_OBJECT);
 			// grab the object in front of us, then raise it up
+
+			raiseMotor.setPower(-8);
+
+			try {
+				Thread.sleep(1200);
+			} catch (InterruptedException e) {
+
+			}
+
+			raiseMotor.stop();
 			
 			grabMotor.setPower(30);
 

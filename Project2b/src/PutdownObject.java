@@ -58,16 +58,6 @@ public class PutdownObject implements Behavior2 {
 
 			nav.goBackward((float)2.5, true);
 
-			raiseMotor.setPower(-8);
-
-			try {
-				Thread.sleep(1200);
-			} catch (InterruptedException e) {
-
-			}
-
-			raiseMotor.stop();
-			
 			setActive(false);
 			
 			if (listener != null)
