@@ -59,7 +59,7 @@ public class AvoidEdge implements Behavior2 {
 			thread = null;
 		}
 
-		if (Project2b.getProgramState() == Project2b.PROGRAM_RETURN_FIRST_BLOCK || Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK)
+		if (Project2b.getProgramState() == Project2b.PROGRAM_RETURN_FIRST_BLOCK || Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK || Project2b.getCurrentState() == Project2b.PICKUP_OBJECT || Project2b.getCurrentState() == Project2b.PUTDOWN_OBJECT)
 			return false;
 			
 		forwardSensor.ping();

@@ -44,6 +44,7 @@ public class PutdownObject implements Behavior2 {
 			
 			// for right now, just drop the thing
 			IntelliBrain.getLcdDisplay().print(0, "Putdown Obj");
+			Project2b.setCurrentState(Project2b.PUTDOWN_OBJECT);
 
 			
 			grabMotor.setPower(-30);
