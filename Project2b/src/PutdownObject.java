@@ -3,6 +3,7 @@ import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
 import com.ridgesoft.robotics.Motor;
+import com.ridgesoft.robotics.sensors.SharpGP2D12;
 
 
 public class PutdownObject implements Behavior2 {
@@ -13,11 +14,13 @@ public class PutdownObject implements Behavior2 {
 	private Motor grabMotor;
 	private Motor raiseMotor;
 	private NavigatorWrapper nav;
+	private SharpGP2D12 objectSensor;
 	
-	public PutdownObject(Motor grabMotor, Motor raiseMotor, NavigatorWrapper navWrap) {
+	public PutdownObject(Motor grabMotor, Motor raiseMotor, NavigatorWrapper navWrap, SharpGP2D12 objectSensor) {
 		this.grabMotor = grabMotor;
 		this.raiseMotor = raiseMotor;
 		nav = navWrap;
+		this.objectSensor = objectSensor;
 	}
 	
 	public void setEnabled(boolean arg0) {
@@ -47,6 +50,38 @@ public class PutdownObject implements Behavior2 {
 			Project2b.setCurrentState(Project2b.PUTDOWN_OBJECT);
 
 			nav.turnTo((float)Math.PI, true);
+			
+			// if this is the second block we're dropping:
+			if (Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK) {
+				// find the original block
+				float divisor = 24;
+				for (int i = 0; i < 5; i ++) {
+					try {
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+
+					}
+					objectSensor.ping();
+					
+					if (objectSensor.getDistanceInches() <= 12 && objectSensor.getDistanceInches() > 0)
+						break;
+					
+					nav.turn((float)Math.PI / divisor, true);
+					divisor = divisor / -2;
+				}
+				
+				// move forward until the block is 4.5 in away
+				objectSensor.ping();
+				
+				if (objectSensor.getDistanceInches() > 4.5 && objectSensor.getDistanceInches() <= 24)
+					nav.goForward(objectSensor.getDistanceInches() - 4.5f, true);
+				
+				// center on block
+				
+				// TODO
+				
+				
+			}
 			
 			grabMotor.setPower(-30);
 

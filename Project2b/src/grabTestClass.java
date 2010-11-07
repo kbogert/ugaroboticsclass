@@ -45,7 +45,8 @@ public class grabTestClass {
 
 		}
 
-
+		closeMotor.stop();
+		
 		raiseMotor.setPower(-8);
 
 		try {

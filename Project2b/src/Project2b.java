@@ -121,7 +121,7 @@ public class Project2b {
 
         mAvoidEdgeBehavior = new AvoidEdge(navWrap, tableEdgeSensor, leftTableSensor, rightTableSensor);
         mAvoidObstacleBehavior = new AvoidObstacle(objectSensor, navWrap, odometer);
-        mExamineObjectBehavior = new ExamineObject(navWrap, camera);
+        mExamineObjectBehavior = new ExamineObject(navWrap, camera, raiseMotor);
         mExploreBehavior = new Explore(navWrap, map);
         mIdentifyHomeBehavior = new IdentifyHome(navigator, map);
         mLookAroundBehavior = new LookAround(navWrap);
@@ -129,7 +129,7 @@ public class Project2b {
         mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, odometer, map);
         mNavigateBehavior = new Navigate(navWrap, odometer);
         mPickupObjectBehavior = new PickupObject(grabMotor, raiseMotor);
-        mPutdownObjectBehavior = new PutdownObject(grabMotor, raiseMotor, navWrap);
+        mPutdownObjectBehavior = new PutdownObject(grabMotor, raiseMotor, navWrap, objectSensor);
         
         mIdentifyHomeBehavior.setActive(true);
 

@@ -3,6 +3,7 @@ import com.ridgesoft.io.Display;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
+import com.ridgesoft.robotics.Motor;
 import com.ridgesoft.robotics.sensors.CMUcam.CMUcam2;
 import com.ridgesoft.robotics.sensors.CMUcam.CMUcamTrackingData;
 
@@ -24,10 +25,12 @@ public class ExamineObject implements Behavior2 {
 	private BehaviorListener listener;
 	private NavigatorWrapper nav;
 	private CMUcam2 camera;
+	private Motor raiseMotor;
 	
-	public ExamineObject(NavigatorWrapper nav, CMUcam2 camera) throws Exception{
+	public ExamineObject(NavigatorWrapper nav, CMUcam2 camera, Motor r) throws Exception{
 		this.nav = nav;
 		this.camera = camera;
+		this.raiseMotor = r;
 		
         camera.open();
         camera.setRGBMode(true);
@@ -71,7 +74,17 @@ public class ExamineObject implements Behavior2 {
 				// if we found the block, maneuver using the camera's data to get it into the right position for pickup
 				
 				int noDetectCounter = 0;
+				
+				raiseMotor.setPower(-8);
 
+				try {
+					Thread.sleep(1200);
+				} catch (InterruptedException e) {
+
+				}
+
+				raiseMotor.stop();
+				
 				Display display = IntelliBrain.getLcdDisplay();
 				while (true) {
 				    Thread.sleep(750);
@@ -132,8 +145,10 @@ public class ExamineObject implements Behavior2 {
 				    	noDetectCounter ++;
 				    }
 				    
-				    if (noDetectCounter > 10)
+				    if (noDetectCounter > 10) {
+
 				    	break;
+				    }
 				}
 
 //				camera.sleepDeeply();
@@ -141,6 +156,16 @@ public class ExamineObject implements Behavior2 {
 				throw new RuntimeException(e.getMessage());
 			} 
 
+			raiseMotor.setPower(8);
+
+			try {
+				Thread.sleep(1200);
+			} catch (InterruptedException e) {
+
+			}
+
+			raiseMotor.stop();
+			
 			setActive(false);
 	        if (listener != null)
 	        	listener.behaviorEvent(new BehaviorEvent(this, -1));
