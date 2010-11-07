@@ -174,9 +174,9 @@ public class MoveToObject implements Behavior2 {
 					}
 				}
 				
-				// move forward towards the object, when we're < 4 inches stop and return
+				// move forward towards the object, when we're < 6 inches stop and return
 				distance = objectSensor.getDistanceInches();
-				nav.goForward(distance - 3, true);
+				nav.goForward(distance - 6, true);
 				if (!active)
 					return;
 
