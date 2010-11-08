@@ -53,11 +53,11 @@ public class PutdownObject implements Behavior2 {
 			
 			// if this is the second block we're dropping:
 			if (Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK) {
-				// find the original block
-				float divisor = 24;
-				for (int i = 0; i < 5; i ++) {
+
+				int turn = 48;
+				for (int i = 0; i < 6; i ++) {
 					try {
-						Thread.sleep(100);
+						Thread.sleep(300);
 					} catch (InterruptedException e) {
 
 					}
@@ -66,33 +66,101 @@ public class PutdownObject implements Behavior2 {
 					if (objectSensor.getDistanceInches() <= 12 && objectSensor.getDistanceInches() > 0)
 						break;
 					
-					nav.turn((float)Math.PI / divisor, true);
-					divisor = divisor / -2;
+					nav.turn((float)Math.PI / turn, true);
+					turn /= -2;
+				}
+				IntelliBrain.getLcdDisplay().print(0, "Object: " + objectSensor.getDistanceInches());
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+
 				}
 				
 				// move forward until the block is 4.5 in away
 				objectSensor.ping();
 				
-				if (objectSensor.getDistanceInches() > 4.5 && objectSensor.getDistanceInches() <= 24)
-					nav.goForward(objectSensor.getDistanceInches() - 4.5f, true);
+				if (objectSensor.getDistanceInches() > 6 && objectSensor.getDistanceInches() <= 24 )
+					nav.goForward((float)Math.max(objectSensor.getDistanceInches() - 6f, 1), true);
 				
-				// center on block
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e1) {
+				}
+
 				
-				// TODO
+				raiseMotor.setPower(-12);
+
+				try {
+					Thread.sleep(600);
+				} catch (InterruptedException e) {
+
+				}
+
+				raiseMotor.stop();
+
+				
+
+				grabMotor.setPower(-30);
+
+				try {
+					Thread.sleep(450);
+				} catch (InterruptedException e) {
+
+				}
+
+				grabMotor.stop();
 				
 				
+				raiseMotor.setPower(12);
+
+				try {
+					Thread.sleep(900);
+				} catch (InterruptedException e) {
+
+				}
+
+				raiseMotor.stop();
+
+			} else {
+
+				
+				raiseMotor.setPower(-12);
+
+				try {
+					Thread.sleep(1200);
+				} catch (InterruptedException e) {
+
+				}
+
+				raiseMotor.stop();
+
+				
+
+				grabMotor.setPower(-30);
+
+				try {
+					Thread.sleep(450);
+				} catch (InterruptedException e) {
+
+				}
+
+				grabMotor.stop();
+				
+				
+				raiseMotor.setPower(12);
+
+				try {
+					Thread.sleep(1200);
+				} catch (InterruptedException e) {
+
+				}
+
+				raiseMotor.stop();
+
 			}
 			
-			grabMotor.setPower(-30);
-
-			try {
-				Thread.sleep(450);
-			} catch (InterruptedException e) {
-
-			}
 			
-			grabMotor.stop();
-
+			
 			nav.goBackward((float)2.5, true);
 
 			setActive(false);
