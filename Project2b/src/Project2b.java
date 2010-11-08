@@ -161,7 +161,7 @@ public class Project2b {
         mArbiter.start();
 
         Thread musicThread = new Thread(new PlayMusic());
-       // musicThread.start();
+        musicThread.start();
         
         while (true) {
         	int state;
