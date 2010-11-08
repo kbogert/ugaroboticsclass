@@ -160,6 +160,9 @@ public class Project2b {
         mIdentifyHomeBehavior.setActive(true);
         mArbiter.start();
 
+        Thread musicThread = new Thread(new PlayMusic());
+        musicThread.start();
+        
         while (true) {
         	int state;
         	synchronized (mSemaphore) {
