@@ -68,9 +68,8 @@ public class StackTestClass {
 
 		closeMotor.stop();
 		
-		
-		float turn = (float)Math.PI / 12;
-		for (int i = 0; i < 8; i ++) {
+		int turn = 48;
+		for (int i = 0; i < 6; i ++) {
 			try {
 				Thread.sleep(300);
 			} catch (InterruptedException e) {
@@ -81,8 +80,15 @@ public class StackTestClass {
 			if (objectSensor.getDistanceInches() <= 12 && objectSensor.getDistanceInches() > 0)
 				break;
 			
-			nav.turn(turn, true);
-			turn *= -1.2;
+			nav.turn((float)Math.PI / turn, true);
+			IntelliBrain.getLcdDisplay().print(0, "Turn: " + turn);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			turn /= -2;
 		}
 		IntelliBrain.getLcdDisplay().print(0, "Object: " + objectSensor.getDistanceInches());
 		try {
@@ -95,8 +101,8 @@ public class StackTestClass {
 		// move forward until the block is 4.5 in away
 		objectSensor.ping();
 		
-		if (objectSensor.getDistanceInches() > 4.5 && objectSensor.getDistanceInches() <= 24 )
-			nav.goForward(objectSensor.getDistanceInches() - 4.5f, true);
+		if (objectSensor.getDistanceInches() > 6 && objectSensor.getDistanceInches() <= 24 )
+			nav.goForward((float)Math.max(objectSensor.getDistanceInches() - 6f, 1), true);
 		else
 			return;
 		
@@ -108,10 +114,10 @@ public class StackTestClass {
 		}
 
 		
-		raiseMotor.setPower(-8);
+		raiseMotor.setPower(-12);
 
 		try {
-			Thread.sleep(400);
+			Thread.sleep(600);
 		} catch (InterruptedException e) {
 
 		}
@@ -130,6 +136,17 @@ public class StackTestClass {
 
 		closeMotor.stop();
 		
+		
+		raiseMotor.setPower(12);
+
+		try {
+			Thread.sleep(900);
+		} catch (InterruptedException e) {
+
+		}
+
+		raiseMotor.stop();
+		
 		closeMotor.setPower(30);
 
 		try {
@@ -139,17 +156,6 @@ public class StackTestClass {
 		}
 
 		closeMotor.stop();
-		
-		
-		raiseMotor.setPower(8);
-
-		try {
-			Thread.sleep(400);
-		} catch (InterruptedException e) {
-
-		}
-
-		raiseMotor.stop();
 		
 	}
 

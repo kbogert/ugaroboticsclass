@@ -75,7 +75,7 @@ public class ExamineObject implements Behavior2 {
 				
 				int noDetectCounter = 0;
 				
-				raiseMotor.setPower(-8);
+				raiseMotor.setPower(-12);
 
 				try {
 					Thread.sleep(1200);

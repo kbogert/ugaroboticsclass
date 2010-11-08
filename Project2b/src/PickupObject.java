@@ -48,10 +48,10 @@ public class PickupObject implements Behavior2 {
 
 			grabMotor.brake();
 
-			raiseMotor.setPower(8);
+			raiseMotor.setPower(12);
 
 			try {
-				Thread.sleep(1500);
+				Thread.sleep(1300);
 			} catch (InterruptedException e) {
 
 			}

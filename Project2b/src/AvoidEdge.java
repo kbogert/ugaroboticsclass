@@ -2,6 +2,8 @@ import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
+import com.ridgesoft.robotics.Localizer;
+import com.ridgesoft.robotics.Pose;
 import com.ridgesoft.robotics.sensors.SharpGP2D12;
 
 /**
@@ -16,18 +18,16 @@ public class AvoidEdge implements Behavior2 {
 
 	private boolean isEnabled;
 	private SharpGP2D12 forwardSensor;
-	private TableSensor leftRear;
-	private TableSensor rightRear;
 	private NavigatorWrapper nav;
 	private BehaviorListener listener;
 	private boolean active;
 	private InternalThread thread;
+	private Localizer loc;
 	
-	AvoidEdge(NavigatorWrapper nav, SharpGP2D12 forward, TableSensor leftRear, TableSensor rightRear) {
+	AvoidEdge(NavigatorWrapper nav, SharpGP2D12 forward, Localizer l) {
 		this.forwardSensor = forward;
-		this.leftRear = leftRear;
-		this.rightRear = rightRear;
 		this.nav = nav;
+		this.loc = l;
 	}
 	
 	public void setEnabled(boolean arg0) {
@@ -64,7 +64,7 @@ public class AvoidEdge implements Behavior2 {
 			
 		forwardSensor.ping();
 	//	IntelliBrain.getLcdDisplay().print(1, "Edge: " + forwardSensor.getDistanceInches());
-		if (forwardSensor.getDistanceInches() > 10 ) {
+		if (forwardSensor.getDistanceInches() > 24 ) {
 			
 			return true;
 		}
@@ -102,31 +102,17 @@ public class AvoidEdge implements Behavior2 {
 				
 				Thread.sleep(200);
 
-				
-
 				// if we detected the edge in front of us, backup
 				forwardSensor.ping();
-				if (forwardSensor.getDistanceInches() > 10) {
-					
-					// if both, turn away from the rear detection
-					if (! leftRear.isOnTable()) {
-						
-						nav.turn((float)(Math.PI / 2), true);
-						
-					} else if ( ! rightRear.isOnTable()) {
+				if (forwardSensor.getDistanceInches() > 24){
+					Pose pose = loc.getPose();
+					float x = 12 * (float)Math.cos(pose.heading) + pose.x;
+					float y = 12 * (float)Math.sin(pose.heading) + pose.y;
 
-						nav.turn(-(float)(Math.PI / 2), true);
-						
-					} else {
-						nav.goBackward(4, true);
-					}
+					nav.addObstacle(x * Project2b.MAPSCALE, y * Project2b.MAPSCALE, 10, 2);
 					
-				} else {
-					// if we detected the edge in back, Move Forward
-					
-					nav.goForward(3, true);
-					
-				}
+					nav.goBackward(4, true);
+				} 
 				
 			} catch (Exception e) {
 				IntelliBrain.getLcdDisplay().print(1, "CRASH: Avd Edge");
