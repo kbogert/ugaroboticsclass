@@ -36,9 +36,9 @@ public class ExamineObject implements Behavior2 {
         camera.setRGBMode(true);
         camera.setWhiteBalance(true);
         camera.setAutoExposure(true);
-        Thread.sleep(2000);
-        camera.setWhiteBalance(false);
-        camera.setAutoExposure(false);
+//        Thread.sleep(2000);
+ //       camera.setWhiteBalance(false);
+//        camera.setAutoExposure(false);
 
         
         camera.trackColor(220, 255, 220, 255, 220, 255); // white block
@@ -78,7 +78,7 @@ public class ExamineObject implements Behavior2 {
 				raiseMotor.setPower(-12);
 
 				try {
-					Thread.sleep(1200);
+					Thread.sleep(1400);
 				} catch (InterruptedException e) {
 
 				}
@@ -159,7 +159,7 @@ public class ExamineObject implements Behavior2 {
 			raiseMotor.setPower(8);
 
 			try {
-				Thread.sleep(1200);
+				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 
 			}
