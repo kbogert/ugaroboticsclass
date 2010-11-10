@@ -58,8 +58,7 @@ public class PutdownObject implements Behavior2 {
 			// if this is the second block we're dropping:
 			if (Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK) {
 
-				int turn = 48;
-				boolean flip = false;
+				int turn = 480;
 				while (turn > 0) {
 					try {
 						Thread.sleep(500);
@@ -90,11 +89,9 @@ public class PutdownObject implements Behavior2 {
 					if (objectSensor.getDistanceInches() <= 24 && objectSensor.getDistanceInches() > 0)
 						break;
 					
-					nav.turn((float)Math.PI / turn, true);
-					turn = Math.abs(turn) - 2;
-					flip = ! flip;
-					if (flip)
-						turn *= -1;
+					nav.turn((float)Math.PI / 24, true);
+					turn -= 15;
+					
 				}
 				IntelliBrain.getLcdDisplay().print(0, "Object: " + objectSensor.getDistanceInches());
 				try {
