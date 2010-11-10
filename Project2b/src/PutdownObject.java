@@ -15,12 +15,16 @@ public class PutdownObject implements Behavior2 {
 	private Motor raiseMotor;
 	private NavigatorWrapper nav;
 	private SharpGP2D12 objectSensor;
+	private Motor leftWheel;
+	private Motor rightWheel;
 	
-	public PutdownObject(Motor grabMotor, Motor raiseMotor, NavigatorWrapper navWrap, SharpGP2D12 objectSensor) {
+	public PutdownObject(Motor grabMotor, Motor raiseMotor, NavigatorWrapper navWrap, SharpGP2D12 objectSensor, Motor leftWheel, Motor rightWheel) {
 		this.grabMotor = grabMotor;
 		this.raiseMotor = raiseMotor;
 		nav = navWrap;
 		this.objectSensor = objectSensor;
+		this.leftWheel = leftWheel;
+		this.rightWheel = rightWheel;
 	}
 	
 	public void setEnabled(boolean arg0) {
@@ -55,19 +59,42 @@ public class PutdownObject implements Behavior2 {
 			if (Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK) {
 
 				int turn = 48;
-				for (int i = 0; i < 6; i ++) {
+				boolean flip = false;
+				while (turn > 0) {
 					try {
-						Thread.sleep(300);
+						Thread.sleep(500);
 					} catch (InterruptedException e) {
 
 					}
 					objectSensor.ping();
 					
-					if (objectSensor.getDistanceInches() <= 12 && objectSensor.getDistanceInches() > 0)
+					while (objectSensor.getDistanceInches() < 5 && objectSensor.getDistanceInches() > 0) {
+						leftWheel.setPower(-8);
+						rightWheel.setPower(-8);
+						
+						try {
+							Thread.sleep(250);
+						} catch (InterruptedException e) {
+
+						}
+						leftWheel.setPower(0);
+						rightWheel.setPower(0);
+						try {
+							Thread.sleep(300);
+						} catch (InterruptedException e) {
+
+						}
+						objectSensor.ping();
+					}
+					
+					if (objectSensor.getDistanceInches() <= 24 && objectSensor.getDistanceInches() > 0)
 						break;
 					
 					nav.turn((float)Math.PI / turn, true);
-					turn /= -2;
+					turn = Math.abs(turn) - 2;
+					flip = ! flip;
+					if (flip)
+						turn *= -1;
 				}
 				IntelliBrain.getLcdDisplay().print(0, "Object: " + objectSensor.getDistanceInches());
 				try {
@@ -120,6 +147,19 @@ public class PutdownObject implements Behavior2 {
 				}
 
 				raiseMotor.stop();
+				
+
+				leftWheel.setPower(-8);
+				rightWheel.setPower(-8);
+				
+				try {
+					Thread.sleep(300);
+				} catch (InterruptedException e) {
+
+				}
+				leftWheel.setPower(0);
+				rightWheel.setPower(0);
+
 
 			} else {
 
@@ -150,7 +190,7 @@ public class PutdownObject implements Behavior2 {
 				raiseMotor.setPower(12);
 
 				try {
-					Thread.sleep(1200);
+					Thread.sleep(1500);
 				} catch (InterruptedException e) {
 
 				}
@@ -159,8 +199,7 @@ public class PutdownObject implements Behavior2 {
 
 			}
 			
-			
-			
+
 			nav.goBackward((float)2.5, true);
 
 			setActive(false);

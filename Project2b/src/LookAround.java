@@ -37,6 +37,7 @@ public class LookAround implements Behavior2 {
 		
 		if (active ) {
 			if (thread == null) {
+				turnLeft = 360;
 				thread = new InternalThread(this);
 				thread.start();
 			} else if (! thread.isAlive() || thread.isInterrupted()) {
@@ -89,7 +90,7 @@ public class LookAround implements Behavior2 {
 					nav.turn((float)Math.PI / 12, true);
 					turnLeft -= 30;
 
-					Thread.sleep(250);
+					Thread.sleep(400);
 
 				}
 			} catch (InterruptedException e) {
@@ -100,6 +101,7 @@ public class LookAround implements Behavior2 {
 				}
 				
 			} finally {
+				nav.turn(-(float)Math.PI / 12, true);
 				parent.setActive(false);
 			}
 		}

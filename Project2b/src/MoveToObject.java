@@ -3,7 +3,7 @@ import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
 import com.ridgesoft.robotics.Localizer;
-import com.ridgesoft.robotics.Pose;
+import com.ridgesoft.robotics.Motor;
 import com.ridgesoft.robotics.sensors.SharpGP2D12;
 
 
@@ -23,12 +23,16 @@ public class MoveToObject implements Behavior2 {
 	private Localizer localizer;
 	private Map myMap;
 	private InternalThread thread;
+	private Motor leftWheel;
+	private Motor rightWheel;
 	
-	MoveToObject(NavigatorWrapper n, SharpGP2D12 objectSensor, Localizer l, Map m) {
+	MoveToObject(NavigatorWrapper n, SharpGP2D12 objectSensor, Localizer l, Map m, Motor leftWheel, Motor rightWheel) {
 		nav = n;
 		this.objectSensor = objectSensor;
 		localizer = l;
 		myMap = m;
+		this.leftWheel = leftWheel;
+		this.rightWheel = rightWheel;
 	}
 	
 	public void setEnabled(boolean arg0) {
@@ -123,7 +127,7 @@ public class MoveToObject implements Behavior2 {
 				Project2b.setCurrentState(Project2b.MOVE_TO_OBJECT);
 
 				
-				Thread.sleep(200);
+				Thread.sleep(500);
 				
 				if (!active)
 					return;
@@ -134,6 +138,9 @@ public class MoveToObject implements Behavior2 {
 				
 				objectSensor.ping();
 				float distance = objectSensor.getDistanceInches();
+
+				IntelliBrain.getLcdDisplay().print(1, "Distance: " + distance);
+				Thread.sleep(1000);
 				
 				if (distance > 18 || distance < 0) {
 
@@ -172,6 +179,25 @@ public class MoveToObject implements Behavior2 {
 							return;
 						}
 					}
+				}
+				
+				while (objectSensor.getDistanceInches() <= 6) {
+					leftWheel.setPower(-8);
+					rightWheel.setPower(-8);
+					
+					try {
+						Thread.sleep(250);
+					} catch (InterruptedException e) {
+
+					}
+					leftWheel.setPower(0);
+					rightWheel.setPower(0);
+					try {
+						Thread.sleep(300);
+					} catch (InterruptedException e) {
+
+					}
+					objectSensor.ping();
 				}
 				
 				// move forward towards the object, when we're < 6 inches stop and return

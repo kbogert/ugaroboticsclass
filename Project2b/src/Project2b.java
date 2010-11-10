@@ -126,23 +126,23 @@ public class Project2b {
         mIdentifyHomeBehavior = new IdentifyHome(navigator, map);
         mLookAroundBehavior = new LookAround(navWrap);
         mMoveToHomeBehavior = new MoveToHome(navWrap);
-        mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, odometer, map);
+        mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, odometer, map, leftMotor, rightMotor);
         mNavigateBehavior = new Navigate(navWrap, odometer);
         mPickupObjectBehavior = new PickupObject(grabMotor, raiseMotor);
-        mPutdownObjectBehavior = new PutdownObject(grabMotor, raiseMotor, navWrap, objectSensor);
+        mPutdownObjectBehavior = new PutdownObject(grabMotor, raiseMotor, navWrap, objectSensor, leftMotor, rightMotor);
         
         mIdentifyHomeBehavior.setActive(true);
 
         Behavior2 behaviors[] = new Behavior2[] { 
         		mIdentifyHomeBehavior,
-        		mAvoidEdgeBehavior, 
  //       		mAvoidObstacleBehavior, 
-        		mMoveToHomeBehavior,
         		mExamineObjectBehavior,
         		mPickupObjectBehavior,
-        		mPutdownObjectBehavior,
-        		mExploreBehavior,
+        		mPutdownObjectBehavior, 
         		mMoveToObjectBehavior,
+        		mAvoidEdgeBehavior, 
+        		mMoveToHomeBehavior,
+        		mExploreBehavior,
         		mLookAroundBehavior,
         		mNavigateBehavior
         };
@@ -161,7 +161,8 @@ public class Project2b {
         mArbiter.start();
 
         Thread musicThread = new Thread(new PlayMusic());
-        musicThread.start();
+        musicThread.setPriority(Thread.MAX_PRIORITY - 3);
+//        musicThread.start();
         
         while (true) {
         	int state;
@@ -204,7 +205,12 @@ public class Project2b {
                             mState = IDLE;
                         }
                         else if (event.behavior == mAvoidEdgeBehavior) {
-                            mState = IDLE;
+                        	if (programState == PROGRAM_RETURN_FIRST_BLOCK || programState == PROGRAM_RETURN_SECOND_BLOCK) {
+                        		mState = MOVE_TO_HOME;
+                        	} else {
+                        		mState = IDLE;
+                        	}
+                            
                         }
                         else if (event.behavior == mAvoidObstacleBehavior) {
                         	mState = NAVIGATE;

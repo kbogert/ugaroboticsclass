@@ -59,13 +59,18 @@ public class AvoidEdge implements Behavior2 {
 			thread = null;
 		}
 
-		if (Project2b.getProgramState() == Project2b.PROGRAM_RETURN_FIRST_BLOCK || Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK || Project2b.getCurrentState() == Project2b.PICKUP_OBJECT || Project2b.getCurrentState() == Project2b.PUTDOWN_OBJECT)
+		if (Project2b.getCurrentState() == Project2b.MOVE_TO_OBJECT || Project2b.getCurrentState() == Project2b.PICKUP_OBJECT || Project2b.getCurrentState() == Project2b.PUTDOWN_OBJECT)
 			return false;
 			
 		forwardSensor.ping();
-	//	IntelliBrain.getLcdDisplay().print(1, "Edge: " + forwardSensor.getDistanceInches());
-		if (forwardSensor.getDistanceInches() > 24 ) {
-			
+//		IntelliBrain.getLcdDisplay().print(1, "Edge: " + forwardSensor.getDistanceInches());
+		if (forwardSensor.getDistanceInches() > 24 || forwardSensor.getDistanceInches() < 0) {
+			// If we are within 10 inches of the home, ignore the edge sensor, since otherwise we'll enter an endless loop
+			Pose p = loc.getPose();
+			float distanceToHomeNotSqrt = (p.x - 0)*(p.x - 0) + (p.y - 0)*(p.y - 0);
+			if ((Project2b.getProgramState() == Project2b.PROGRAM_RETURN_FIRST_BLOCK || Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK) &&
+				distanceToHomeNotSqrt <= 100)
+				return false;
 			return true;
 		}
 		return false;
@@ -104,14 +109,15 @@ public class AvoidEdge implements Behavior2 {
 
 				// if we detected the edge in front of us, backup
 				forwardSensor.ping();
-				if (forwardSensor.getDistanceInches() > 24){
+				if (forwardSensor.getDistanceInches() > 24 || forwardSensor.getDistanceInches() < 0){
 					Pose pose = loc.getPose();
-					float x = 12 * (float)Math.cos(pose.heading) + pose.x;
-					float y = 12 * (float)Math.sin(pose.heading) + pose.y;
+					float x = 8 * (float)Math.cos(pose.heading) + pose.x;
+					float y = 8 * (float)Math.sin(pose.heading) + pose.y;
 
 					nav.addObstacle(x * Project2b.MAPSCALE, y * Project2b.MAPSCALE, 10, 2);
 					
-					nav.goBackward(4, true);
+					nav.turn(-(float)Math.PI / 2, true);
+					//nav.goBackward(4, true);
 				} 
 				
 			} catch (Exception e) {
