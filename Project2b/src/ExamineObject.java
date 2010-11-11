@@ -75,16 +75,6 @@ public class ExamineObject implements Behavior2 {
 				
 				int noDetectCounter = 0;
 				
-				raiseMotor.setPower(-12);
-
-				try {
-					Thread.sleep(1400);
-				} catch (InterruptedException e) {
-
-				}
-
-				raiseMotor.stop();
-				
 				Display display = IntelliBrain.getLcdDisplay();
 				while (true) {
 				    Thread.sleep(750);
