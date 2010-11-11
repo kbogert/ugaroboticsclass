@@ -20,19 +20,17 @@ public class MoveToObject implements Behavior2 {
 	private BehaviorListener listener;
 	private NavigatorWrapper nav;
 	private SharpGP2D12 objectSensor;
-	private Localizer localizer;
-	private Map myMap;
 	private InternalThread thread;
 	private Motor leftWheel;
 	private Motor rightWheel;
+	private Motor raiseMotor;
 	
-	MoveToObject(NavigatorWrapper n, SharpGP2D12 objectSensor, Localizer l, Map m, Motor leftWheel, Motor rightWheel) {
+	MoveToObject(NavigatorWrapper n, SharpGP2D12 objectSensor, Motor leftWheel, Motor rightWheel, Motor raiseMotor) {
 		nav = n;
 		this.objectSensor = objectSensor;
-		localizer = l;
-		myMap = m;
 		this.leftWheel = leftWheel;
 		this.rightWheel = rightWheel;
+		this.raiseMotor = raiseMotor;
 	}
 	
 	public void setEnabled(boolean arg0) {
@@ -202,6 +200,17 @@ public class MoveToObject implements Behavior2 {
 				
 				// move forward towards the object, when we're < 6 inches stop and return
 				distance = objectSensor.getDistanceInches();
+				
+				raiseMotor.setPower(-12);
+
+				try {
+					Thread.sleep(1400);
+				} catch (InterruptedException e) {
+
+				}
+
+				raiseMotor.stop();
+				
 				nav.goForward(distance - 6, true);
 				if (!active)
 					return;
