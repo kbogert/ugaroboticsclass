@@ -2,6 +2,7 @@ import com.ridgesoft.intellibrain.IntelliBrain;
 import com.ridgesoft.robotics.Behavior2;
 import com.ridgesoft.robotics.BehaviorEvent;
 import com.ridgesoft.robotics.BehaviorListener;
+import com.ridgesoft.robotics.Localizer;
 import com.ridgesoft.robotics.Motor;
 import com.ridgesoft.robotics.sensors.SharpGP2D12;
 
@@ -17,14 +18,16 @@ public class PutdownObject implements Behavior2 {
 	private SharpGP2D12 objectSensor;
 	private Motor leftWheel;
 	private Motor rightWheel;
+	private Localizer loc;
 	
-	public PutdownObject(Motor grabMotor, Motor raiseMotor, NavigatorWrapper navWrap, SharpGP2D12 objectSensor, Motor leftWheel, Motor rightWheel) {
+	public PutdownObject(Motor grabMotor, Motor raiseMotor, NavigatorWrapper navWrap, SharpGP2D12 objectSensor, Motor leftWheel, Motor rightWheel, Localizer loc) {
 		this.grabMotor = grabMotor;
 		this.raiseMotor = raiseMotor;
 		nav = navWrap;
 		this.objectSensor = objectSensor;
 		this.leftWheel = leftWheel;
 		this.rightWheel = rightWheel;
+		this.loc = loc;
 	}
 	
 	public void setEnabled(boolean arg0) {
@@ -53,11 +56,21 @@ public class PutdownObject implements Behavior2 {
 			IntelliBrain.getLcdDisplay().print(0, "Putdown Obj");
 			Project2b.setCurrentState(Project2b.PUTDOWN_OBJECT);
 
-			nav.turnTo((float)Math.PI, true);
-			
+
 			// if this is the second block we're dropping:
 			if (Project2b.getProgramState() == Project2b.PROGRAM_RETURN_SECOND_BLOCK) {
 
+				objectSensor.ping();
+				
+				if (objectSensor.getDistanceInches() < 5 || objectSensor.getDistanceInches() > 24) {
+					nav.turnTo((float)Math.PI, true);
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+
+					}
+				}
+				
 				int turn = 480;
 				while (turn > 0) {
 					try {
@@ -103,14 +116,19 @@ public class PutdownObject implements Behavior2 {
 				// move forward until the block is 4.5 in away
 				objectSensor.ping();
 				
+				float savedHeading = loc.getPose().heading;
+				
 				if (objectSensor.getDistanceInches() > 6 && objectSensor.getDistanceInches() <= 24 )
 					nav.goForward((float)Math.max(objectSensor.getDistanceInches() - 6f, 1), true);
+				else if (objectSensor.getDistanceInches() < 4 || objectSensor.getDistanceInches() > 24)
+					return true;
 				
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e1) {
 				}
 
+				nav.turnTo(savedHeading, true);
 				
 				raiseMotor.setPower(-12);
 
@@ -159,7 +177,12 @@ public class PutdownObject implements Behavior2 {
 
 
 			} else {
+				nav.turnTo((float)Math.PI, true);
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
 
+				}
 				
 				raiseMotor.setPower(-12);
 

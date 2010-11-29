@@ -129,7 +129,7 @@ public class Project2b {
         mMoveToObjectBehavior = new MoveToObject(navWrap, objectSensor, leftMotor, rightMotor, raiseMotor);
         mNavigateBehavior = new Navigate(navWrap, odometer);
         mPickupObjectBehavior = new PickupObject(grabMotor, raiseMotor);
-        mPutdownObjectBehavior = new PutdownObject(grabMotor, raiseMotor, navWrap, objectSensor, leftMotor, rightMotor);
+        mPutdownObjectBehavior = new PutdownObject(grabMotor, raiseMotor, navWrap, objectSensor, leftMotor, rightMotor, odometer);
         
         mIdentifyHomeBehavior.setActive(true);
 

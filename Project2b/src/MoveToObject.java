@@ -160,10 +160,13 @@ public class MoveToObject implements Behavior2 {
 
 						if (!active)
 							return;
-						nav.turn((float)Math.PI / -6, true);
+						nav.turn((float)Math.PI / -12, true);
+						nav.turn((float)Math.PI / -12, true);
 						if (!active)
 							return;
-					
+						
+						Thread.sleep(250);
+						
 						objectSensor.ping();
 						distance = objectSensor.getDistanceInches();
 						if (distance > 18 || distance < 0) {
@@ -204,7 +207,7 @@ public class MoveToObject implements Behavior2 {
 				raiseMotor.setPower(-12);
 
 				try {
-					Thread.sleep(1400);
+					Thread.sleep(1700);
 				} catch (InterruptedException e) {
 
 				}
