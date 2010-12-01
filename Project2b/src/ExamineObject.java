@@ -127,7 +127,7 @@ public class ExamineObject implements Behavior2 {
 				    		y = 30;
 				    	
 				    	if (y / 10 < 1)
-				    		y = 1;
+				    		y = 1; // bug?  this should probably be y = 10
 
 				    	nav.goForward(y / 10, true);
 
