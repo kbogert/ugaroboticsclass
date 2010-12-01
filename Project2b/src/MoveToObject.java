@@ -45,13 +45,14 @@ public class MoveToObject implements Behavior2 {
 		if (!enabled)
 			return false;
 		
-		if (active) {
+		if (getActive()) {
 			if (thread == null) {
 				// all stop
 				nav.stop();
 				thread = new InternalThread(this);
 				thread.start();
 			} else if (! thread.isAlive() || thread.isInterrupted()) {
+				setActive(false);
 				return false;
 			}
 
@@ -98,10 +99,15 @@ public class MoveToObject implements Behavior2 {
 		return false;
 	}
 
-	public void setActive(boolean arg0) {
+	public synchronized void setActive(boolean arg0) {
 		active = arg0;
 		if (thread != null)
 			thread.setActive(arg0);
+	}
+	
+	public synchronized boolean getActive() {
+		return active;
+		
 	}
 	
 	private class InternalThread extends Thread {
@@ -182,7 +188,8 @@ public class MoveToObject implements Behavior2 {
 					}
 				}
 				
-				while (objectSensor.getDistanceInches() <= 6) {
+				objectSensor.ping();				
+				while (objectSensor.getDistanceInches() <= 6.5) {
 					leftWheel.setPower(-8);
 					rightWheel.setPower(-8);
 					

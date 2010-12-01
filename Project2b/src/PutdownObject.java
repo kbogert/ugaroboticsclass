@@ -44,15 +44,6 @@ public class PutdownObject implements Behavior2 {
 		if (active) {
 			// if we have already dropped a block, find it and maneuver so that it's underneath our gripper
 			
-			// how? need some way to detect the first block while we're holding one.
-			// Camera will be blocked
-			// IR sensor is blocked
-			
-			// need another sensor? or else keep the IR sensor fixed rather than raise it up
-			
-			// lower the block and open the gripper
-			
-			// for right now, just drop the thing
 			IntelliBrain.getLcdDisplay().print(0, "Putdown Obj");
 			Project2b.setCurrentState(Project2b.PUTDOWN_OBJECT);
 
@@ -113,15 +104,15 @@ public class PutdownObject implements Behavior2 {
 
 				}
 				
-				// move forward until the block is 4.5 in away
+				// move forward until the block is 6 in away
 				objectSensor.ping();
 				
-				float savedHeading = loc.getPose().heading;
+				float savedHeading = loc.getPose().heading;  // this is needed thanks to the wonderfully shitty navigator class allowing the wheels to jerk after a stop
 				
 				if (objectSensor.getDistanceInches() > 6 && objectSensor.getDistanceInches() <= 24 )
 					nav.goForward((float)Math.max(objectSensor.getDistanceInches() - 6f, 1), true);
 				else if (objectSensor.getDistanceInches() < 4 || objectSensor.getDistanceInches() > 24)
-					return true;
+					return true; // problem, didn't find the block, repeat the behavior as often as necessary
 				
 				try {
 					Thread.sleep(500);

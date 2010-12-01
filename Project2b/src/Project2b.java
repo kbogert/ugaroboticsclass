@@ -21,8 +21,6 @@ public class Project2b {
     private static byte programState;
 	private static SharpGP2D12 objectSensor;
 	private static SharpGP2D12 tableEdgeSensor;
-//	private static TableSensor leftTableSensor;
-//	private static TableSensor rightTableSensor;
 	private static OdometricLocalizer odometer;
     
 	private static Behavior2 mAvoidEdgeBehavior;
@@ -86,8 +84,6 @@ public class Project2b {
 
 		objectSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(2), null);
 		tableEdgeSensor = new SharpGP2D12(IntelliBrain.getAnalogInput(1), null);
-//		leftTableSensor = new TableSensor(IntelliBrain.getAnalogInput(6));
-//		rightTableSensor = new TableSensor(IntelliBrain.getAnalogInput(7));
 		AnalogShaftEncoder leftEncoder = new AnalogShaftEncoder(IntelliBrain.getAnalogInput(5), 250, 750, 30, Thread.MAX_PRIORITY);
 		AnalogShaftEncoder rightEncoder = new AnalogShaftEncoder(IntelliBrain.getAnalogInput(4), 250, 750, 30, Thread.MAX_PRIORITY);
 		
@@ -189,12 +185,6 @@ public class Project2b {
         	}
         }
 	}
-	
-	private static void inActivateAll(Behavior2 [] b) {
-		for (int i = 0; i < b.length; i ++)
-			b[i].setActive(false);
-	}
-
     
 	private static class Listener implements BehaviorListener {
         public void behaviorEvent(BehaviorEvent event) {
@@ -271,24 +261,5 @@ public class Project2b {
             }
         }
     }
-	
-	
-	public static class ClearScreen extends Thread {
-		
-		public void run() {
-			
-			while (true) {
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			IntelliBrain.getLcdDisplay().print(0, "");
-			IntelliBrain.getLcdDisplay().print(1, Boolean.toString(mArbiter.isAlive()));
-			}
-		}
-		
-	}
 
 }
