@@ -90,7 +90,7 @@ public class LookAround implements Behavior2 {
 					nav.turn((float)Math.PI / 12, true);
 					turnLeft -= 30;
 
-					Thread.sleep(400);
+					Thread.sleep(400);  // should be long enough for the moveToObject behavior to detect an object and take over
 
 				}
 			} catch (InterruptedException e) {
