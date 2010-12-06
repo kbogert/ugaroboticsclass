@@ -11,8 +11,6 @@ import com.ridgesoft.robotics.sensors.CMUcam.CMUcamTrackingData;
 /**
  * Get a reading from the cmucam as to the color of the object in front of us
  * 
- * Record the object's color in the map
- * 
  * If it's the one we're looking for, set an appropriate state
  * 
  * @author kbogert
